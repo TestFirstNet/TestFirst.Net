@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Net.TestFirst.Extensions")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("TestFirst.Net extensions for NUnit and Moq")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TestFirst.Net")]
 [assembly: AssemblyProduct("TestFirst.Net.Extensions")]

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TestFirst.Net.Performance")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("TestFirst.Net performance testing extensions")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TestFirst.Net")]
 [assembly: AssemblyProduct("TestFirst.Net.Performance")]

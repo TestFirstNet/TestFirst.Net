@@ -4,3 +4,5 @@ obj/
 *.vssscc
 *.vspscc
 TestFirst.Net.sln.DotSettings.user
+*.nupkg
+*.user
