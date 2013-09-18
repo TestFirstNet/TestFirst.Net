@@ -14,7 +14,7 @@ namespace TestFirst.Net.Random
 
         private readonly Random m_random = new Random();
             
-        private readonly Lookup<IRandomGenerator> m_generators = new Lookup<IRandomGenerator>();
+        private readonly Lookup<IRandomValueFactory> m_generators = new Lookup<IRandomValueFactory>();
         private readonly Lookup<Func<Type, object>> m_interfacesToClass = new Lookup<Func<Type,Object>>();
         private readonly Lookup<int> m_recursionLimit = new Lookup<int>();
         private readonly Func<Type, PropertyInfo, bool> m_propertyFilter;
@@ -44,7 +44,7 @@ namespace TestFirst.Net.Random
         private RandomFiller( //keep private so builder is used
             bool loggingEnabled,
             bool failOnCircularDependency,
-            Lookup<IRandomGenerator> generators,
+            Lookup<IRandomValueFactory> generators,
             Lookup<Func<Type,Object>> interfacesToClass,
             Func<Type, PropertyInfo, bool> propertyFilter,
             Lookup<int> recursionLimits
@@ -119,11 +119,11 @@ namespace TestFirst.Net.Random
         private void SetGenerator<TPropertyType>(Func<Type,TPropertyType> func)
         {
             var type = typeof(TPropertyType);
-            var generator = new FuncGenerator<TPropertyType>(func);
+            var generator = new RandomValueViaFunction<TPropertyType>(func);
             SetGenerator(type, generator);  
         }
 
-        private void SetGenerator(Type type, IRandomGenerator gen)
+        private void SetGenerator(Type type, IRandomValueFactory gen)
         {
             Debug("Registering generator for type {0}", type.PrettyName());                
             m_generators.SetForType(type,gen);
@@ -269,12 +269,12 @@ namespace TestFirst.Net.Random
             m_parentTypes.Pop();
         }
 
-        private IRandomGenerator GetGeneratorFor(Type onInstanceType, String propertyName, Type propertyType)
+        private IRandomValueFactory GetGeneratorFor(Type onInstanceType, String propertyName, Type propertyType)
         {
             Type type = ExtractUnderlyingTypeIfNullable(propertyType);
             Debug("Try get generator for propertyName '{0}', type '{1}'", propertyName, type.PrettyName());
 
-            IRandomGenerator generator;
+            IRandomValueFactory generator;
             if (m_generators.TryGetValue(onInstanceType, propertyName, propertyType, out generator))
             {
                 Debug("Found existing generator");
@@ -290,7 +290,7 @@ namespace TestFirst.Net.Random
             return generator;
         }
 
-        private IRandomGenerator CreateGeneratorFor(Type onInstanceType, String propertyName, Type propertyType)
+        private IRandomValueFactory CreateGeneratorFor(Type onInstanceType, String propertyName, Type propertyType)
         {
             Debug("Creating new generator");
 
@@ -335,9 +335,9 @@ namespace TestFirst.Net.Random
             return null;
         }
 
-        private FuncGenerator<object> CreateClassInstanceGenerator()
+        private RandomValueViaFunction<object> CreateClassInstanceGenerator()
         {
-            var gen = new FuncGenerator<Object>((genType) =>
+            var gen = new RandomValueViaFunction<Object>((genType) =>
                 {
                     Object propertyInstance;
                     try
@@ -354,9 +354,9 @@ namespace TestFirst.Net.Random
             return gen;
         }
 
-        private FuncGenerator<object> CreateInterfaceGenerator(Type onInstanceType, string propertyName, Type type)
+        private RandomValueViaFunction<object> CreateInterfaceGenerator(Type onInstanceType, string propertyName, Type type)
         {
-            var gen = new FuncGenerator<Object>((genType) =>
+            var gen = new RandomValueViaFunction<Object>((genType) =>
                 {
                     var propertyInstance = CreateInstanceFromInterface(onInstanceType, propertyName, type);
                     InternalFillWithRandom(propertyInstance);
@@ -365,14 +365,14 @@ namespace TestFirst.Net.Random
             return gen;
         }
 
-        private FuncGenerator<object> CreateEnumGeneratorFor(Type type)
+        private RandomValueViaFunction<object> CreateEnumGeneratorFor(Type type)
         {
-            return new FuncGenerator<Object>(genType => m_random.EnumOf(type));
+            return new RandomValueViaFunction<Object>(genType => m_random.EnumOf(type));
         }
 
-        private FuncGenerator<object> CreateArrayGenerator()
+        private RandomValueViaFunction<object> CreateArrayGenerator()
         {
-            var gen = new FuncGenerator<Object>((parentType, listPropertyName, arrayType) =>
+            var gen = new RandomValueViaFunction<Object>((parentType, listPropertyName, arrayType) =>
                 {
                     Type itemType = arrayType.GetElementType();
                     var numItems = m_random.IntBetween(MinColSize, MaxColSize + 1);
@@ -387,7 +387,7 @@ namespace TestFirst.Net.Random
             return gen;
         }
 
-        private FuncGenerator<object> CreateDictionaryGeneratorFor(Type type)
+        private RandomValueViaFunction<object> CreateDictionaryGeneratorFor(Type type)
         {
             //perform a bunch of precalc
             Type keyType = type.GetGenericArguments()[0];
@@ -403,7 +403,7 @@ namespace TestFirst.Net.Random
             }
             var concreteDictCtor = concreteDictType.GetConstructor(new Type[] {});
 
-            var gen = new FuncGenerator<Object>((parentType, dictPropertyName, dictType) =>
+            var gen = new RandomValueViaFunction<Object>((parentType, dictPropertyName, dictType) =>
                 {
                     dynamic dict = concreteDictCtor.Invoke(new object[] {});
                     var numItems = m_random.IntBetween(MinColSize, MaxColSize + 1);
@@ -423,7 +423,7 @@ namespace TestFirst.Net.Random
             return gen;
         }
 
-        private FuncGenerator<object> CreateListGeneratorFor(Type type)
+        private RandomValueViaFunction<object> CreateListGeneratorFor(Type type)
         {
             //perform a bunch of precalc
             Type itemType = type.GetGenericArguments()[0];
@@ -438,7 +438,7 @@ namespace TestFirst.Net.Random
             }
             var concreteListCtor = concreteListType.GetConstructor(new Type[] {});
 
-            var gen = new FuncGenerator<Object>((parentType, listPropertyName, listType) =>
+            var gen = new RandomValueViaFunction<Object>((parentType, listPropertyName, listType) =>
                 {
                     dynamic list = concreteListCtor.Invoke(new object[] {});
                     var numItems = m_random.IntBetween(MinColSize, MaxColSize + 1);
@@ -514,21 +514,21 @@ namespace TestFirst.Net.Random
             }
         }
 
-        private class FuncGenerator<TPropertyType> : IRandomGenerator
+        private class RandomValueViaFunction<TPropertyType> : IRandomValueFactory
         {
             private readonly Func<Type,String,Type,TPropertyType> m_createRandomFunc;
 
-            public FuncGenerator(Func<TPropertyType> createRandomFunc)
+            public RandomValueViaFunction(Func<TPropertyType> createRandomFunc)
             {
                 m_createRandomFunc = (onType,propertyName,propertyType) => { return createRandomFunc.Invoke(); };
             }
 
-            public FuncGenerator(Func<Type, TPropertyType> createRandomFunc)
+            public RandomValueViaFunction(Func<Type, TPropertyType> createRandomFunc)
             {
                 m_createRandomFunc = (onType,propertyName,propertyType) => { return createRandomFunc.Invoke(propertyType); };
             }
 
-            public FuncGenerator(Func<Type, String, Type, TPropertyType> createRandomFunc)
+            public RandomValueViaFunction(Func<Type, String, Type, TPropertyType> createRandomFunc)
             {
                 m_createRandomFunc = createRandomFunc;
             }
@@ -542,7 +542,7 @@ namespace TestFirst.Net.Random
         /// <summary>
         /// Generates a random value
         /// </summary>
-        public interface IRandomGenerator
+        public interface IRandomValueFactory
         {
             /// <summary>
             /// Creates a value for the given property
@@ -561,7 +561,7 @@ namespace TestFirst.Net.Random
             private bool m_enableLogging = false;
             private bool m_failOnCircularDependency = true;
 
-            private readonly Lookup<IRandomGenerator> m_generators = new Lookup<IRandomGenerator>();
+            private readonly Lookup<IRandomValueFactory> m_generators = new Lookup<IRandomValueFactory>();
             private readonly Lookup<Func<Type,Object>> m_interfacesToClass = new Lookup<Func<Type,Object>>();
             private readonly Lookup<int> m_recursionLimit = new Lookup<int>();
 
@@ -621,7 +621,7 @@ namespace TestFirst.Net.Random
             public Builder GeneratorForType<TPropertyType>(Func<TPropertyType> func)
             {
                 var type = typeof (TPropertyType);
-                var generator = new FuncGenerator<TPropertyType>(func);
+                var generator = new RandomValueViaFunction<TPropertyType>(func);
                 GeneratorForType(type, generator); 
                 return this; 
             }
@@ -631,7 +631,7 @@ namespace TestFirst.Net.Random
                 m_generators.SetOnTypeForPropertyName(
                     typeof(TInstanceType),
                     propertyName,
-                    new FuncGenerator<TPropertyType>(func));
+                    new RandomValueViaFunction<TPropertyType>(func));
                 return this; 
             }
 
@@ -640,17 +640,17 @@ namespace TestFirst.Net.Random
                 m_generators.SetOnTypeForPropertyType(
                     typeof(TInstanceType),
                     typeof(TPropertyType),
-                    new FuncGenerator<TPropertyType>(func));
+                    new RandomValueViaFunction<TPropertyType>(func));
                 return this; 
             }
 
             public Builder GeneratorForType(Type type,Func<Object> func)
             {          
-                m_generators.SetForType(type,new FuncGenerator<Object>(func));
+                m_generators.SetForType(type,new RandomValueViaFunction<Object>(func));
                 return this;
             }
 
-            public Builder GeneratorForType(Type type, IRandomGenerator gen)
+            public Builder GeneratorForType(Type type, IRandomValueFactory gen)
             {               
                 m_generators.SetForType(type,gen);
 
