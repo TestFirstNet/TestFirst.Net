@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TestFirst.Net.Test</RootNamespace>
+    <AssemblyName>TestFirst.Net.Test</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AbstractScenarioTest.cs" />
+    <Compile Include="AbstractScenarioTestTest.cs" />
+    <Compile Include="Matcher\ABoolTest.cs" />
+    <Compile Include="Matcher\ADateTimeTest.cs" />
+    <Compile Include="Matcher\ADoubleTest.cs" />
+    <Compile Include="Matcher\AFloatTest.cs" />
+    <Compile Include="Matcher\ALongTest.cs" />
+    <Compile Include="Matcher\AnExceptionTest.cs" />
+    <Compile Include="Matcher\AShortTest.cs" />
+    <Compile Include="Matcher\AnInstanceTest.cs" />
+    <Compile Include="Matcher\ATimeSpanTest.cs" />
+    <Compile Include="Matcher\AListInAnyOrderTest.cs" />
+    <Compile Include="Random\RandomFillerTest.cs" />
+    <Compile Include="ScenarioBuilderTest.cs" />
+    <Compile Include="ScenarioInserterTest.cs" />
+    <Compile Include="ScenarioThenMatcherTest.cs" />
+    <Compile Include="DescriptionTest.cs" />
+    <Compile Include="Matcher\AGuidTest.cs" />
+    <Compile Include="Matcher\AStringTest.cs" />
+    <Compile Include="ScenarioFetcherTest.cs" />
+    <Compile Include="ScenarioTest.cs" />
+    <Compile Include="MatchDiagnosticsTest.cs" />
+    <Compile Include="Matcher\AnIntTest.cs" />
+    <Compile Include="Matcher\BaseMatcherTest.cs" />
+    <Compile Include="Matcher\AListInOrderTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Matcher\PropertyMatcherTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Lang\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TestFirst.Net\TestFirst.Net.csproj">
+      <Project>{EF8C3967-0099-41CF-AAE7-02555869C67A}</Project>
+      <Name>TestFirst.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
