@@ -117,6 +117,15 @@ namespace TestFirst.Net
         }
 
         /// <summary>
+        /// Warning method to catch the use of a matcher on a given. Always throws exception
+        /// </summary>
+        [Obsolete("This is not the method you want. You probably want an inserter instead. Keep this to warn of api incorrect usage")]
+        public void Given(IMatcher notWhatYouWantUseInserterInstead)
+        {
+            throw Givens.NewGivenMatcherError();
+        }
+
+        /// <summary>
         /// Pass in an instance which is dependency injected
         /// </summary>
         /// <param name="instance">the instance to pass back</param>
@@ -387,7 +396,15 @@ namespace TestFirst.Net
                 : base(scenario)
             {
             }
-
+            
+            /// <summary>
+            /// Warning method to catch the use of a matcher on a given. Always throws exception
+            /// </summary>
+            [Obsolete("This is not the method you want. You probably want an inserter instead. Keep this to warn of api incorrect usage")]
+            public void Given(IMatcher notWhatYouWantUseInserterInstead)
+            {
+                throw Givens.NewGivenMatcherError();
+            }
             /// <summary>
             /// Invoke an inserter
             /// </summary>
@@ -601,6 +618,11 @@ namespace TestFirst.Net
 
         private static class Givens
         {
+
+            internal static NotImplementedException NewGivenMatcherError()
+            {
+                return new NotImplementedException("You passed a matcher to a Given which is not likely your intent, instead you probably wanted to pass in an inserter or action instead");      
+            }
             internal static GivenStep Given(Scenario scenario, Action action)
             {
                 scenario.Step("Given(Action)");
