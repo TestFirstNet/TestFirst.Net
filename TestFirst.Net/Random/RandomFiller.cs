@@ -14,7 +14,7 @@ namespace TestFirst.Net.Random
 
         private readonly Random m_random = new Random();
             
-        private readonly Lookup<IRandomValueFactory> m_generators = new Lookup<IRandomValueFactory>();
+        private readonly Lookup<IRandomValueFactory> m_randomValueFactories = new Lookup<IRandomValueFactory>();
         private readonly Lookup<Func<Type, object>> m_interfacesToClass = new Lookup<Func<Type,Object>>();
         private readonly Lookup<int> m_recursionLimit = new Lookup<int>();
         private readonly Func<Type, PropertyInfo, bool> m_propertyFilter;
@@ -55,7 +55,7 @@ namespace TestFirst.Net.Random
 
             RegisterDefaultGenerators();
 
-            m_generators.SetAll(generators);
+            m_randomValueFactories.SetAll(generators);
             m_interfacesToClass.SetAll(interfacesToClass);
             m_recursionLimit.SetAll(recursionLimits);
 
@@ -126,7 +126,7 @@ namespace TestFirst.Net.Random
         private void SetValueFactoryFor(Type type, IRandomValueFactory gen)
         {
             Debug("Registering generator for type {0}", type.PrettyName());                
-            m_generators.SetForType(type,gen);
+            m_randomValueFactories.SetForType(type,gen);
         }
 
         public Object FillWithRandom(Type t)
@@ -186,7 +186,7 @@ namespace TestFirst.Net.Random
                 try
                 {
                     var val = InternalNewRandomValueFor(instance.GetType(), prop);
-                    Debug("Setting value for prop '{0}',  value '{1}'", prop.Name, val);
+                    Debug("Setting value for property '{0}',  value '{1}'", prop.Name, val);
                     //no indexed prop at the mo!
                     prop.SetValue(instance, val, null);
                 }
@@ -208,12 +208,12 @@ namespace TestFirst.Net.Random
             if (generator != null)
             {
                 var val = generator.CreateValue(onInstanceType, propertyName, propertyType);
-                Debug("For prop '{0}', type '{1}', generated val '{2}'", propertyName, propertyType.PrettyName(), val);
+                Debug("For property '{0}', type '{1}', generated value '{2}'", propertyName, propertyType.PrettyName(), val);
                 return val;
             }
             throw new RandomFillException(String.Format(
                         "Couldn't generate random for  {0}.{1} of type {2}. Consider registering " +
-                        "a custom generator for the given type. Remember to register the nullable " +
+                        "a custom value factory for the given type. Remember to register the nullable " +
                         "version also", 
                         onInstanceType.PrettyName(), propertyName, propertyType.PrettyName()));                          
         }
@@ -255,7 +255,7 @@ namespace TestFirst.Net.Random
             }
             throw new RandomFillException(
                 String.Format(
-                    "Circular dependency detected on type '{0}', for property with name '{1}', of type '{2}', full propertyPath is '{3}'",
+                    "Circular dependency detected on type '{0}', for property with name '{1}', of type '{2}', full property path is '{3}'",
                     onType.PrettyName(),
                     prop.Name,
                     prop.PropertyType.PrettyName(),
@@ -272,27 +272,27 @@ namespace TestFirst.Net.Random
         private IRandomValueFactory GetValueFactoryFor(Type onInstanceType, String propertyName, Type propertyType)
         {
             Type type = ExtractUnderlyingTypeIfNullable(propertyType);
-            Debug("Try get generator for propertyName '{0}', type '{1}'", propertyName, type.PrettyName());
+            Debug("Try get value factory for propertyName '{0}', type '{1}'", propertyName, type.PrettyName());
 
-            IRandomValueFactory generator;
-            if (m_generators.TryGetValue(onInstanceType, propertyName, propertyType, out generator))
+            IRandomValueFactory factory;
+            if (m_randomValueFactories.TryGetValue(onInstanceType, propertyName, propertyType, out factory))
             {
-                Debug("Found existing generator");
-                return generator;
+                Debug("Found existing value factory");
+                return factory;
             }
 
-            generator = NewValueFactoryFor(onInstanceType, propertyName, propertyType);
-            if (generator != null)
+            factory = NewValueFactoryFor(onInstanceType, propertyName, propertyType);
+            if (factory != null)
             {
-                Debug("Created new generator");
-                SetValueFactoryFor(type,generator);
+                Debug("Created new value factory");
+                SetValueFactoryFor(type,factory);
             }
-            return generator;
+            return factory;
         }
 
         private IRandomValueFactory NewValueFactoryFor(Type onInstanceType, String propertyName, Type propertyType)
         {
-            Debug("Creating new generator");
+            Debug("Creating new value factory");
 
             Type type = ExtractUnderlyingTypeIfNullable(propertyType);
             if (type.IsEnum)
@@ -331,7 +331,7 @@ namespace TestFirst.Net.Random
                 Debug("IsClass");
                 return NewClassInstanceFactory();
             }
-            Debug("Could not create generator");
+            Debug("Could not create value factory");
             return null;
         }
 
@@ -483,7 +483,7 @@ namespace TestFirst.Net.Random
 
         private Object NewInstanceFromInterface(Type onInstanceType, String propertyName, Type type)
         {
-            Debug("Looking for interface instance factory for type {0}", type.PrettyName());
+            Debug("Looking for interface-->instance factory for type {0}", type.PrettyName());
 
             Func<Type,Object> instanceFactory;
 
@@ -616,17 +616,17 @@ namespace TestFirst.Net.Random
             {           
                 m_interfacesToClass.SetForType(interfaceType, objectFactory);
                 return this;
-            }
+            }           
 
-            public Builder GeneratorForType<TPropertyType>(Func<TPropertyType> func)
+            public Builder ValueFactoryForType<TPropertyType>(Func<TPropertyType> func)
             {
                 var type = typeof (TPropertyType);
                 var generator = new RandomValueViaFunction<TPropertyType>(func);
-                GeneratorForType(type, generator); 
+                ValueFactoryForType(type, generator); 
                 return this; 
             }
-
-            public Builder GeneratorForNamedPropertyOnType<TInstanceType,TPropertyType>(String propertyName,Func<TPropertyType> func)
+            
+            public Builder ValueFactoryForNamedPropertyOnType<TInstanceType,TPropertyType>(String propertyName,Func<TPropertyType> func)
             {
                 m_generators.SetOnTypeForPropertyName(
                     typeof(TInstanceType),
@@ -635,7 +635,7 @@ namespace TestFirst.Net.Random
                 return this; 
             }
 
-            public Builder GeneratorForTypeOnType<TPropertyType,TInstanceType>(Func<TPropertyType> func)
+            public Builder ValueFactoryForTypeOnType<TPropertyType,TInstanceType>(Func<TPropertyType> func)
             {
                 m_generators.SetOnTypeForPropertyType(
                     typeof(TInstanceType),
@@ -644,18 +644,18 @@ namespace TestFirst.Net.Random
                 return this; 
             }
 
-            public Builder GeneratorForType(Type type,Func<Object> func)
+            public Builder ValueFactoryForType(Type type,Func<Object> func)
             {          
                 m_generators.SetForType(type,new RandomValueViaFunction<Object>(func));
                 return this;
             }
 
-            public Builder GeneratorForType(Type type, IRandomValueFactory gen)
+            public Builder ValueFactoryForType(Type type, IRandomValueFactory gen)
             {               
                 m_generators.SetForType(type,gen);
 
                 return this;
-            }
+            }            
 
             public Builder SelectPropertiesToFill(Func<Type,PropertyInfo,bool> returnTrueForPropertiesToSet)
             {
@@ -674,6 +674,41 @@ namespace TestFirst.Net.Random
             {          
                 PreConditions.AssertTrue(limit > 0, "Limit must be greater than 0");
                 m_recursionLimit.SetOnTypeForPropertyType(onType, forType, limit);
+                return this;
+            }
+
+            [Obsolete("Use ValueFactoryForType instead")]
+            public Builder GeneratorForType<TPropertyType>(Func<TPropertyType> func)
+            {
+                ValueFactoryForType<TPropertyType>(func); 
+                return this; 
+            }
+
+            [Obsolete("Use ValueFactoryForNamedPropertyOnType instead")]
+            public Builder GeneratorForNamedPropertyOnType<TInstanceType,TPropertyType>(String propertyName,Func<TPropertyType> func)
+            {
+                ValueFactoryForNamedPropertyOnType<TInstanceType,TPropertyType>(propertyName,func);
+                return this; 
+            }
+
+            [Obsolete("Use ValueFactoryForTypeOnType instead")]
+            public Builder GeneratorForTypeOnType<TPropertyType,TInstanceType>(Func<TPropertyType> func)
+            {
+                ValueFactoryForTypeOnType<TPropertyType,TInstanceType>(func);
+                return this; 
+            }
+
+            [Obsolete("Use ValueFactoryForType instead")]
+            public Builder GeneratorForType(Type type,Func<Object> func)
+            {          
+                ValueFactoryForType(type,func);
+                return this;
+            }
+
+            [Obsolete("Use ValueFactoryForType instead")]
+            public Builder GeneratorForType(Type type, IRandomValueFactory gen)
+            {               
+                ValueFactoryForType(type, gen);
                 return this;
             }
         }
