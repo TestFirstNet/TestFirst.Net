@@ -337,7 +337,7 @@ namespace TestFirst.Net.Random
 
         private RandomValueViaFunction<object> NewClassInstanceFactory()
         {
-            var gen = new RandomValueViaFunction<Object>((genType) =>
+            var factory = new RandomValueViaFunction<Object>((genType) =>
                 {
                     Object propertyInstance;
                     try
@@ -351,18 +351,18 @@ namespace TestFirst.Net.Random
                     InternalFillWithRandom(propertyInstance);
                     return propertyInstance;
                 });
-            return gen;
+            return factory;
         }
 
         private RandomValueViaFunction<object> NewInterfaceFactoryFor(Type onInstanceType, string propertyName, Type type)
         {
-            var gen = new RandomValueViaFunction<Object>((genType) =>
+            var factory = new RandomValueViaFunction<Object>((genType) =>
                 {
                     var propertyInstance = NewInstanceFromInterface(onInstanceType, propertyName, type);
                     InternalFillWithRandom(propertyInstance);
                     return propertyInstance;
                 });
-            return gen;
+            return factory;
         }
 
         private RandomValueViaFunction<object> NewEnumFactoryFor(Type type)
@@ -372,7 +372,7 @@ namespace TestFirst.Net.Random
 
         private RandomValueViaFunction<object> NewArrayFactory()
         {
-            var gen = new RandomValueViaFunction<Object>((parentType, listPropertyName, arrayType) =>
+            var factory = new RandomValueViaFunction<Object>((parentType, listPropertyName, arrayType) =>
                 {
                     Type itemType = arrayType.GetElementType();
                     var numItems = m_random.IntBetween(MinColSize, MaxColSize + 1);
@@ -384,7 +384,7 @@ namespace TestFirst.Net.Random
                     }
                     return array;
                 });
-            return gen;
+            return factory;
         }
 
         private RandomValueViaFunction<object> NewDictionaryFactoryFor(Type type)
@@ -403,7 +403,7 @@ namespace TestFirst.Net.Random
             }
             var concreteDictCtor = concreteDictType.GetConstructor(new Type[] {});
 
-            var gen = new RandomValueViaFunction<Object>((parentType, dictPropertyName, dictType) =>
+            var factory = new RandomValueViaFunction<Object>((parentType, dictPropertyName, dictType) =>
                 {
                     dynamic dict = concreteDictCtor.Invoke(new object[] {});
                     var numItems = m_random.IntBetween(MinColSize, MaxColSize + 1);
@@ -420,7 +420,7 @@ namespace TestFirst.Net.Random
                     }
                     return dict;
                 });
-            return gen;
+            return factory;
         }
 
         private RandomValueViaFunction<object> NewListFactoryFor(Type type)
@@ -438,7 +438,7 @@ namespace TestFirst.Net.Random
             }
             var concreteListCtor = concreteListType.GetConstructor(new Type[] {});
 
-            var gen = new RandomValueViaFunction<Object>((parentType, listPropertyName, listType) =>
+            var factory = new RandomValueViaFunction<Object>((parentType, listPropertyName, listType) =>
                 {
                     dynamic list = concreteListCtor.Invoke(new object[] {});
                     var numItems = m_random.IntBetween(MinColSize, MaxColSize + 1);
@@ -451,7 +451,7 @@ namespace TestFirst.Net.Random
                     }
                     return list;
                 });
-            return gen;
+            return factory;
         }
 
 
@@ -561,8 +561,8 @@ namespace TestFirst.Net.Random
             private bool m_enableLogging = false;
             private bool m_failOnCircularDependency = true;
 
-            private readonly Lookup<IRandomValueFactory> m_generators = new Lookup<IRandomValueFactory>();
-            private readonly Lookup<Func<Type,Object>> m_interfacesToClass = new Lookup<Func<Type,Object>>();
+            private readonly Lookup<IRandomValueFactory> m_factories = new Lookup<IRandomValueFactory>();
+            private readonly Lookup<Func<Type,Object>> m_interfacesToClassInstances = new Lookup<Func<Type,Object>>();
             private readonly Lookup<int> m_recursionLimit = new Lookup<int>();
 
             private Func<Type, PropertyInfo, bool> m_propertyFilter = IncludeAllPropertiesFilter;
@@ -572,8 +572,8 @@ namespace TestFirst.Net.Random
                 return new RandomFiller(
                     m_enableLogging,
                     m_failOnCircularDependency,
-                    m_generators,
-                    m_interfacesToClass,
+                    m_factories,
+                    m_interfacesToClassInstances,
                     m_propertyFilter??IncludeAllPropertiesFilter, 
                     m_recursionLimit);
             }
@@ -605,30 +605,30 @@ namespace TestFirst.Net.Random
                 return this;
             }
 
-            public Builder InterfaceToImplementation<TInterface>(Func<Type,TInterface> objectFactory)
+            public Builder InterfaceToImplementation<TInterface>(Func<Type,TInterface> classInstanceFactory)
                 where TInterface:class
             {           
-                m_interfacesToClass.SetForType(typeof(TInterface), objectFactory);
+                m_interfacesToClassInstances.SetForType(typeof(TInterface), classInstanceFactory);
                 return this;
             }
 
-            public Builder InterfaceToImplementation(Type interfaceType, Func<Type, Object> objectFactory)
+            public Builder InterfaceToImplementation(Type interfaceType, Func<Type, Object> classInstanceFactory)
             {           
-                m_interfacesToClass.SetForType(interfaceType, objectFactory);
+                m_interfacesToClassInstances.SetForType(interfaceType, classInstanceFactory);
                 return this;
             }           
 
-            public Builder ValueFactoryForType<TPropertyType>(Func<TPropertyType> func)
+            public Builder ValueFactoryForType<TPropertyType>(Func<TPropertyType> factoryFunction)
             {
                 var type = typeof (TPropertyType);
-                var generator = new RandomValueViaFunction<TPropertyType>(func);
-                ValueFactoryForType(type, generator); 
+                var factory = new RandomValueViaFunction<TPropertyType>(factoryFunction);
+                ValueFactoryForType(type, factory); 
                 return this; 
             }
             
             public Builder ValueFactoryForNamedPropertyOnType<TInstanceType,TPropertyType>(String propertyName,Func<TPropertyType> func)
             {
-                m_generators.SetOnTypeForPropertyName(
+                m_factories.SetOnTypeForPropertyName(
                     typeof(TInstanceType),
                     propertyName,
                     new RandomValueViaFunction<TPropertyType>(func));
@@ -637,22 +637,22 @@ namespace TestFirst.Net.Random
 
             public Builder ValueFactoryForTypeOnType<TPropertyType,TInstanceType>(Func<TPropertyType> func)
             {
-                m_generators.SetOnTypeForPropertyType(
+                m_factories.SetOnTypeForPropertyType(
                     typeof(TInstanceType),
                     typeof(TPropertyType),
                     new RandomValueViaFunction<TPropertyType>(func));
                 return this; 
             }
 
-            public Builder ValueFactoryForType(Type type,Func<Object> func)
+            public Builder ValueFactoryForType(Type type,Func<Object> factoryFunction)
             {          
-                m_generators.SetForType(type,new RandomValueViaFunction<Object>(func));
+                m_factories.SetForType(type,new RandomValueViaFunction<Object>(factoryFunction));
                 return this;
             }
 
-            public Builder ValueFactoryForType(Type type, IRandomValueFactory gen)
+            public Builder ValueFactoryForType(Type type, IRandomValueFactory factoryFunction)
             {               
-                m_generators.SetForType(type,gen);
+                m_factories.SetForType(type,factoryFunction);
 
                 return this;
             }            
