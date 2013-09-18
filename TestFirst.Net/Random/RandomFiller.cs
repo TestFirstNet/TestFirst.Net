@@ -66,64 +66,64 @@ namespace TestFirst.Net.Random
         {
             // ReSharper disable RedundantTypeArgumentsOfMethod
 
-            SetGenerator<bool>(type=>m_random.Bool());
-            SetGenerator<bool?>(type=>m_random.Bool());
-            SetGenerator<char>(type=>m_random.Utf8Char());
-            SetGenerator<char?>(type=>m_random.Utf8Char());
-            SetGenerator<byte>(type=>m_random.Byte());
-            SetGenerator<byte?>(type=>m_random.Byte());
-            SetGenerator<short>(type=>m_random.Short());
-            SetGenerator<short?>(type=>m_random.Short());
-            SetGenerator<int>(type=>m_random.Int());
-            SetGenerator<int?>(type=>m_random.Int());
-            SetGenerator<long>(type=>m_random.Long());
-            SetGenerator<long?>(type=>m_random.Long());
-            SetGenerator<double>(type=>m_random.Double());
-            SetGenerator<double?>(type=>m_random.Double());
-            SetGenerator<float>(type=>m_random.Float());
-            SetGenerator<float?>(type=>m_random.Float());
+            SetValueFactoryFor<bool>(type=>m_random.Bool());
+            SetValueFactoryFor<bool?>(type=>m_random.Bool());
+            SetValueFactoryFor<char>(type=>m_random.Utf8Char());
+            SetValueFactoryFor<char?>(type=>m_random.Utf8Char());
+            SetValueFactoryFor<byte>(type=>m_random.Byte());
+            SetValueFactoryFor<byte?>(type=>m_random.Byte());
+            SetValueFactoryFor<short>(type=>m_random.Short());
+            SetValueFactoryFor<short?>(type=>m_random.Short());
+            SetValueFactoryFor<int>(type=>m_random.Int());
+            SetValueFactoryFor<int?>(type=>m_random.Int());
+            SetValueFactoryFor<long>(type=>m_random.Long());
+            SetValueFactoryFor<long?>(type=>m_random.Long());
+            SetValueFactoryFor<double>(type=>m_random.Double());
+            SetValueFactoryFor<double?>(type=>m_random.Double());
+            SetValueFactoryFor<float>(type=>m_random.Float());
+            SetValueFactoryFor<float?>(type=>m_random.Float());
 
-            SetGenerator<String>(type=>m_random.Utf8String());
+            SetValueFactoryFor<String>(type=>m_random.Utf8String());
 
-            SetGenerator<UInt16>(type=>m_random.UInt16());
-            SetGenerator<UInt16?>(type=>m_random.UInt16());
-            SetGenerator<Int16>(type=>m_random.Int16());
-            SetGenerator<Int16?>(type=>m_random.Int16());
+            SetValueFactoryFor<UInt16>(type=>m_random.UInt16());
+            SetValueFactoryFor<UInt16?>(type=>m_random.UInt16());
+            SetValueFactoryFor<Int16>(type=>m_random.Int16());
+            SetValueFactoryFor<Int16?>(type=>m_random.Int16());
 
-            SetGenerator<UInt32>(type=>m_random.UInt32());
-            SetGenerator<UInt32?>(type=>m_random.UInt32());
-            SetGenerator<Int32>(type=>m_random.Int32());
-            SetGenerator<Int32?>(type=>m_random.Int32());
+            SetValueFactoryFor<UInt32>(type=>m_random.UInt32());
+            SetValueFactoryFor<UInt32?>(type=>m_random.UInt32());
+            SetValueFactoryFor<Int32>(type=>m_random.Int32());
+            SetValueFactoryFor<Int32?>(type=>m_random.Int32());
 
-            SetGenerator<UInt64>(type=>m_random.UInt64());
-            SetGenerator<UInt64?>(type=>m_random.UInt64());
-            SetGenerator<Int64>(type=>m_random.Int64());
-            SetGenerator<Int64?>(type=>m_random.Int64());
+            SetValueFactoryFor<UInt64>(type=>m_random.UInt64());
+            SetValueFactoryFor<UInt64?>(type=>m_random.UInt64());
+            SetValueFactoryFor<Int64>(type=>m_random.Int64());
+            SetValueFactoryFor<Int64?>(type=>m_random.Int64());
 
-            SetGenerator<SByte>(type=>m_random.SByte());
-            SetGenerator<SByte?>(type=>m_random.SByte());
+            SetValueFactoryFor<SByte>(type=>m_random.SByte());
+            SetValueFactoryFor<SByte?>(type=>m_random.SByte());
 
-            SetGenerator<Decimal>(type=>m_random.Decimal());
-            SetGenerator<Decimal?>(type=>m_random.Decimal());
-            SetGenerator<Guid>(type=>m_random.Guid());
-            SetGenerator<Guid?>(type=>m_random.Guid());
-            SetGenerator<DateTime>(type=>m_random.DateTime());
-            SetGenerator<DateTime?>(type=>m_random.DateTime());
-            SetGenerator<TimeSpan>(type=>m_random.TimeSpan());
-            SetGenerator<TimeSpan?>(type=>m_random.TimeSpan());
-            SetGenerator<Object>(type=>m_random.Object());
+            SetValueFactoryFor<Decimal>(type=>m_random.Decimal());
+            SetValueFactoryFor<Decimal?>(type=>m_random.Decimal());
+            SetValueFactoryFor<Guid>(type=>m_random.Guid());
+            SetValueFactoryFor<Guid?>(type=>m_random.Guid());
+            SetValueFactoryFor<DateTime>(type=>m_random.DateTime());
+            SetValueFactoryFor<DateTime?>(type=>m_random.DateTime());
+            SetValueFactoryFor<TimeSpan>(type=>m_random.TimeSpan());
+            SetValueFactoryFor<TimeSpan?>(type=>m_random.TimeSpan());
+            SetValueFactoryFor<Object>(type=>m_random.Object());
 
             // ReSharper restore RedundantTypeArgumentsOfMethod
         }
 
-        private void SetGenerator<TPropertyType>(Func<Type,TPropertyType> func)
+        private void SetValueFactoryFor<TPropertyType>(Func<Type,TPropertyType> func)
         {
             var type = typeof(TPropertyType);
             var generator = new RandomValueViaFunction<TPropertyType>(func);
-            SetGenerator(type, generator);  
+            SetValueFactoryFor(type, generator);  
         }
 
-        private void SetGenerator(Type type, IRandomValueFactory gen)
+        private void SetValueFactoryFor(Type type, IRandomValueFactory gen)
         {
             Debug("Registering generator for type {0}", type.PrettyName());                
             m_generators.SetForType(type,gen);
@@ -131,12 +131,12 @@ namespace TestFirst.Net.Random
 
         public Object FillWithRandom(Type t)
         {
-            return InternalCreateRandomFor(null, null, t);
+            return InternalNewRandomValueFor(null, null, t);
         }
 
         public T FillWithRandom<T>()
         {
-            return (T)InternalCreateRandomFor(null, null, typeof(T));
+            return (T)InternalNewRandomValueFor(null, null, typeof(T));
         }
 
         public T FillWithRandom<T>(T instance)
@@ -185,7 +185,7 @@ namespace TestFirst.Net.Random
             {
                 try
                 {
-                    var val = InternalCreateRandomFor(instance.GetType(), prop);
+                    var val = InternalNewRandomValueFor(instance.GetType(), prop);
                     Debug("Setting value for prop '{0}',  value '{1}'", prop.Name, val);
                     //no indexed prop at the mo!
                     prop.SetValue(instance, val, null);
@@ -197,14 +197,14 @@ namespace TestFirst.Net.Random
             }
         }
 
-        private Object InternalCreateRandomFor(Type onInstanceType, PropertyInfo prop)
+        private Object InternalNewRandomValueFor(Type onInstanceType, PropertyInfo prop)
         {
-            return InternalCreateRandomFor(onInstanceType, prop.Name, prop.PropertyType);
+            return InternalNewRandomValueFor(onInstanceType, prop.Name, prop.PropertyType);
         }
 
-        private Object InternalCreateRandomFor(Type onInstanceType, String propertyName, Type propertyType)
+        private Object InternalNewRandomValueFor(Type onInstanceType, String propertyName, Type propertyType)
         {
-            var generator = GetGeneratorFor(onInstanceType, propertyName, propertyType);
+            var generator = GetValueFactoryFor(onInstanceType, propertyName, propertyType);
             if (generator != null)
             {
                 var val = generator.CreateValue(onInstanceType, propertyName, propertyType);
@@ -269,7 +269,7 @@ namespace TestFirst.Net.Random
             m_parentTypes.Pop();
         }
 
-        private IRandomValueFactory GetGeneratorFor(Type onInstanceType, String propertyName, Type propertyType)
+        private IRandomValueFactory GetValueFactoryFor(Type onInstanceType, String propertyName, Type propertyType)
         {
             Type type = ExtractUnderlyingTypeIfNullable(propertyType);
             Debug("Try get generator for propertyName '{0}', type '{1}'", propertyName, type.PrettyName());
@@ -281,16 +281,16 @@ namespace TestFirst.Net.Random
                 return generator;
             }
 
-            generator = CreateGeneratorFor(onInstanceType, propertyName, propertyType);
+            generator = NewValueFactoryFor(onInstanceType, propertyName, propertyType);
             if (generator != null)
             {
                 Debug("Created new generator");
-                SetGenerator(type,generator);
+                SetValueFactoryFor(type,generator);
             }
             return generator;
         }
 
-        private IRandomValueFactory CreateGeneratorFor(Type onInstanceType, String propertyName, Type propertyType)
+        private IRandomValueFactory NewValueFactoryFor(Type onInstanceType, String propertyName, Type propertyType)
         {
             Debug("Creating new generator");
 
@@ -298,12 +298,12 @@ namespace TestFirst.Net.Random
             if (type.IsEnum)
             {
                 Debug("IsEnum");
-                return CreateEnumGeneratorFor(type);
+                return NewEnumFactoryFor(type);
             }
             if (type.IsArray)
             {
                 Debug("IsArray");
-                return CreateArrayGenerator();
+                return NewArrayFactory();
             }
 
             if (type.IsGenericType)
@@ -313,29 +313,29 @@ namespace TestFirst.Net.Random
                 if (ImplementsInterface(type,typeof(IDictionary<,>)))
                 {
                     Debug("IsDictionary");
-                    return CreateDictionaryGeneratorFor(type);
+                    return NewDictionaryFactoryFor(type);
                 }
                 if (ImplementsInterface(type,typeof(ICollection<>)) || ImplementsInterface(type,typeof(IList<>)))
                 {
                     Debug("IsList/IsCol");
-                    return CreateListGeneratorFor(type);
+                    return NewListFactoryFor(type);
                 }
             }
             if(type.IsInterface)
             {
                 Debug("IsInterface");
-                return CreateInterfaceGenerator(onInstanceType, propertyName, type);
+                return NewInterfaceFactoryFor(onInstanceType, propertyName, type);
             }
             if (type.IsClass)
             {
                 Debug("IsClass");
-                return CreateClassInstanceGenerator();
+                return NewClassInstanceFactory();
             }
             Debug("Could not create generator");
             return null;
         }
 
-        private RandomValueViaFunction<object> CreateClassInstanceGenerator()
+        private RandomValueViaFunction<object> NewClassInstanceFactory()
         {
             var gen = new RandomValueViaFunction<Object>((genType) =>
                 {
@@ -354,23 +354,23 @@ namespace TestFirst.Net.Random
             return gen;
         }
 
-        private RandomValueViaFunction<object> CreateInterfaceGenerator(Type onInstanceType, string propertyName, Type type)
+        private RandomValueViaFunction<object> NewInterfaceFactoryFor(Type onInstanceType, string propertyName, Type type)
         {
             var gen = new RandomValueViaFunction<Object>((genType) =>
                 {
-                    var propertyInstance = CreateInstanceFromInterface(onInstanceType, propertyName, type);
+                    var propertyInstance = NewInstanceFromInterface(onInstanceType, propertyName, type);
                     InternalFillWithRandom(propertyInstance);
                     return propertyInstance;
                 });
             return gen;
         }
 
-        private RandomValueViaFunction<object> CreateEnumGeneratorFor(Type type)
+        private RandomValueViaFunction<object> NewEnumFactoryFor(Type type)
         {
             return new RandomValueViaFunction<Object>(genType => m_random.EnumOf(type));
         }
 
-        private RandomValueViaFunction<object> CreateArrayGenerator()
+        private RandomValueViaFunction<object> NewArrayFactory()
         {
             var gen = new RandomValueViaFunction<Object>((parentType, listPropertyName, arrayType) =>
                 {
@@ -379,7 +379,7 @@ namespace TestFirst.Net.Random
                     dynamic array = Array.CreateInstance(itemType, numItems);
                     for (int i = 0; i < numItems; i++)
                     {
-                        dynamic item = InternalCreateRandomFor(parentType, listPropertyName + ".Value", itemType);
+                        dynamic item = InternalNewRandomValueFor(parentType, listPropertyName + ".Value", itemType);
                         array[i] = item;
                     }
                     return array;
@@ -387,7 +387,7 @@ namespace TestFirst.Net.Random
             return gen;
         }
 
-        private RandomValueViaFunction<object> CreateDictionaryGeneratorFor(Type type)
+        private RandomValueViaFunction<object> NewDictionaryFactoryFor(Type type)
         {
             //perform a bunch of precalc
             Type keyType = type.GetGenericArguments()[0];
@@ -411,8 +411,8 @@ namespace TestFirst.Net.Random
                     for (int i = 0; i < numItems; i++)
                     {
                         //todo:allow customisation or keys?
-                        dynamic key = InternalCreateRandomFor(parentType, dictPropertyName + ".Key", keyType);
-                        dynamic val = InternalCreateRandomFor(parentType, dictPropertyName + ".Value", valueType);
+                        dynamic key = InternalNewRandomValueFor(parentType, dictPropertyName + ".Key", keyType);
+                        dynamic val = InternalNewRandomValueFor(parentType, dictPropertyName + ".Value", valueType);
                         if (!dict.ContainsKey(key))
                         {
                             dict.Add(key, val);
@@ -423,7 +423,7 @@ namespace TestFirst.Net.Random
             return gen;
         }
 
-        private RandomValueViaFunction<object> CreateListGeneratorFor(Type type)
+        private RandomValueViaFunction<object> NewListFactoryFor(Type type)
         {
             //perform a bunch of precalc
             Type itemType = type.GetGenericArguments()[0];
@@ -446,7 +446,7 @@ namespace TestFirst.Net.Random
                     //and the lis may only allow uniques
                     for (int i = 0; i < numItems; i++)
                     {
-                        dynamic item = InternalCreateRandomFor(parentType, listPropertyName + ".Value", itemType);
+                        dynamic item = InternalNewRandomValueFor(parentType, listPropertyName + ".Value", itemType);
                         list.Add(item);
                     }
                     return list;
@@ -481,7 +481,7 @@ namespace TestFirst.Net.Random
             return false;
         }
 
-        private Object CreateInstanceFromInterface(Type onInstanceType, String propertyName, Type type)
+        private Object NewInstanceFromInterface(Type onInstanceType, String propertyName, Type type)
         {
             Debug("Looking for interface instance factory for type {0}", type.PrettyName());
 
