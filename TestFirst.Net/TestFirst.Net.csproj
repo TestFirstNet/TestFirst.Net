@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EF8C3967-0099-41CF-AAE7-02555869C67A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TestFirst.Net</RootNamespace>
+    <AssemblyName>TestFirst.Net</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="TestFirst.Net.nuspec" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime.Serialization" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AbstractMatcher.cs" />
+    <Compile Include="AbstractScenarioTest.cs" />
+    <Compile Include="Expect.cs" />
+    <Compile Include="IntegerExtensions.cs" />
+    <Compile Include="IReturnParentInserter.cs" />
+    <Compile Include="ISimpleMatcher.cs" />
+    <Compile Include="Lang\NotThreadSafe.cs" />
+    <Compile Include="Lang\ThreadSafe.cs" />
+    <Compile Include="Logging\ActionLogAdapter.cs" />
+    <Compile Include="Logging\BaseLogger.cs" />
+    <Compile Include="Logging\ConsoleLogAdapter.cs" />
+    <Compile Include="Logging\DefaultLogFactory.cs" />
+    <Compile Include="Logging\ILogFactory.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\LogLevel.cs" />
+    <Compile Include="Logging\NullLogger.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\SystemDiagnosticsLogAdapter.cs" />
+    <Compile Include="Matcher\AnUri.cs" />
+    <Compile Include="Util\TimeSpanBuilder.cs" />
+    <Compile Include="TestFirstAssert.cs" />
+    <Compile Include="AssertionFailedException.cs" />
+    <Compile Include="Concurrent\ParallelActionInvoker.cs" />
+    <Compile Include="ConsoleLoggingMatchDiagnostics.cs" />
+    <Compile Include="DisposingStepArgInjector.cs" />
+    <Compile Include="IUpdater.cs" />
+    <Compile Include="IRunOnScenarioEnd.cs" />
+    <Compile Include="Matcher\ACookie.cs" />
+    <Compile Include="Matcher\AnIdentity.cs" />
+    <Compile Include="Matcher\Internal\AbstractListInAnyOrderWithOnly.cs" />
+    <Compile Include="Matcher\Internal\AListInAnyOrderWithAtLeast.cs" />
+    <Compile Include="Matcher\Internal\AListInAnyOrderWithOnlyMatcher.cs" />
+    <Compile Include="Matcher\Internal\AListInOrderAtLeastMatcher.cs" />
+    <Compile Include="Matcher\Internal\AListInOrderWithOnlyMatcher.cs" />
+    <Compile Include="Matcher\Internal\AListNotContains.cs" />
+    <Compile Include="Matcher\Internal\IProvidePrettyTypeName.cs" />
+    <Compile Include="NullMatchDiagnostics.cs" />
+    <Compile Include="Matcher\ADictionary.cs" />
+    <Compile Include="Matcher\AnException.cs" />
+    <Compile Include="Matcher\MatcherExtensions.cs" />
+    <Compile Include="NullDescription.cs" />
+    <Compile Include="NullStepArgDependencyInjector.cs" />
+    <Compile Include="IFetcher.cs" />
+    <Compile Include="IInserter.cs" />
+    <Compile Include="GroupedInserters.cs" />
+    <Compile Include="IInvokable.cs" />
+    <Compile Include="IStepArgDependencyInjector.cs" />
+    <Compile Include="Matcher\APath.cs" />
+    <Compile Include="Matcher\AByteArray.cs" />
+    <Compile Include="Matcher\ATimeSpan.cs" />
+    <Compile Include="Util\InserterUtil.cs" />
+    <Compile Include="Util\ObjectExtensions.cs" />
+    <Compile Include="PassInstanceBuilder.cs" />
+    <Compile Include="Random\Lookup.cs" />
+    <Compile Include="Random\RandomFiller.cs" />
+    <Compile Include="Random\RandomFillException.cs" />
+    <Compile Include="Random\Random.cs" />
+    <Compile Include="Random\TypeExtensions.cs" />
+    <Compile Include="TestFirstException.cs" />
+    <Compile Include="Util\FileUtils.cs" />
+    <Compile Include="Util\ToStringHelper.cs" />
+    <Compile Include="Matcher\ADateTime.cs" />
+    <Compile Include="Matcher\AGuid.cs" />
+    <Compile Include="Matcher\ADouble.cs" />
+    <Compile Include="Matcher\AnInstance.cs" />
+    <Compile Include="Matcher\AShort.cs" />
+    <Compile Include="Matcher\AnArray.cs" />
+    <Compile Include="Matcher\ALong.cs" />
+    <Compile Include="Matcher\ABool.cs" />
+    <Compile Include="Matcher\AFloat.cs" />
+    <Compile Include="Matcher\ADecimal.cs" />
+    <Compile Include="ScenarioFluency.cs" />
+    <Compile Include="Description.cs" />
+    <Compile Include="IBuilder.cs" />
+    <Compile Include="IDescription.cs" />
+    <Compile Include="IMatchDiagnostics.cs" />
+    <Compile Include="IMatcher.cs" />
+    <Compile Include="ISelfDescribing.cs" />
+    <Compile Include="Lang\Preconditions.cs" />
+    <Compile Include="MatchDiagnostics.cs" />
+    <Compile Include="Matcher\AnInt.cs" />
+    <Compile Include="Matcher\AString.cs" />
+    <Compile Include="Matcher\AList.cs" />
+    <Compile Include="Matcher\Matchers.cs" />
+    <Compile Include="Matcher\PropertyMatcher.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scenario.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENSE.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
