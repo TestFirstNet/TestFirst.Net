@@ -92,7 +92,7 @@ namespace TestFirst.Net.Examples.Service.Http
                         {
                             ctxt.AsyncWaitHandle.WaitOne();
                         }
-                        catch (ThreadInterruptedException e)
+                        catch (ThreadInterruptedException)
                         {
                             //done listening, do nothing
                         }

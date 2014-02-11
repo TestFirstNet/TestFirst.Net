@@ -2,7 +2,7 @@
 {
     public class ANotificationQueryResponse : AQueryResponse<ANotificationQueryResponse,Notification>
     {
-        public new static ANotificationQueryResponse With()
+        public static ANotificationQueryResponse With()
         {
             return new ANotificationQueryResponse();
         }
