@@ -77,7 +77,7 @@ namespace TestFirst.Net.Concurrent
                 var complete = true;
                 foreach (var wrapper in wrappedActions)
                 {
-                    if (!wrapper.IsComplete())
+                    if (!wrapper.IsComplete)
                     {
                         complete = false;
                         break;
@@ -90,12 +90,12 @@ namespace TestFirst.Net.Concurrent
                 }
             }
             //fail if any of the actions threw an exception
-            var exceptions = new List<Exception>();
+            var exceptions = new List<string>();
             foreach (var wrapper in wrappedActions)
             {
-                if (wrapper.HasFailed())
+                if (wrapper.HasFailed)
                 {
-                    exceptions.Add(wrapper.GetException());
+                    exceptions.Add("thread[" + wrapper.ThreadId + "] : " + wrapper.Exception);
                 }
             }
             if (exceptions.Count > 0)
@@ -130,6 +130,7 @@ namespace TestFirst.Net.Concurrent
             private volatile bool m_complete = false;
             private readonly Barrier m_barrier;
             private volatile Exception m_actionException;
+            private volatile int m_threadId;
 
             internal ActionWrapper(Barrier barrier, Action action)
             {
@@ -137,25 +138,39 @@ namespace TestFirst.Net.Concurrent
                 m_action = action;
             }
 
-            public bool IsComplete()
+            public bool IsComplete
             {
-                return m_complete;
+                get { return m_complete; }
             }
 
-            public bool HasFailed()
+            public bool HasFailed
             {
-                return m_actionException != null;
+                get { return m_actionException != null;}
             }
 
-            public Exception GetException()
+            public Exception Exception
             {
-                return m_actionException;
+                get
+                {
+                    return m_actionException;
+                }
             }
 
+            /// <summary>
+            /// Return the thread id of the thread used to invoke the action. Useful in diagnostics
+            /// </summary>
+            public String ThreadId
+            {
+                get
+                {
+                    return m_threadId.ToString();
+                }
+            }
             public void Invoke()
             {
                 try
-                {   
+                {
+                    m_threadId = Thread.CurrentThread.ManagedThreadId;
                     //try to cause max contention                    
                     if (!m_barrier.SignalAndWait(TimeSpan.FromSeconds(30)))
                     {
