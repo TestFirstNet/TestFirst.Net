@@ -10,7 +10,7 @@ namespace TestFirst.Net.Matcher
             {
                 return Null();
             }
-            return Matchers.Function((double? actual) => actual == expect, "a double == " + expect.ToPrettyString());
+            return Matchers.Function((double? actual) => expect.Value.SafeCompareTo(actual) == 0, "a double == " + expect.ToPrettyString());
         }
 
         public static IMatcher<double?> GreaterThan(double expect)

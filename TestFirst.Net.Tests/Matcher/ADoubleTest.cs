@@ -15,6 +15,20 @@ namespace TestFirst.Net.Test.Matcher
         }
 
         [Test]
+        public void EqualToTestMin()
+        {
+            AssertPasses(double.MinValue, ADouble.EqualTo(double.MinValue));
+            AssertFails(double.MinValue + 0.000000000000001D, ADouble.EqualTo(double.MaxValue));
+        }
+
+        [Test]
+        public void EqualToTestMax()
+        {
+            AssertFails(1.797689999999e+308, ADouble.EqualTo(double.MaxValue));
+            AssertPasses(double.MaxValue, ADouble.EqualTo(double.MaxValue));
+        }
+
+        [Test]
         public void GreaterThanTest()
         {
             AssertFails(10D, ADouble.GreaterThan(10));
