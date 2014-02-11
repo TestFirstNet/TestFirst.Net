@@ -22,6 +22,15 @@ namespace TestFirst.Net.Test.Matcher
         }
 
         [Test]
+        public void EqualToNull()
+        {
+            AssertPasses(null, ADouble.EqualTo(null));
+            AssertFails(null, ADouble.EqualTo(1D));
+            AssertFails(1D, ADouble.EqualTo(null));
+        }
+
+
+        [Test]
         public void EqualToTestMax()
         {
             AssertFails(1.797689999999e+308, ADouble.EqualTo(double.MaxValue));
