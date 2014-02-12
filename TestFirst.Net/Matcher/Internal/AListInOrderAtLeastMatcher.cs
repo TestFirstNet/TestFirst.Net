@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace TestFirst.Net.Matcher.Internal
@@ -24,7 +25,7 @@ namespace TestFirst.Net.Matcher.Internal
             return this;
         }
 
-        public override bool Matches(IEnumerable<T> actual, IMatchDiagnostics diagnostics)
+        public override bool Matches(IEnumerable actual, IMatchDiagnostics diagnostics)
         {
             if (actual == null)
             {
@@ -39,7 +40,7 @@ namespace TestFirst.Net.Matcher.Internal
                 return true;
             }
             matcher.NextMatcher();
-            T lastMatchedItem = default(T); 
+            Object lastMatchedItem = default(T); 
             int lastMatchedItemIdx = -1;
             for (int i = 0; i < items.Count && matcher.CanStillMatch(); i++)
             {
@@ -73,7 +74,7 @@ namespace TestFirst.Net.Matcher.Internal
                 m_matchers = matchers;
             }
 
-            internal bool Matches(T item, int itemPos, IMatchDiagnostics diagnostics)
+            internal bool Matches(Object item, int itemPos, IMatchDiagnostics diagnostics)
             {
                 var matcher = CurrentMatcher();
                 return diagnostics.TryMatch(item, itemPos, matcher);
@@ -115,7 +116,7 @@ namespace TestFirst.Net.Matcher.Internal
                 return m_currentMatcherIdx < m_matchers.Count - 1;
             }
 
-            internal void AddMisMatchMessage(IMatchDiagnostics diagnostics, T lastMatchedItem, int itemPosition, IEnumerable<T> items)
+            internal void AddMisMatchMessage(IMatchDiagnostics diagnostics, Object lastMatchedItem, int itemPosition, IEnumerable items)
             {
                 if( HasNextMatcher()){
                     diagnostics.Text("not all matchers matched, matchers which didn't match were");
@@ -127,13 +128,6 @@ namespace TestFirst.Net.Matcher.Internal
                     diagnostics.Children("items", items);
                 }
             }
-        }
-
-        //only convert if not already a list
-        private static IList<T> AsEfficientList(IEnumerable<T> items)
-        {
-            var list = items as IList<T>;
-            return list ?? new List<T>(items);
         }
 
         public override string ToString()

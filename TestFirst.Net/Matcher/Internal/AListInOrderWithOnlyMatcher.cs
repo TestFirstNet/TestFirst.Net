@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 
 namespace TestFirst.Net.Matcher.Internal
 {
@@ -21,14 +22,14 @@ namespace TestFirst.Net.Matcher.Internal
             return this;
         }
 
-        public override bool Matches(IEnumerable<T> actual, IMatchDiagnostics diagnostics)
+        public override bool Matches(IEnumerable actual, IMatchDiagnostics diagnostics)
         {
             if (actual == null)
             {
                 diagnostics.MisMatched("items are null");
                 return false;
             }
-            var list = AsList(actual);
+            var list = AsEfficientList(actual);
             if (m_matchers.Count != list.Count)
             {
                 diagnostics
@@ -48,13 +49,6 @@ namespace TestFirst.Net.Matcher.Internal
                 }
             }
             return true;
-        }
-
-        //only convert if not already a list
-        private static IList<T> AsList(IEnumerable<T> items)
-        {
-            var list = items as IList<T>;                
-            return list?? new List<T>(items);
         }
 
         public override string ToString()

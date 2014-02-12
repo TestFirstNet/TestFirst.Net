@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TestFirst.Net.Lang;
@@ -193,7 +194,7 @@ namespace TestFirst.Net.Matcher
         }
          // ReSharper enable PossibleMultipleEnumeration
 
-        public interface IListMatcher<in T> :IMatcher<IEnumerable<T>>
+        public interface IListMatcher<in T> :IMatcher<IEnumerable<T>>,IMatcher<IEnumerable>
         {
         }
 
@@ -218,6 +219,32 @@ namespace TestFirst.Net.Matcher
             {
                 return "AList." + m_shortName + "(IEnumerable<" + ProvidePrettyTypeName.GetPrettyTypeNameFor<T>() + ">)";
             }
+
+            public override bool Matches(IEnumerable<T> actual, IMatchDiagnostics diagnostics)
+            {
+                return Matches(actual as IEnumerable, diagnostics);
+            }
+
+            internal static IList AsEfficientList(IEnumerable items)
+            {
+                if (items == null)
+                {
+                    return null;
+                }
+                var list = items as IList;
+                if (list != null)
+                {
+                    return list;
+                }
+                list = new List<Object>(15);
+                foreach (var item in items)
+                {
+                    list.Add(item);
+                }
+                return list;
+            }
+
+            public abstract bool Matches(IEnumerable actual, IMatchDiagnostics diagnostics);
         }
 
         private class IsEmptyMatcher<T>:NumItemsMatcher<T>
@@ -235,7 +262,7 @@ namespace TestFirst.Net.Matcher
                 m_countMatcher = countMatcher;
             }
 
-            public override bool Matches(IEnumerable<T> instance, IMatchDiagnostics diag)
+            public override bool Matches(IEnumerable instance, IMatchDiagnostics diag)
             {
                 var enummerator = instance.GetEnumerator();
                 int count = 0;

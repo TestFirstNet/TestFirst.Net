@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 
 namespace TestFirst.Net.Matcher.Internal
@@ -21,7 +22,7 @@ namespace TestFirst.Net.Matcher.Internal
             return this;
         }
 
-        public override bool Matches(IEnumerable<T> actual, IMatchDiagnostics diagnostics)
+        public override bool Matches(IEnumerable actual, IMatchDiagnostics diagnostics)
         {
             if (actual == null)
             {
@@ -30,9 +31,9 @@ namespace TestFirst.Net.Matcher.Internal
             }
             var list = AsEfficientList(actual);
             int pos = 0;
-            for(; pos < list.Count; pos++)
+            for (; pos < list.Count; pos++)
             {
-                T item = list[pos];
+                var item = list[pos];
                 foreach (var matcher in m_matchers)
                 {
                     //prevent useless diagnostics messages appearing in output as we call the matchers
@@ -48,13 +49,6 @@ namespace TestFirst.Net.Matcher.Internal
                 }
             }
             return true;
-        }
-
-        //only convert if not already a list
-        private static IList<T> AsEfficientList(IEnumerable<T> items)
-        {
-            var list = items as IList<T>;                
-            return list?? new List<T>(items);
         }
 
         public override string ToString()
