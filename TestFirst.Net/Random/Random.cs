@@ -252,20 +252,9 @@ namespace TestFirst.Net.Random
         //taken from http://stackoverflow.com/questions/609501/generating-a-random-decimal-in-c-sharp
         public Decimal Decimal()
         {
-            //The low 32 bits of a 96-bit integer. 
-            int lo = m_random.Next(int.MinValue, int.MaxValue);
-            //The middle 32 bits of a 96-bit integer. 
-            int mid = m_random.Next(int.MinValue, int.MaxValue);
-            //The high 32 bits of a 96-bit integer. 
-            int hi = m_random.Next(int.MinValue, int.MaxValue);
-            //The sign of the number; 1 is negative, 0 is positive. 
-            bool isNegative = (m_random.Next(2) == 0);
-            //A power of 10 ranging from 0 to 28. 
-            byte scale = Convert.ToByte(m_random.Next(29));
-
-            Decimal randomDecimal = new Decimal(lo, mid, hi, isNegative, scale);
-
-            return randomDecimal;
+            byte scale = (byte)m_random.Next(29);
+            bool sign = Bool();
+            return new Decimal(Int32()/*low*/, Int32()/*mid*/, Int32()/*high*/, sign, scale);
         }
 
         public Guid Guid()
