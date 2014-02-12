@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 
 namespace TestFirst.Net.Matcher.Internal
 {
@@ -35,7 +36,7 @@ namespace TestFirst.Net.Matcher.Internal
             return this;
         }
 
-        public override bool Matches(IEnumerable<T> actual, IMatchDiagnostics diagnostics)
+        public override bool Matches(IEnumerable actual, IMatchDiagnostics diagnostics)
         {
             if (actual == null)
             {
@@ -48,7 +49,7 @@ namespace TestFirst.Net.Matcher.Internal
             int pos = 0;
             for(; pos < list.Count; pos++)
             {
-                T item = list[pos];
+                var item = list[pos];
                 var matchPassed = false;
                 if(ctxt.MatchersRemain())
                 {
@@ -104,17 +105,10 @@ namespace TestFirst.Net.Matcher.Internal
             return passed;
         }
 
-        //only convert if not already a list
-        private static IList<T> AsEfficientList(IEnumerable<T> items)
+        private static IList SubSet(int startIndex, IList list)
         {
-            var list = items as IList<T>;                
-            return list?? new List<T>(items);
-        }
-
-        private static IList<T> SubSet(int from, IList<T> list)
-        {
-            var sub = new List<T>(list.Count - @from);
-            for (int i = @from; i < list.Count; i++)
+            var sub = new List<object>(list.Count - startIndex);
+            for (int i = startIndex; i < list.Count; i++)
             {
                 sub.Add(list[i]);
             }
@@ -150,7 +144,7 @@ namespace TestFirst.Net.Matcher.Internal
                 m_remainingMatchers = new List<IMatcher<T>>(matchers);
             }
 
-            internal bool Matches(T item, int itemPos, IMatchDiagnostics diagnostics)
+            internal bool Matches(System.Object item, int itemPos, IMatchDiagnostics diagnostics)
             {
                 //collect all the mismatches for later
                 var children = new List<IMatchDiagnostics>(m_remainingMatchers.Count);
