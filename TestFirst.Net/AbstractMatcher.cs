@@ -4,11 +4,25 @@ namespace TestFirst.Net
 {
     public abstract class AbstractMatcher<T>:IMatcher<T>
     {
-        private readonly bool m_isNullable;
+        private readonly Nulls m_isNullable;
+
+        private enum Nulls
+        {
+            NonNullableType, Allowed, NotAllowed
+        }
 
         protected AbstractMatcher()
         {
-            m_isNullable = IsNullableType(typeof (T));
+            m_isNullable = IsNullableType(typeof (T))?Nulls.Allowed : Nulls.NonNullableType;
+        }
+
+        protected AbstractMatcher(bool allowNull)
+        {
+            if (IsNullableType(typeof(T)))
+            {
+                m_isNullable = allowNull ? Nulls.Allowed : Nulls.NotAllowed;
+            }
+            m_isNullable = Nulls.NonNullableType;
         }
 
         /// <summary>
@@ -38,13 +52,17 @@ namespace TestFirst.Net
         {
             if (actual == null)
             {
-                if (m_isNullable)
+                switch(m_isNullable)
                 {
-                    return Matches((T)actual, diagnostics);
+                    case Nulls.Allowed:
+                        return Matches((T)actual, diagnostics);
+                    case Nulls.NotAllowed:
+                        diagnostics.MisMatched("Expected non null");
+                        return false;
+                    case Nulls.NonNullableType:
+                        diagnostics.MisMatched("Wrong type, expected type {0} which is non nullable, but got null instead", typeof(T).FullName);
+                        return false;
                 }
-                
-                diagnostics.MisMatched("Wrong type, expected {0} which is non nullable, but got null instead",typeof (T).FullName);
-                return false;
             }
             if (typeof(T).IsInstanceOfType(actual))
             {
