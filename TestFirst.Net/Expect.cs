@@ -20,7 +20,7 @@ namespace TestFirst.Net {
         /// </summary>
         /// <param name="label"></param>
         /// <returns></returns>
-        public ExpectWithLabel For(Object label)
+        public static ExpectWithLabel For(Object label)
         {
             return new ExpectWithLabel(label);
         }
