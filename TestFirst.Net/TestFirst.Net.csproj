@@ -51,6 +51,7 @@
     <Compile Include="AbstractMatcher.cs" />
     <Compile Include="AbstractScenarioTest.cs" />
     <Compile Include="Expect.cs" />
+    <Compile Include="Template\MatchersTemplate.cs" />
     <Compile Include="IntegerExtensions.cs" />
     <Compile Include="IReturnParentInserter.cs" />
     <Compile Include="ISimpleMatcher.cs" />
@@ -139,6 +140,7 @@
   <ItemGroup>
     <Content Include="LICENSE.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
