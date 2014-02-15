@@ -1,0 +1,7 @@
+(A) fix double matcher and tests
+(b) setup nuget build
+possibly find an online build server
+improve docs
+build website
+flesh out examples
+update badly named methods
