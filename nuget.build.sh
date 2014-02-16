@@ -1,3 +1,5 @@
+#!/bin/sh
+
 cd TestFirst.Net
 nuget pack TestFirst.Net.csproj  -Symbols
 nuget pack TestFirst.Net.csproj  -IncludeReferencedProjects

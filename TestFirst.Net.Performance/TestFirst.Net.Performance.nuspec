@@ -1,18 +1,20 @@
 <?xml version="1.0"?>
-<package >
+<package>
   <metadata>
     <id>$id$</id>
     <version>$version$</version>
     <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
-    <!--<licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>-->
-    <!--<projectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</projectUrl>-->
-    <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
+    <authors>TestFirst.Net</authors>
+    <owners>TestFirst.Net</owners>
+    <licenseUrl>https://github.com/TestFirstNet/TestFirst.Net/blob/master/TestFirst.Net/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/TestFirstNet/TestFirst.Net/</projectUrl>
+    <iconUrl>https://github.com/TestFirstNet/TestFirst.Net/blob/master/TestFirst.Net/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
-    <releaseNotes>Initial release.</releaseNotes>
-    <copyright>Copyright 2013</copyright>
-    <!--<tags>Tag1 Tag2</tags>-->
+    <description>Performance testing extensions to core TestFirst.Net</description>
+    <!--<releaseNotes></releaseNotes>-->
+    <copyright>Copyright © TestFirst.Net 2014</copyright>
+    <tags>testing bdd fluent performance</tags>
   </metadata>
+  <!-- don't include /content/ in nupkg -->
+  <files />
 </package>
