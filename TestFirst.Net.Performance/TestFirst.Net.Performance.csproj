@@ -73,13 +73,13 @@
     <Compile Include="SimpleLoadRunner.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TestFirst.Net\TestFirst.Net.csproj">
-      <Project>{EF8C3967-0099-41CF-AAE7-02555869C67A}</Project>
-      <Name>TestFirst.Net</Name>
-    </ProjectReference>
+    <Content Include="LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LICENSE.txt" />
+    <ProjectReference Include="..\TestFirst.Net\TestFirst.Net.csproj">
+      <Project>{ef8c3967-0099-41cf-aae7-02555869c67a}</Project>
+      <Name>TestFirst.Net</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

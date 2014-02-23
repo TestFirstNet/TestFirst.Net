@@ -70,17 +70,20 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TestFirst.Net\TestFirst.Net.csproj">
-      <Project>{EF8C3967-0099-41CF-AAE7-02555869C67A}</Project>
-      <Name>TestFirst.Net</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="TestFirst.Net.Extensions.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TestFirst.Net\TestFirst.Net.csproj">
+      <Project>{ef8c3967-0099-41cf-aae7-02555869c67a}</Project>
+      <Name>TestFirst.Net</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
