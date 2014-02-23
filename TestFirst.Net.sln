@@ -23,8 +23,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{8CB35AE6-E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8F6D2D73-39B5-4720-8C63-AE00F5BBA54E}"
 	ProjectSection(SolutionItems) = preProject
-		nuget.build.bat = nuget.build.bat
-		nuget.release.bat = nuget.release.bat
+		build.release.sh = build.release.sh
+		icon.png = icon.png
+		icon_30x35.png = icon_30x35.png
+		icon_60x71.png = icon_60x71.png
+		LICENSE.txt = LICENSE.txt
+		nuget.build.sh = nuget.build.sh
+		nuget.release.sh = nuget.release.sh
 		todo.txt = todo.txt
 	EndProjectSection
 EndProject
@@ -82,6 +87,5 @@ Global
 		{B75670B3-D47C-4B70-8F04-9267523833B8} = {8CB35AE6-ED66-47F0-B4A8-E43ED1A4B431}
 		{D45897FA-344E-4833-8B22-44608265A829} = {8CB35AE6-ED66-47F0-B4A8-E43ED1A4B431}
 		{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C} = {8CB35AE6-ED66-47F0-B4A8-E43ED1A4B431}
-		{8CB35AE6-ED66-47F0-B4A8-E43ED1A4B431} = {8F6D2D73-39B5-4720-8C63-AE00F5BBA54E}
 	EndGlobalSection
 EndGlobal
