@@ -84,6 +84,7 @@
     <Compile Include="Matcher\AListInOrderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Matcher\PropertyMatcherTest.cs" />
+    <Compile Include="TypeExtensionsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Lang\" />

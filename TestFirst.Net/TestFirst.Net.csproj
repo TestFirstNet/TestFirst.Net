@@ -40,7 +40,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="TestFirst.Net.nuspec" />
+    <None Include="TestFirst.Net.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,6 +53,7 @@
     <Compile Include="AbstractMatcher.cs" />
     <Compile Include="AbstractScenarioTest.cs" />
     <Compile Include="Expect.cs" />
+    <Compile Include="Matcher\AFileInfo.cs" />
     <Compile Include="Template\MatchersTemplate.cs" />
     <Compile Include="IntegerExtensions.cs" />
     <Compile Include="IReturnParentInserter.cs" />
@@ -68,6 +71,7 @@
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Logging\SystemDiagnosticsLogAdapter.cs" />
     <Compile Include="Matcher\AnUri.cs" />
+    <Compile Include="TypeExtensions.cs" />
     <Compile Include="Util\TimeSpanBuilder.cs" />
     <Compile Include="TestFirstAssert.cs" />
     <Compile Include="AssertionFailedException.cs" />

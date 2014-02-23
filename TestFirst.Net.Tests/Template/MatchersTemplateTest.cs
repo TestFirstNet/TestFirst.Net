@@ -14,16 +14,21 @@ namespace TestFirst.Net.Template
         [Test]
         public void MatchersAreCorrectlyGenerated()
         {
-            var template = MatchersTemplate.With()
-                .Defaults()
-                .Build();
+            var template = new MatchersTemplate();
 
+            template.ForPropertyType<String>()
+                .AddMatchMethodTaking<int>("$argName.ToString()");
+            
             template.GenerateFor<TestDto>();
             template.GenerateFor<TestDto2>();
+            template.GenerateFor<TestDto3>().MatcherName("MyCustomName").ExcludeProperties("MyExcludedProp");
             template.GenerateFor<TestDtoEnumerable>();
+            template.GenerateFor<TestIndexedDto>().Namespace("MyNamespace");
+            template.GenerateFor<TestDtoWithSubClass>();
+            template.GenerateFor<TestDtoWithSubClass.SubTestDto>();
 
             var actualContent = template.Render();
-            //Console.WriteLine("==============================ACTUAL=================================");
+            Console.WriteLine("==============================ACTUAL=================================");
             Console.WriteLine(actualContent); 
             
             var expectFile = new FileInfo(Path.Combine(GetProjectDir().Parent.FullName, "TestFirst.Net.Tests/Template/MatchersTemplateTest.ExpectGenerated.cs"));

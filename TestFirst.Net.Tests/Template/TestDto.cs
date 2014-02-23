@@ -49,21 +49,59 @@ namespace TestFirst.Net.Template
         public IList<String> MyListOfStringsProp { get; set; }
         public IList<int?> MyListOfNullIntsProp { get; set; }
 
-        public IList<IList<String>> MyListOfListsProp { get; set;  }
+        public IList<IList<String>> MyListOfListsProp { get; set; }
+        public IDictionary<String,String> MyDictionaryOfStrings { get; set; }
+        public IEnumerable<String> MyEnumerableOfStringsProp { get; set; }
 
         public TestDto2 MyDto2 { get; set;  }
-
         public TestDtoEnumerable MyDtoEnmerable { get; set; }
+        public TestEnum MyTestEnum { get; set; }
 
     }
 
     public class TestDto2
     {
-        public String MyString { get; set; }
+        public String MyProp { get; set; }
+    }
+
+    public class TestDto3 //to be renamed
+    {
+        public String MyProp { get; set; }
+        public String MyExcludedProp { get; set; }
     }
 
     public class TestDtoEnumerable : List<String>
     {
         public String MyProp { get; set; }
+    }
+
+    public enum TestEnum
+    {
+        One,Two
+    }
+
+    public class TestIndexedDto
+    {
+        public string this[String key]
+        {
+            get
+            {
+                return null;
+            }
+            set
+            {
+               //do nothing
+            }
+        }
+    }
+
+    public class TestDtoWithSubClass
+    {
+        public SubTestDto SubDto { get; set; }
+
+        public class SubTestDto
+        {
+            public string SomeProp { get; set;  }
+        }
     }
 }
