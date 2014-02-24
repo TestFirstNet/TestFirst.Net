@@ -53,6 +53,7 @@
     <Compile Include="AbstractMatcher.cs" />
     <Compile Include="AbstractScenarioTest.cs" />
     <Compile Include="Expect.cs" />
+    <Compile Include="Matcher\ADateTimeOffset.cs" />
     <Compile Include="Matcher\AFileInfo.cs" />
     <Compile Include="Template\MatchersTemplate.cs" />
     <Compile Include="IntegerExtensions.cs" />
