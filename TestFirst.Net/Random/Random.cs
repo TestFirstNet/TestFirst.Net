@@ -140,6 +140,26 @@ namespace TestFirst.Net.Random
             return (byte)m_random.Next(System.Byte.MinValue,System.Byte.MaxValue + 1 );
         }
 
+        public byte[] Bytes()
+        {
+            return BytesOfLengthBetween(0, 100);
+        }
+
+        public byte[] BytesOfLengthBetween(int minsizeInclusive, int maxSizeExclusive)
+        {
+            return BytesOfLength(IntBetween(minsizeInclusive, maxSizeExclusive));
+        }
+
+        public byte[] BytesOfLength(int numBytes)
+        {
+            var bytes = new byte[numBytes];
+            for (var i = 0; i < numBytes; i++)
+            {
+                bytes[i] = Byte();
+            }
+            return bytes;
+        }
+
         public SByte SByte()
         {
             return (SByte)m_random.Next(System.SByte.MinValue,System.SByte.MaxValue + 1);

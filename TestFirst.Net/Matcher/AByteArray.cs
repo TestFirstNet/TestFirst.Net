@@ -20,6 +20,84 @@ namespace TestFirst.Net.Matcher
             return Matchers.Function((byte[] actual) =>actual != null && actual.Length > 0,"a non null or empty byte array");
         }
 
+        public static IMatcher<byte[]> EqualTo(byte[] expect)
+        {
+            if (expect == null)
+            {
+                return AnInstance.Null();
+            }
+            return new ByteArrayMatcher(expect);
+        }
+
+        private class ByteArrayMatcher : AbstractMatcher<byte[]>
+        {
+            private readonly byte[] m_expect;
+
+            internal ByteArrayMatcher(byte[] expect) : base(false)
+            {
+                m_expect = expect;
+            }
+
+            public static IMatcher<byte[]> EqualTo(byte[] expect)
+            {
+                if (expect == null)
+                {
+                    return AnInstance.Null();
+                }
+                return new ByteArrayMatcher(expect);
+            }
+
+            public override bool Matches(byte[] actual, IMatchDiagnostics diag)
+            {    
+                for (int i = 0; i < m_expect.Length ||  i < actual.Length; i++)
+                {
+                    if (i >= m_expect.Length)
+                    {
+                        diag.MisMatched("mismatched at byte[{0}], expected end of array, but got [{1}],\nlengths {2},\nexpect end\nbut got bytes\n{3}"
+                            , i
+                            , actual[i]
+                            , LengthDiffMessage(actual, m_expect)
+                            , GetSegmentWithOffsetAndLength(actual, i, 30)
+                        );
+                        return false;
+                    }
+                    else if (i >= actual.Length)
+                    {
+                        diag.MisMatched("mismatched at byte[{0}], expected [{1}], but got end, of array\nlengths {2},\nexpect bytes\n{3}\nbut got end of array"
+                            , i
+                            , m_expect[i]
+                            , LengthDiffMessage(actual, m_expect)
+                            , GetSegmentWithOffsetAndLength(m_expect, i, 30)
+                        );
+                        return false;
+                    }
+                    else
+                    {
+                        if (actual[i] != m_expect[i])
+                        {
+                            diag.MisMatched("mismatched at byte[{0}], expected {1}, but got [{2}], lengths {3},\nexpect bytes\n{4}\nbut got bytes\n{5}"
+                                , i
+                                , m_expect[i]
+                                , actual[i]
+                                , LengthDiffMessage(actual, m_expect)
+                                , GetSegmentWithOffsetAndLength(m_expect, i, 30)
+                                , GetSegmentWithOffsetAndLength(actual, i, 30)
+                            );
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            private static string LengthDiffMessage(byte[] actual, byte[] expect){
+                if( actual.Length == expect.Length){
+                    return "match";
+                }
+                return "differ, actual length = " + actual.Length + ", expected " + expect.Length;
+            }
+        }
+        
         public static IMatcher<byte[]> AsUtf8(IMatcher<String> matcher)
         {                 
             return As(BytesToUtf8, matcher);
