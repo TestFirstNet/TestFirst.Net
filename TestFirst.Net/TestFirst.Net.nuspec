@@ -6,9 +6,9 @@
     <title>$title$</title>
     <authors>TestFirst.Net</authors>
     <owners>TestFirst.Net</owners>
-    <licenseUrl>https://github.com/TestFirstNet/TestFirst.Net/blob/master/TestFirst.Net/LICENSE.txt</licenseUrl>
+    <licenseUrl>http://testfirstnet.github.io/TestFirst.Net/LICENSE.txt</licenseUrl>
     <projectUrl>https://github.com/TestFirstNet/TestFirst.Net/</projectUrl>
-    <iconUrl>https://github.com/TestFirstNet/TestFirst.Net/blob/master/TestFirst.Net/icon.png</iconUrl>
+    <iconUrl>http://testfirstnet.github.io/TestFirst.Net/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Testing library providing a fluent bdd testing approach. Can be easily integrated into your own testing tools (nunit, xunit, moq, etc)</description>
     <releaseNotes>
