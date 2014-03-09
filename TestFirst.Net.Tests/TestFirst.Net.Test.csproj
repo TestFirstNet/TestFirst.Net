@@ -55,7 +55,7 @@
   <ItemGroup>
     <Compile Include="AbstractScenarioTest.cs" />
     <Compile Include="AbstractScenarioTestTest.cs" />
-    <Compile Include="Matcher\AByteArrayTest.cs" />
+    <Compile Include="Matcher\AnArrayTest.cs" />
     <Compile Include="Matcher\ADateTimeOffsetTest.cs" />
     <Compile Include="Template\MatchersTemplateTest.ExpectGenerated.cs" />
     <Compile Include="Template\MatchersTemplateTest.cs" />
