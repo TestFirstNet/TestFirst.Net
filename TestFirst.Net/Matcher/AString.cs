@@ -77,6 +77,22 @@ namespace TestFirst.Net.Matcher
             return Matchers.Function((string actual) => !string.IsNullOrEmpty(actual) && actual.Trim().Length > 0, "a non blank string");
         }
 
+        /// <summary>
+        /// A string which is not null but empty
+        /// </summary>
+        public static IMatcher<string> Empty()
+        {
+            return Matchers.Function((string actual) => actual != null && actual.Length == 0, "an empty non null string");
+        }
+
+        /// <summary>
+        /// A string which is not null but empty
+        /// </summary>
+        public static IMatcher<string> EmptyOrNull()
+        {
+            return Matchers.Function((string actual) => actual == null || actual.Length == 0, "an empty or null string");
+        }
+
         public static IMatcher<string> EqualTo(string expect)
         {
             return Matchers.Function((string actual) =>

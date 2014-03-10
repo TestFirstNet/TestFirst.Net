@@ -154,5 +154,40 @@ namespace TestFirst.Net.Test.Matcher
             AssertFails(null, AString.EndingWith("MyString"));
             AssertFails("MyString", AString.EndingWith("Other"));
         }
+
+        [Test]
+        public void Blank()
+        {
+            AssertPasses("", AString.Blank());
+            AssertPasses(" ", AString.Blank());
+            AssertPasses(" \t", AString.Blank());
+            AssertPasses(null, AString.Blank());
+
+            AssertFails("x", AString.Blank());
+        }
+
+        [Test]
+        public void Empty()
+        {
+            AssertPasses("", AString.Empty());
+
+            AssertFails(" ", AString.Empty());
+            AssertFails("\t", AString.Empty());
+            AssertFails(null, AString.Empty());
+            AssertFails("x", AString.Empty());
+        }
+
+        [Test]
+        public void EmptyOrNull()
+        {
+            AssertPasses("", AString.EmptyOrNull());
+            AssertPasses(null, AString.EmptyOrNull());
+
+            AssertFails(" ", AString.EmptyOrNull()); 
+            AssertFails(" \t", AString.EmptyOrNull());
+            AssertFails("x", AString.EmptyOrNull());
+        }
+
+
     }
 }
