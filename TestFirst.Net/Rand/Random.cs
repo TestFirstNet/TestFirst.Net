@@ -18,6 +18,10 @@ namespace TestFirst.Net.Rand
         private int m_count = 0;
         private int m_charCount = 32;
 
+        private static long MinDateTimeTicks = new DateTime(1, 0, 0, 0, 0, 0, 0).Ticks;
+        private static long MaxDateTimeTicks = new DateTime(2200, 0, 0, 0, 0, 0, 0).Ticks;
+
+
         private const String AlphaNumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
 
         public T EnumOf<T>() where T:struct,IConvertible
@@ -32,7 +36,7 @@ namespace TestFirst.Net.Rand
                 throw new ArgumentException(String.Format("Expect an enumerated type but got {0}", enumType.FullName));
             }
             Array values = Enum.GetValues(enumType);
-            var randomIdx = IntBetween(0, values.Length);
+            var randomIdx = Int(0, values.Length);
             return values.GetValue(randomIdx);
         }
 
@@ -44,13 +48,13 @@ namespace TestFirst.Net.Rand
 
         public T ItemFrom<T>(ICollection<T> items)
         {
-            var index = IntBetween(0, items.Count);
+            var index = Int(0, items.Count);
             return items.ElementAt(index);
         }
 
         public String AlphaNumericString()
         {
-            var len = IntBetween(DefaultMinStringLen, DefaultMaxStringLen + 1);
+            var len = Int(DefaultMinStringLen, DefaultMaxStringLen + 1);
             return AlphaNumericString(len);
         }
 
@@ -66,7 +70,7 @@ namespace TestFirst.Net.Rand
 
         public String AsciiString()
         {
-            var len = IntBetween(DefaultMinStringLen, DefaultMaxStringLen + 1);
+            var len = Int(DefaultMinStringLen, DefaultMaxStringLen + 1);
             return AsciiString(len);
         }
 
@@ -96,7 +100,7 @@ namespace TestFirst.Net.Rand
         /// <returns></returns>
         public String Utf8String()
         {
-            var len = IntBetween(DefaultMinStringLen, DefaultMaxStringLen + 1);
+            var len = Int(DefaultMinStringLen, DefaultMaxStringLen + 1);
             return Utf8String(len);
         }
 
@@ -116,7 +120,7 @@ namespace TestFirst.Net.Rand
         /// <returns></returns>
         public String BasicUtf8String()
         {
-            var len = IntBetween(DefaultMinStringLen, DefaultMaxStringLen + 1);
+            var len = Int(DefaultMinStringLen, DefaultMaxStringLen + 1);
             return BasicUtf8String(len);
         }
 
@@ -147,7 +151,7 @@ namespace TestFirst.Net.Rand
 
         public byte[] BytesOfLengthBetween(int minsizeInclusive, int maxSizeExclusive)
         {
-            return BytesOfLength(IntBetween(minsizeInclusive, maxSizeExclusive));
+            return BytesOfLength(Int(minsizeInclusive, maxSizeExclusive));
         }
 
         public byte[] BytesOfLength(int numBytes)
@@ -203,6 +207,17 @@ namespace TestFirst.Net.Rand
         public int Int()
         {
             return m_random.Next();
+        }
+
+        [Obsolete("Use Int(min,maxInclusive) instead")]
+        public int IntBetween(int minInclusive, int maxExclusive)
+        {
+            return Int(minInclusive, maxExclusive);
+        }
+
+        public int Int(int minInclusive, int maxExclusive)
+        {
+            return m_random.Next(minInclusive, maxExclusive);
         }
 
         public UInt16 UInt16()
@@ -284,23 +299,35 @@ namespace TestFirst.Net.Rand
 
         public DateTime DateTime()
         {
-            //not very random! But will do for now. May want to  randomly add/subtract
-            return System.DateTime.Now + TimeSpan();
+            return new DateTime(Long(MinDateTimeTicks, MaxDateTimeTicks));
+        }
+
+        public DateTimeOffset DateTimeOffset()
+        {
+            return new DateTimeOffset(Long(MinDateTimeTicks, MaxDateTimeTicks), System.TimeSpan.FromHours(Int(0,13)));
         }
 
         public TimeSpan TimeSpan()
         {
-            return new TimeSpan(0, 0, 0, m_random.Next(86400));
+            //want duration to keep working, hence we stay just below the min/max range
+            var ticks = Long(System.TimeSpan.MinValue.Ticks + 1, System.TimeSpan.MaxValue.Ticks - 1);
+            return new System.TimeSpan(ticks);
+        }
+
+        public TimeSpan TimeSpanWithinDay()
+        {
+            return TimeSpan(System.TimeSpan.FromMilliseconds(0), System.TimeSpan.FromDays(1));
+        }
+
+        public TimeSpan TimeSpan(TimeSpan min, TimeSpan maxInclusive)
+        {
+            var ticks = Long(min.Ticks, maxInclusive.Ticks);
+            return new TimeSpan(ticks);
         }
 
         public Object Object()
         {
             return new RandomObj(GuidString());
-        }
-
-        public int IntBetween(int minInclusive, int maxExclusive)
-        {
-            return m_random.Next(minInclusive, maxExclusive);
         }
 
         [DataContract]

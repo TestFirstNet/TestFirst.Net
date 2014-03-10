@@ -375,7 +375,7 @@ namespace TestFirst.Net.Rand
             var factory = new RandomValueViaFunction<Object>((parentType, listPropertyName, arrayType) =>
                 {
                     Type itemType = arrayType.GetElementType();
-                    var numItems = m_random.IntBetween(MinColSize, MaxColSize + 1);
+                    var numItems = m_random.Int(MinColSize, MaxColSize + 1);
                     dynamic array = Array.CreateInstance(itemType, numItems);
                     for (int i = 0; i < numItems; i++)
                     {
@@ -406,7 +406,7 @@ namespace TestFirst.Net.Rand
             var factory = new RandomValueViaFunction<Object>((parentType, dictPropertyName, dictType) =>
                 {
                     dynamic dict = concreteDictCtor.Invoke(new object[] {});
-                    var numItems = m_random.IntBetween(MinColSize, MaxColSize + 1);
+                    var numItems = m_random.Int(MinColSize, MaxColSize + 1);
                     //don't use the dicationary count as we may be using a static key dependening on the user generator
                     for (int i = 0; i < numItems; i++)
                     {
@@ -441,7 +441,7 @@ namespace TestFirst.Net.Rand
             var factory = new RandomValueViaFunction<Object>((parentType, listPropertyName, listType) =>
                 {
                     dynamic list = concreteListCtor.Invoke(new object[] {});
-                    var numItems = m_random.IntBetween(MinColSize, MaxColSize + 1);
+                    var numItems = m_random.Int(MinColSize, MaxColSize + 1);
                     //don't use the list count as we may be using a static key dependening on the user generator
                     //and the lis may only allow uniques
                     for (int i = 0; i < numItems; i++)
