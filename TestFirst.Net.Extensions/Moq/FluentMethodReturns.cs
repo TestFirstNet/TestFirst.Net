@@ -5,7 +5,7 @@ namespace TestFirst.Net.Extensions.Moq
 {
     /// <typeparam name="T">the type of the class being mocked</typeparam>
     /// <typeparam name="TResult">the return type of the method</typeparam>
-    public class FluentMethodReturns<T, TResult>
+    public class FluentMethodReturns<T, TResult> : IRunOnMockVerify
         where T : class
     {
         private readonly FluentMock<T> m_mock;
@@ -17,6 +17,11 @@ namespace TestFirst.Net.Extensions.Moq
             m_mock = mock;
             m_setup = setup;
             m_numArgs = numArgs;
+        }
+
+        public void VerifyMock()
+        {
+            //do nothing for now
         }
 
         public FluentMock<T> ReturnsNull()

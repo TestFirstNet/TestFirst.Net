@@ -5,7 +5,7 @@ namespace TestFirst.Net.Extensions.Moq
 {
     /// <typeparam name="T">the type of the class being mocked</typeparam>
     /// <typeparam name="TProperty">the type of the property</typeparam>
-    public class FluentPropertyGet<T, TProperty> 
+    public class FluentPropertyGet<T, TProperty> : IRunOnMockVerify
         where T : class
     {
         private readonly FluentMock<T>  m_mock;
@@ -15,6 +15,11 @@ namespace TestFirst.Net.Extensions.Moq
         {
             m_mock = mock;
             m_setup = setup;
+        }
+
+        public void VerifyMock()
+        {
+            //do nothing for now
         }
 
         public FluentMock<T> ReturnsNull()

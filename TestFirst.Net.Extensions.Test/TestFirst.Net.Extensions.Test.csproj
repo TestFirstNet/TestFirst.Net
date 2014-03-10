@@ -8,7 +8,7 @@
     <ProjectGuid>{B45A483E-F928-43BB-A862-6FDBDB3F255D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestFirst.Net.Extensions.Test</RootNamespace>
+    <RootNamespace>TestFirst.Net.Extensions</RootNamespace>
     <AssemblyName>TestFirst.Net.Extensions.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Moq\AbstractNUnitMoqScenatioTestTest.cs" />
+    <Compile Include="Moq\MockMethodVoidTest.cs" />
     <Compile Include="NUnit\AbstractNUnitScenarioTestTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

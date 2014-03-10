@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using Moq;
+using System.Collections.Generic;
 
 namespace TestFirst.Net.Extensions.Moq
 {
@@ -8,14 +9,16 @@ namespace TestFirst.Net.Extensions.Moq
     /// Wraps a <see cref="Mock{T}"/> and provides a fluent interface over it. Recommend to use 
     /// the <see cref="AbstractNUnitMoqScenarioTest.AMock{T}"/> to create an instance of this. Alternatively
     /// create your own but be sure to register this mock with the <see cref="Scenario"/> via injection to ensure
-    /// the wrapped mocks <see cref="Mock.VerifyAll"/> is called at scenario completion. Feel free to implement your
+    /// the wrapped mocks <see cref="m_mock.VerifyAll"/> is called at scenario completion. Feel free to implement your
     /// own mechanism but then you maintain it
     /// </summary>
     /// <typeparam name="T">the type of the object we are mocking</typeparam>
-    public class FluentMock<T> :IRunOnScenarioEnd where T:class 
+    public class FluentMock<T> : IRunOnScenarioEnd, IRunOnMockVerify where T : class 
     {
         private readonly Mock<T> m_mock;
-        
+
+        private List<IRunOnMockVerify> m_runOnVerify = new List<IRunOnMockVerify>();
+
         /// <summary>
         /// Return the instance being mocked. Make all your invoke calls on this
         /// </summary>
@@ -52,7 +55,9 @@ namespace TestFirst.Net.Extensions.Moq
         /// <returns></returns>
         public FluentMock<TAnother> AndMocks<TAnother>() where TAnother : class
         {
-            return new FluentMock<TAnother>(m_mock.As<TAnother>());
+            var methodMock = new FluentMock<TAnother>(m_mock.As<TAnother>());
+            RunOnVerify(methodMock);
+            return methodMock;
         }
 
         /// <summary>
@@ -64,11 +69,17 @@ namespace TestFirst.Net.Extensions.Moq
         {
             var setup = m_mock.Setup(expression);
             var call = expression.Body as MethodCallExpression;
+            FluentMethodReturns<T, TResult> methodMock;
             if (call != null)
             {
-                return new FluentMethodReturns<T, TResult>(this, setup, call.Arguments.Count);
+                methodMock = new FluentMethodReturns<T, TResult>(this, setup, call.Arguments.Count);
             }
-            return new FluentMethodReturns<T, TResult>(this, setup, 0);
+            else
+            {
+                methodMock = new FluentMethodReturns<T, TResult>(this, setup, 0);
+            }
+            RunOnVerify(methodMock);
+            return methodMock;
         }
 
         /// <summary>
@@ -79,7 +90,9 @@ namespace TestFirst.Net.Extensions.Moq
         public FluentMethodVoid<T> WhereMethod(Expression<Action<T>> expression)
         {
             var setup = m_mock.Setup(expression);
-            return new FluentMethodVoid<T>(this, setup);
+            var methodMock = new FluentMethodVoid<T>(this, setup, expression);
+            RunOnVerify(methodMock);
+            return methodMock;
         }
 
         /// <summary>
@@ -91,7 +104,9 @@ namespace TestFirst.Net.Extensions.Moq
         public FluentPropertyGet<T,TProperty> WhereGet<TProperty>(Expression<Func<T,TProperty>> expression)
         {
             var setup = m_mock.SetupGet(expression);
-            return new FluentPropertyGet<T,TProperty>(this,setup);
+            var propertyMock = new FluentPropertyGet<T,TProperty>(this,setup);
+            RunOnVerify(propertyMock);
+            return propertyMock;
         }
 
         public FluentMock<T> WhereSet(Action<T> setter)
@@ -100,9 +115,23 @@ namespace TestFirst.Net.Extensions.Moq
             return this;
         }
 
-        public virtual void OnScenarioEnd()
+        internal void RunOnVerify(IRunOnMockVerify verifier)
         {
-            m_mock.VerifyAll();
+            m_runOnVerify.Add(verifier);
         }
+
+        public void OnScenarioEnd()
+        {
+            VerifyMock();
+        }
+
+        public void VerifyMock()
+        {
+            foreach (var verifier in m_runOnVerify)
+            {
+                verifier.VerifyMock();
+            }
+            m_mock.VerifyAll();
+        }        
     }
 }

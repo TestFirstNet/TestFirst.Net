@@ -77,6 +77,7 @@
     <Compile Include="Rand\Random.cs" />
     <Compile Include="Rand\RandomFiller.cs" />
     <Compile Include="Rand\RandomFillException.cs" />
+    <Compile Include="Util\TimesBuilder.cs" />
     <Compile Include="Util\TimeSpanBuilder.cs" />
     <Compile Include="TestFirstAssert.cs" />
     <Compile Include="AssertionFailedException.cs" />

@@ -64,6 +64,7 @@
     <Compile Include="Moq\FluentMethodReturns.cs" />
     <Compile Include="Moq\FluentPropertyGet.cs" />
     <Compile Include="Moq\InSequenceReturner.cs" />
+    <Compile Include="Moq\IRunOnMockVerify.cs" />
     <Compile Include="Moq\MatcherMoqExtensions.cs" />
     <Compile Include="NUnit\AbstractNUnitScenarioTest.cs" />
     <Compile Include="NUnit\NotImplementedYet.cs" />
