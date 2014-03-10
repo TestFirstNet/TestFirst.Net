@@ -107,7 +107,9 @@ namespace TestFirst.Net.Rand
             SetValueFactoryFor<Decimal?>(type=>m_random.Decimal());
             SetValueFactoryFor<Guid>(type=>m_random.Guid());
             SetValueFactoryFor<Guid?>(type=>m_random.Guid());
-            SetValueFactoryFor<DateTime>(type=>m_random.DateTime());
+            SetValueFactoryFor<DateTimeOffset>(type => m_random.DateTimeOffset());
+            SetValueFactoryFor<DateTimeOffset?>(type => m_random.DateTimeOffset()); 
+            SetValueFactoryFor<DateTime>(type => m_random.DateTime());
             SetValueFactoryFor<DateTime?>(type=>m_random.DateTime());
             SetValueFactoryFor<TimeSpan>(type=>m_random.TimeSpan());
             SetValueFactoryFor<TimeSpan?>(type=>m_random.TimeSpan());

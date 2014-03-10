@@ -18,8 +18,8 @@ namespace TestFirst.Net.Rand
         private int m_count = 0;
         private int m_charCount = 32;
 
-        private static long MinDateTimeTicks = new DateTime(1, 0, 0, 0, 0, 0, 0).Ticks;
-        private static long MaxDateTimeTicks = new DateTime(2200, 0, 0, 0, 0, 0, 0).Ticks;
+        private static long MinDateTimeTicks = new DateTime(1, 1, 1, 0, 0, 0, 0).Ticks;
+        private static long MaxDateTimeTicks = new DateTime(2200, 1, 1, 0, 0, 0, 0).Ticks;
 
 
         private const String AlphaNumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
