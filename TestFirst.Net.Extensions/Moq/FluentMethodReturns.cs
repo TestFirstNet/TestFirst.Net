@@ -1,5 +1,9 @@
 ﻿using System;
 using Moq.Language.Flow;
+using System.Linq.Expressions;
+using TestFirst.Net.Util;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace TestFirst.Net.Extensions.Moq
 {
@@ -11,17 +15,16 @@ namespace TestFirst.Net.Extensions.Moq
         private readonly FluentMock<T> m_mock;
         private readonly ISetup<T, TResult> m_setup;
         private readonly int m_numArgs;
+        private readonly Expression<Func<T, TResult>> m_expression;
+        private readonly List<IRunOnMockVerify> m_runOnVerify = new List<IRunOnMockVerify>(1);
 
-        internal FluentMethodReturns(FluentMock<T> mock,ISetup<T,TResult> setup, int numArgs)
+        internal FluentMethodReturns(FluentMock<T> mock,ISetup<T,TResult> setup, Expression<Func<T,TResult>> expression)
         {
+            var call = expression.Body as MethodCallExpression;
             m_mock = mock;
             m_setup = setup;
-            m_numArgs = numArgs;
-        }
-
-        public void VerifyMock()
-        {
-            //do nothing for now
+            m_numArgs = call == null ? 0 : call.Arguments.Count;
+            m_expression = expression;
         }
 
         public FluentMock<T> ReturnsNull()
@@ -140,6 +143,30 @@ namespace TestFirst.Net.Extensions.Moq
         {
             m_setup.Callback(action);
             return this;
+        }
+
+        public TimesBuilder<int, FluentMethodReturns<T,TResult>> IsCalled(int num)
+        {
+            return new TimesBuilder<int, FluentMethodReturns<T, TResult>>(num, (val) =>
+            {
+                var counter = new InvocationCounter(val, m_expression);
+                m_setup.Callback(counter.Increment);
+                RunOnVerify(counter);
+                return this;//return the fluent method builder
+            });
+        }
+
+        internal void RunOnVerify(IRunOnMockVerify verifier)
+        {
+            m_runOnVerify.Add(verifier);
+        }
+
+        public void VerifyMock()
+        {
+            foreach (var verifier in m_runOnVerify)
+            {
+                verifier.VerifyMock();
+            }
         }
     }
 }

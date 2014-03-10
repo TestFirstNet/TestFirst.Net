@@ -1,5 +1,8 @@
 ﻿using System;
 using Moq.Language.Flow;
+using TestFirst.Net.Util;
+using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace TestFirst.Net.Extensions.Moq
 {
@@ -10,16 +13,14 @@ namespace TestFirst.Net.Extensions.Moq
     {
         private readonly FluentMock<T>  m_mock;
         private readonly ISetupGetter<T, TProperty> m_setup;
-        
-        internal FluentPropertyGet(FluentMock<T> mock,ISetupGetter<T,TProperty> setup)
+        private readonly Expression<Func<T, TProperty>> m_expression;
+        private readonly List<IRunOnMockVerify> m_runOnVerify = new List<IRunOnMockVerify>(1);
+
+        internal FluentPropertyGet(FluentMock<T> mock, ISetupGetter<T, TProperty> setup, Expression<Func<T, TProperty>> expression)
         {
             m_mock = mock;
             m_setup = setup;
-        }
-
-        public void VerifyMock()
-        {
-            //do nothing for now
+            m_expression = expression;
         }
 
         public FluentMock<T> ReturnsNull()
@@ -70,6 +71,30 @@ namespace TestFirst.Net.Extensions.Moq
         {
             m_setup.Throws(builder.Build());
             return m_mock;
+        }
+
+        public TimesBuilder<int, FluentPropertyGet<T, TProperty>> IsCalled(int num)
+        {
+            return new TimesBuilder<int, FluentPropertyGet<T, TProperty>>(num, (val) =>
+            {
+                var counter = new InvocationCounter(val, m_expression);
+                m_setup.Callback(counter.Increment);
+                RunOnVerify(counter);
+                return this;//return the fluent method builder
+            });
+        }
+
+        internal void RunOnVerify(IRunOnMockVerify verifier)
+        {
+            m_runOnVerify.Add(verifier);
+        }
+
+        public void VerifyMock()
+        {
+            foreach (var verifier in m_runOnVerify)
+            {
+                verifier.VerifyMock();
+            }
         }
     }
 }

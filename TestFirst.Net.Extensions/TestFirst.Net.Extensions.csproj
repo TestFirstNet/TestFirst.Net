@@ -66,6 +66,7 @@
     <Compile Include="Moq\InSequenceReturner.cs" />
     <Compile Include="Moq\IRunOnMockVerify.cs" />
     <Compile Include="Moq\MatcherMoqExtensions.cs" />
+    <Compile Include="Moq\InvocationCounter.cs" />
     <Compile Include="NUnit\AbstractNUnitScenarioTest.cs" />
     <Compile Include="NUnit\NotImplementedYet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

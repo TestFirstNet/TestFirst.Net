@@ -16,8 +16,7 @@ namespace TestFirst.Net.Extensions.Moq
     public class FluentMock<T> : IRunOnScenarioEnd, IRunOnMockVerify where T : class 
     {
         private readonly Mock<T> m_mock;
-
-        private List<IRunOnMockVerify> m_runOnVerify = new List<IRunOnMockVerify>();
+        private readonly List<IRunOnMockVerify> m_runOnVerify = new List<IRunOnMockVerify>(5);
 
         /// <summary>
         /// Return the instance being mocked. Make all your invoke calls on this
@@ -68,16 +67,7 @@ namespace TestFirst.Net.Extensions.Moq
         public FluentMethodReturns<T,TResult> WhereMethod<TResult>(Expression<Func<T,TResult>> expression)
         {
             var setup = m_mock.Setup(expression);
-            var call = expression.Body as MethodCallExpression;
-            FluentMethodReturns<T, TResult> methodMock;
-            if (call != null)
-            {
-                methodMock = new FluentMethodReturns<T, TResult>(this, setup, call.Arguments.Count);
-            }
-            else
-            {
-                methodMock = new FluentMethodReturns<T, TResult>(this, setup, 0);
-            }
+            var methodMock = new FluentMethodReturns<T, TResult>(this, setup, expression);
             RunOnVerify(methodMock);
             return methodMock;
         }
@@ -104,7 +94,7 @@ namespace TestFirst.Net.Extensions.Moq
         public FluentPropertyGet<T,TProperty> WhereGet<TProperty>(Expression<Func<T,TProperty>> expression)
         {
             var setup = m_mock.SetupGet(expression);
-            var propertyMock = new FluentPropertyGet<T,TProperty>(this,setup);
+            var propertyMock = new FluentPropertyGet<T,TProperty>(this,setup, expression);
             RunOnVerify(propertyMock);
             return propertyMock;
         }

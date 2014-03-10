@@ -61,6 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Moq\AbstractNUnitMoqScenatioTestTest.cs" />
+    <Compile Include="Moq\MockPropertyGetTest.cs" />
+    <Compile Include="Moq\MockMethodReturnsTest.cs" />
     <Compile Include="Moq\MockMethodVoidTest.cs" />
     <Compile Include="NUnit\AbstractNUnitScenarioTestTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

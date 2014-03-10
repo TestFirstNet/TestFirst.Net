@@ -41,46 +41,12 @@ namespace TestFirst.Net.Extensions.Moq
         public TimesBuilder<int,FluentMock<T>> IsCalled(int num)
         {
             return new TimesBuilder<int,FluentMock<T>>(num,(val)=>{
-                var counter = new MetodInvocationCounter(val, m_expression);
+                var counter = new InvocationCounter(val, m_expression);
                 m_setup.Callback(counter.Increment);
                 RunOnVerify(counter);
                 return this;//return the fluent method builder
             });
         }
 
-        private class MetodInvocationCounter : IRunOnMockVerify
-        {
-            private readonly Expression<Action<T>> m_expression;
-            private readonly int m_expectCount;
-            private int m_invokeCount;
-
-            internal MetodInvocationCounter(int expect, Expression<Action<T>> expression){
-                m_expectCount = expect;
-                m_expression = expression;
-            }
-
-            internal void Increment()
-            {
-                var count = Interlocked.Increment(ref m_invokeCount);
-                if (count > m_expectCount)//lets bail as soon as possible
-                {
-                    throw new AssertionFailedException("Invocation " + m_expression + " was unexpectedly performed " + Times(count) + ", but expected " + Times(m_expectCount));
-                }
-            }
-
-            private static string Times(int i)
-            {
-                return i + " " + (i == 1 ? "time" : "times");
-            }
-
-            //ensue we handle case where method is nt invoked often enough
-            public void VerifyMock()
-            {
-                if (m_invokeCount != m_expectCount)
-                {
-                    throw new AssertionFailedException("Invocation " + m_expression + " was unexpectedly performed " + Times(m_invokeCount) + ", but expected " + Times(m_expectCount));
-                }
-            }
-        }
     }
 }
