@@ -71,7 +71,7 @@
     <Compile Include="Matcher\AnInstanceTest.cs" />
     <Compile Include="Matcher\ATimeSpanTest.cs" />
     <Compile Include="Matcher\AListInAnyOrderTest.cs" />
-    <Compile Include="Random\RandomFillerTest.cs" />
+    <Compile Include="Rand\RandomFillerTest.cs" />
     <Compile Include="ScenarioBuilderTest.cs" />
     <Compile Include="ScenarioInserterTest.cs" />
     <Compile Include="ScenarioThenMatcherTest.cs" />

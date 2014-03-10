@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TestFirst.Net.Random
+namespace TestFirst.Net.Rand
 {
     /// <summary>
     /// Wraps registration and retrieval of a value associated with a type, named property on a type, or a propertyType on a type

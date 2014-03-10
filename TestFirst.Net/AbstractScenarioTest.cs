@@ -10,7 +10,7 @@ namespace TestFirst.Net
     /// </summary>
     public abstract class AbstractScenarioTest : ScenarioFluency
     {
-        private readonly Random.Random m_random = new Random.Random();
+        private readonly Rand.Random m_random = new Rand.Random();
         private static readonly IStepArgDependencyInjector DefaultInjector = new NullStepArgDependencyInjector();
 
         protected AbstractScenarioTest()
@@ -18,7 +18,7 @@ namespace TestFirst.Net
             Injector = DefaultInjector;
         }
         
-        protected Random.Random ARandom()
+        protected Rand.Random ARandom()
         {
             return m_random;
         }

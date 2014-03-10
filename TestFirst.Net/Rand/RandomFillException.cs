@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TestFirst.Net.Random
+namespace TestFirst.Net.Rand
 {
     public class RandomFillException : Exception
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using TestFirst.Net.Random;
+using TestFirst.Net.Rand;
 
-namespace TestFirst.Net.Test.Random
+namespace TestFirst.Net.Test.Rand
 {
     [TestFixture]
     public class RandomFillerTest

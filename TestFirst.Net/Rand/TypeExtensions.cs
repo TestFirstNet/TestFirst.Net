@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace TestFirst.Net.Random
+namespace TestFirst.Net.Rand
 {
     internal static class TypeExtensions
     {

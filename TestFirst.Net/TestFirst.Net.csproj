@@ -73,6 +73,10 @@
     <Compile Include="Logging\SystemDiagnosticsLogAdapter.cs" />
     <Compile Include="Matcher\AnUri.cs" />
     <Compile Include="TypeExtensions.cs" />
+    <Compile Include="Rand\Lookup.cs" />
+    <Compile Include="Rand\Random.cs" />
+    <Compile Include="Rand\RandomFiller.cs" />
+    <Compile Include="Rand\RandomFillException.cs" />
     <Compile Include="Util\TimeSpanBuilder.cs" />
     <Compile Include="TestFirstAssert.cs" />
     <Compile Include="AssertionFailedException.cs" />
@@ -107,11 +111,8 @@
     <Compile Include="Util\InserterUtil.cs" />
     <Compile Include="Util\ObjectExtensions.cs" />
     <Compile Include="PassInstanceBuilder.cs" />
-    <Compile Include="Random\Lookup.cs" />
     <Compile Include="Random\RandomFiller.cs" />
-    <Compile Include="Random\RandomFillException.cs" />
     <Compile Include="Random\Random.cs" />
-    <Compile Include="Random\TypeExtensions.cs" />
     <Compile Include="TestFirstException.cs" />
     <Compile Include="Util\FileUtils.cs" />
     <Compile Include="Util\ToStringHelper.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="Matcher\PropertyMatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scenario.cs" />
+    <Compile Include="Rand\TypeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />
