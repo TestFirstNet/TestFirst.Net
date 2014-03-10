@@ -21,8 +21,9 @@ namespace TestFirst.Net.Rand
         private static long MinDateTimeTicks = new DateTime(1, 1, 1, 0, 0, 0, 0).Ticks;
         private static long MaxDateTimeTicks = new DateTime(2200, 1, 1, 0, 0, 0, 0).Ticks;
 
-
         private const String AlphaNumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
+
+        public static readonly Random Instance = new Random();
 
         public T EnumOf<T>() where T:struct,IConvertible
         {
