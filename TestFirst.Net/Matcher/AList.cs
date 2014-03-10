@@ -89,6 +89,16 @@ namespace TestFirst.Net.Matcher
                return WithOnly((IEnumerable<IMatcher<T>>) itemMatchers);
            }
 
+           public IAcceptMoreMatchers<string> WithOnly(params string[] values)
+           {
+               return WithOnly(AList.From(val=>AString.EqualTo(val), values));
+           }
+
+           public IAcceptMoreMatchers<int?> WithOnly(params int?[] values)
+           {
+               return WithOnly(AList.From(val => AnInt.EqualTo(val), values));
+           }
+
            /// <summary>
            /// Return a matcher which requires all items to match
            /// </summary>
@@ -104,6 +114,16 @@ namespace TestFirst.Net.Matcher
            {
                PreConditions.AssertNotNull(itemMatchers, "itemMatchers");
                return new AListInOrderWithOnlyMatcher<T>(itemMatchers);
+           }
+
+           public IAcceptMoreMatchers<string> WithAtLeast(params string[] values)
+           {
+               return WithAtLeast(AList.From(val => AString.EqualTo(val), values));
+           }
+
+           public IAcceptMoreMatchers<int?> WithAtLeast(params int?[] values)
+           {
+               return WithAtLeast(AList.From(val => AnInt.EqualTo(val), values));
            }
 
            /// <summary>
@@ -142,6 +162,16 @@ namespace TestFirst.Net.Matcher
                return new AListInAnyOrderWithOnly<T>();
            }
 
+           public IAcceptMoreMatchers<string> WithOnly(params string[] values)
+           {
+               return WithOnly(AList.From(val => AString.EqualTo(val), values));
+           }
+
+           public IAcceptMoreMatchers<int?> WithOnly(params int?[] values)
+           {
+               return WithOnly(AList.From(val => AnInt.EqualTo(val), values));
+           }
+
            /// <summary>
            /// Return a matcher which requires all items to match
            /// </summary>
@@ -165,6 +195,16 @@ namespace TestFirst.Net.Matcher
            {
                PreConditions.AssertNotNull(itemMatchers, "itemMatchers");
                return new AListInAnyOrderWithOnly<T>(itemMatchers);
+           }
+
+           public IAcceptMoreMatchers<string> WithAtLeast(params string[] values)
+           {
+               return WithAtLeast(AList.From(val => AString.EqualTo(val), values));
+           }
+
+           public IAcceptMoreMatchers<int?> WithAtLeast(params int?[] values)
+           {
+               return WithAtLeast(AList.From(val => AnInt.EqualTo(val), values));
            }
 
            /// <summary>
@@ -191,6 +231,8 @@ namespace TestFirst.Net.Matcher
                 PreConditions.AssertNotNull(itemMatchers, "itemMatchers");
                 return new AListInAnyOrderWithAtLeast<T>(itemMatchers);
            }
+
+
         }
          // ReSharper enable PossibleMultipleEnumeration
 
