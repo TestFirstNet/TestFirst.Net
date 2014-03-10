@@ -13,10 +13,14 @@
     <description>Testing library providing a fluent bdd testing approach. Can be easily integrated into your own testing tools (nunit, xunit, moq, etc)</description>
     <releaseNotes>
       Noteable changes
-      * AList matchers now allow matching on raw IEnumerable
-      * Fixes to ADouble and ADecimal matchers
-      * New : MatchersTemplate to allow auto generation of matchers for your own classes (via T4 templates)
-      * Other bug fixes
+      * Breaking: Moved Random and RandomFiller from TestFirst.Net.Random to TestFirst.Net.Rand to avoid naming clashes
+      * Updated : Random.TimeSpan now generates values using the entire resolution (not just down to seconds)
+      * Updated : Random.DateTime now uses a wider range and uses the fll resolution of DateTime
+      * New : FluentMock now supports asserting number of times methods/property-access is called
+      * New : Actually implement AnArray.EqualTo
+      * New : Add convenience string and int matcher methods on AList.InOrder and AList.AnyOrder
+      * New : Add AString.Empty and AString.EmptyOrNull
+      * New : Add Random.DateTimeOffset
     </releaseNotes>
     <copyright>Copyright © TestFirst.Net 2014</copyright>
     <tags>testing bdd fluent nunit moq</tags>

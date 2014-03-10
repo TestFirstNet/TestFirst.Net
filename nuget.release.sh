@@ -36,7 +36,7 @@ nuget pack TestFirst.Net.Performance.csproj  -Symbols -Prop Configuration=Releas
 nuget pack TestFirst.Net.Performance.csproj  -IncludeReferencedProjects -Prop Configuration=Release -Version $version
 cd ..
 
-echo "copying packages into single directory"
+echo "copying packages into single directory $local_nuget_pkg_dir"
 mkdir -p $local_nuget_pkg_dir
 find . -name \*.nupkg | xargs -i cp {} --target $local_nuget_pkg_dir
 
