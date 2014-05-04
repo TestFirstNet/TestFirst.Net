@@ -7,6 +7,7 @@ using System.Reflection;
 using TestFirst.Net.Lang;
 using Microsoft.CSharp;
 using System.CodeDom;
+using System.Text.RegularExpressions;
 
 namespace TestFirst.Net.Template 
 {
@@ -116,6 +117,54 @@ namespace TestFirst.Net.Template
             }   
         }
 
+        public void GenerateForAssembly(Assembly assembly, params string[] globPaths)
+        {
+            var types = assembly.GetTypes();
+            var matched = new HashSet<Type>();
+            foreach(var glob in globPaths){
+                var re = FromAntToRegex(glob);
+                foreach (var type in types)
+                {
+                    //Console.WriteLine(type.FullName);
+                    if (!type.IsAbstract && re.IsMatch(type.FullName))
+                    {
+                        //Console.WriteLine("MATCHED:" + type.FullName);
+                        matched.Add(type);
+                    }
+                }
+            }
+
+            foreach (var type in matched)
+            {
+                GenerateFor(type);
+            }
+
+        }
+
+        private static Regex FromAntToRegex(string antExpression)
+        {
+            var sb = new StringBuilder();
+            foreach (var c in antExpression)
+            {
+                if (c == '.')
+                {
+                    sb.Append("\\.");
+                }
+                else if (c == '*')
+                {
+                    sb.Append(".*");
+                }
+                else if (c == '?')
+                {
+                    sb.Append(".{1}");
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+            }
+            return new Regex(sb.ToString(), RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+        }
         public TemplateOptions GenerateFor<T>()
         {
             return GenerateFor(typeof(T));
@@ -129,8 +178,47 @@ namespace TestFirst.Net.Template
             return opts;
         }
         
-        public void RenderTo(FileInfo file) {
-            WriteToFile(Render(), file);
+        /// <summary>
+        /// Render to the given file path, returning true if the generation caused a change to the file. If the file path is relative, then
+        /// a search is performed from the current directory up for a *.csproj and this is used as the root directory to calculate the relative path from
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public boolean RenderToFile(string path){
+            FileInfo file;
+            if (Path.IsPathRooted(path))
+            {
+                file = new FileInfo(path);
+            }
+            else
+            {
+                file = new FileInfo(Path.Combine(FindProjectRootDir().FullName, path));
+            }
+            return RenderToFile(file);
+        }
+
+        private static DirectoryInfo FindProjectRootDir(){
+            var current = new DirectoryInfo(Directory.GetCurrentDirectory());
+            while (current != null)
+            {
+                var files = current.GetFiles("*.csproj");
+                if (files.Length > 0)
+                {
+                    return current;
+                }
+                current = current.Parent;
+            }
+            throw new FileNotFoundException("Could not find project root directory (walking up looking for a *.csproj file). You may need to specify an absolute file path");
+        }
+
+        /// <summary>
+        /// Render generated code to the given file, returning true if the file was modified. If the generation causes no change t the file, returns false
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public bool RenderToFile(FileInfo file)
+        {
+            WriteToFileIfChanged(Render(), file);
         }
 
         protected override void Generate()
@@ -152,6 +240,23 @@ namespace TestFirst.Net.Template
             }
         }
 
+        private bool WriteToFileIfChanged(string content, FileInfo file)
+        {
+            if (file.Exists)
+            {
+                using (var stream = file.OpenText())
+                {
+                    var existingContent = stream.ReadToEnd();
+                    if (existingContent.Equals(content))
+                    {
+                        Console.WriteLine("File content the same for path " + file.FullName + ", not writing");
+                        return false;
+                    }
+                }
+            }
+            WriteToFile(content, file);
+            return true;
+        }
         private void WriteToFile(String content, FileInfo file) {
             file.Directory.Create();
 
