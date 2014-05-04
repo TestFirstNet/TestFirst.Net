@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B75670B3-D47C-4B70-8F04-9267523833B8}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TestFirst.Net.Examples</RootNamespace>
     <AssemblyName>TestFirst.Net.Examples.Test</AssemblyName>
@@ -40,6 +40,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>TestFirst.Net.Examples.CodeGenerator</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
@@ -55,6 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\ANotification.cs" />
+    <Compile Include="CodeGenerator.cs" />
+    <Compile Include="Generated.cs" />
     <Compile Include="Service\ExampleAppTest.cs" />
     <Compile Include="Service\Handler\NotificationQueryHandlerTest.cs" />
     <Compile Include="Api\Query\ANotificationQueryResponse.cs" />
@@ -83,6 +88,7 @@
     <Content Include="LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
