@@ -184,7 +184,7 @@ namespace TestFirst.Net.Template
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public boolean RenderToFile(string path){
+        public bool RenderToFile(string path){
             FileInfo file;
             if (Path.IsPathRooted(path))
             {
@@ -218,7 +218,7 @@ namespace TestFirst.Net.Template
         /// <returns></returns>
         public bool RenderToFile(FileInfo file)
         {
-            WriteToFileIfChanged(Render(), file);
+            return WriteToFileIfChanged(Render(), file);
         }
 
         protected override void Generate()
