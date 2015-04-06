@@ -12,11 +12,11 @@ namespace TestFirst.Net.Matcher
                     {
                         return true;
                     }
-                    if (expect != null)
+                    if (expect == null || actual == null)
                     {
-                        return expect.Equals(actual);
+                        return false;
                     }
-                    return false;
+                    return expect.Value.Equals(actual.Value);
                 },
                 "a Guid == '" + expect + "'"
              );
@@ -30,15 +30,11 @@ namespace TestFirst.Net.Matcher
                     {
                         return false;
                     }
-                    if (actual == null)
+                    if (expect == null || actual == null)
                     {
                         return true;
                     }
-                    if (expect != null)
-                    {
-                        return !expect.Equals(actual);
-                    }                
-                    return false;
+                    return !expect.Value.Equals(actual.Value);
                 },
                 "a Guid = '" + expect + "'"
              );
