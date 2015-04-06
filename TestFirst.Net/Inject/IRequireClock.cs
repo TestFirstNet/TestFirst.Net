@@ -7,6 +7,6 @@ namespace TestFirst.Net.Inject
 {
     public interface IRequireClock
     {
-        IClock Clock();
+        IClock Clock{ set; }
     }
 }

@@ -22,6 +22,11 @@ namespace TestFirst.Net
         {
             return m_random;
         }
+
+        protected void UseSimpleStepArgInjector()
+        {
+            UseScenarioInjector(new SimpleStepArgInjector());
+        }
            
         protected void UseDisposingScenarioInjector()
         {

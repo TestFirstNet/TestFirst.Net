@@ -143,6 +143,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scenario.cs" />
     <Compile Include="Rand\TypeExtensions.cs" />
+    <Compile Include="SimpleStepArgInjector.cs" />
+    <Compile Include="Inject\SystemClock.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />
