@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using TestFirst.Net.Matcher;
 
@@ -99,6 +100,45 @@ namespace TestFirst.Net.Test.Matcher
                 );
         }
 
+        [Test]
+        //for a bug raised where List matcher becomes confused with property matchers for
+        //classes which have subclasses
+        public void CanSubClassMatcherAndMatchOnSuperTypePocoTest()
+        {
+            IList<Employee> employees = new List<Employee>() { new Employee("Bob") };
+            IList<Human> humans = new List<Human>() { new Human("Bob") };
+
+            AssertPasses(
+                humans,
+                AList.InOrder().WithOnly(AHuman.With().Name("Bob"))
+                );
+            
+            AssertPasses(
+                employees,
+                AList.InOrder().WithOnly(AnEmployee.With().Name("Bob"))
+                );
+
+            AssertPasses(
+                employees,
+                AList.InOrder().WithOnly(AHuman.With().Name("Bob"))
+                );  
+        }
+
+        [Test]
+        public void CanMatchOnSuperClassPropertyTest()
+        {
+            AssertPasses(
+                new Employee("Bob"),
+                AnEmployeeNotSubHumanMather.With().Name("Bob")
+            );
+         
+            AssertFails(
+                new Employee("NotBob"),
+                AnEmployeeNotSubHumanMather.With().Name("Bob")
+            );
+
+        }
+
         private static PropertyMatcherExposedForTesting<FooPoco> ExpectFoo()
         {
             return new PropertyMatcherExposedForTesting<FooPoco>();
@@ -117,6 +157,73 @@ namespace TestFirst.Net.Test.Matcher
             internal String StringProp { get; set; }
             internal int IntProp { get; set; }
             public String PublicProp { get; set; }
-        } 
+            public List<Guid> Guids { get; set;  }
+        }
+
+
+        internal class Employee : Human
+        {
+            
+            public Employee(String name):base(name) {
+
+            }
+        }
+
+        internal class Human
+        {
+            public Human(String name){
+                Name = name;
+            }
+
+            public String Name { get; set; }
+
+        }
+
+        internal class AHuman<TSelf,T> : PropertyMatcher<T> 
+            where TSelf : AHuman<TSelf, T>
+            where T : Human
+        {
+            private static readonly Human PropertyNames = null;
+
+            public TSelf Name(string name)
+            {
+                WithProperty(() => PropertyNames.Name, AString.EqualTo(name));
+                return (TSelf)this;
+            }
+        }
+        internal class AHuman : AHuman<AHuman,Human>
+        {
+            public static AHuman With()
+            {
+                return new AHuman();
+            }
+        }
+
+        internal class AnEmployee : AHuman<AnEmployee,Employee>
+        {
+            private static readonly Employee PropertyNames = null;
+
+            public static AnEmployee With()
+            {
+                return new AnEmployee();
+            }
+
+        }
+
+        internal class AnEmployeeNotSubHumanMather : PropertyMatcher<Employee>
+        {
+            private static readonly Employee PropertyNames = null;
+
+            public static AnEmployeeNotSubHumanMather With()
+            {
+                return new AnEmployeeNotSubHumanMather();
+            }
+
+            public AnEmployeeNotSubHumanMather Name(string name)
+            {
+                WithProperty(() => PropertyNames.Name, AString.EqualTo(name));
+                return this;
+            }
+        }
     }
 }
