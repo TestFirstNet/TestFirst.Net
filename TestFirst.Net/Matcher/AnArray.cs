@@ -1,4 +1,6 @@
 using System;
+using System.Text;
+
 namespace TestFirst.Net.Matcher
 {
     public static class AnArray
@@ -65,7 +67,7 @@ namespace TestFirst.Net.Matcher
                     {
                         diag.MisMatched("mismatched at [{0}], expected end of array, but got [{1}],\nlengths {2},\nexpect end\nbut got\n{3}"
                             , i
-                            , actual[i]
+                            , ToPrettyVal(actual[i])
                             , LengthDiffMessage(actual, m_expect)
                             , GetSegmentWithOffsetAndLength(actual, i, 30)
                         );
@@ -75,7 +77,7 @@ namespace TestFirst.Net.Matcher
                     {
                         diag.MisMatched("mismatched at [{0}], expected [{1}], but got end, of array\nlengths {2},\nexpect \n{3}\nbut got end of array"
                             , i
-                            , m_expect[i]
+                            , ToPrettyVal(m_expect[i])
                             , LengthDiffMessage(actual, m_expect)
                             , GetSegmentWithOffsetAndLength(m_expect, i, 30)
                         );
@@ -85,8 +87,8 @@ namespace TestFirst.Net.Matcher
                     {
                         diag.MisMatched("mismatched at [{0}], expected {1}, but got [{2}], lengths {3},\nexpect\n{4}\nbut got\n{5}"
                             , i
-                            , m_expect[i]
-                            , actual[i]
+                            , ToPrettyVal(m_expect[i])
+                            , ToPrettyVal(actual[i])
                             , LengthDiffMessage(actual, m_expect)
                             , GetSegmentWithOffsetAndLength(m_expect, i, 30)
                             , GetSegmentWithOffsetAndLength(actual, i, 30)
@@ -105,10 +107,17 @@ namespace TestFirst.Net.Matcher
                 }
                 return "differ, actual length " + actual.Length + ", expected " + expect.Length;
             }
+
+            private Object ToPrettyVal(T obj){
+                if (obj != null && m_toPrettyValConverter != null) {
+                    return m_toPrettyValConverter.Invoke (obj);
+                }
+                return obj;
+            }
         }
 
 
-        private static string GetSegmentWithOffsetAndLength<T>(T[] data, int offset, int segLen)
+        private static string GetSegmentWithOffsetAndLength<T>(T[] data, int offset, int segLen,Func<T, object> toPrettyValConverter = null)
         {
             int from = offset - (segLen / 2);
             if (from < 0)
@@ -120,26 +129,29 @@ namespace TestFirst.Net.Matcher
             {
                 to = data.Length;
             }
-
-            var seg = new byte[to - from];
-            Array.Copy(data, from, seg, 0, seg.Length);
-
-            var s = "index " + from + "->";
-
-            s += "[";
+            var s = new StringBuilder("index " + from + "->");
+            s.Append("[");
             if (from > 0)
             {
-                s += "...";
+                s.Append("...");
             }
-            s += String.Join(",", seg);
+            for (var i = from; i < to; i++) {
+                if (i > from) {
+                    s.Append (',');
+                }
+                if (toPrettyValConverter != null) {
+                    s.Append(toPrettyValConverter.Invoke(data[i]));
+                } else {
+                    s.Append(data[i]);
+                }
+            }
             if (to < data.Length)
             {
-                s += "...";
+                s.Append("...");
             }
-
-            s += "]<-index ";
-            s += to;
-            return s;
+            s.Append("]<-index ");
+            s.Append(to);
+            return s.ToString();
         }
     }
 }
