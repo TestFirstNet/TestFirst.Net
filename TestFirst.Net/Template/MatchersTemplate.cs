@@ -270,8 +270,7 @@ namespace TestFirst.Net.Template
         
         internal class SingleMatcherTemplate : AbstractTemplate
         {
-            private IList<String> m_imports = new List<String>();
-
+            
             internal IDictionary<String, String> EqualMatcherSnippetsByTypeName;
             internal IList<PropertyMatchers> AdditionalPropertyMatchers { get; set; }
 
