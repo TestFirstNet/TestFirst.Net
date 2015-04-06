@@ -32,8 +32,8 @@ namespace TestFirst.Net.Test.Matcher
         [Test]
         public void StackTraceMatchTest()
         {
-            AssertPasses(NewThrownException(), AnException.With().StackTrace(AString.Containing("NewThrownException()")));
-            AssertFails(NewThrownException(), AnException.With().StackTrace(AString.Containing("SomeOtherMethod()")));
+            AssertPasses(NewThrownException(), AnException.With().StackTrace(AString.MatchingAntPattern("NewThrownException?()")));
+            AssertFails(NewThrownException(), AnException.With().StackTrace(AString.MatchingAntPattern("SomeOtherMethod?()")));
         }
 
         private MyException NewThrownException()
