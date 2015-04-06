@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace TestFirst.Net.Matcher
 {
@@ -120,6 +121,63 @@ namespace TestFirst.Net.Matcher
         public static IMatcher<string> Containing(string expect)
         {
             return Matchers.Function((string actual) => actual != null && actual.Contains(expect), "a string containing '" + expect + "'");
+        } 
+
+
+        public static IMatcher<string> MatchingAntPattern(String antPattern)
+        {
+            String regex = AntExpToPatternExp (antPattern, false);
+            return MatchingRegex(regex);
+        }
+
+        ///
+        // Convert an ant regular expression to a standard java pattern expression
+        // 
+        // '*' --&lt; '[^\\]*'
+        // '?' --&lt; '.{1}'
+        // '**' --&lt; '.*'
+        // 
+        //
+        private static String AntExpToPatternExp(String antPattern, bool requireDoubleStarForSlashes) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < antPattern.Length; i++) {
+                char c = antPattern[i];
+                if (c == '.') {
+                    sb.Append("\\.");
+                } else if (c == '*') {
+                    //to match path separators an ANT expression requires a double asterix as in '**'
+                    if (i <= antPattern.Length - 2 && antPattern[i + 1] == '*') {
+                        sb.Append(".*");
+                        i++;
+                    } else {
+                        if(requireDoubleStarForSlashes){
+                            sb.Append("[^/\\\\]*");// a single asterix '*' doesn't match path separators
+                        } else {
+                            sb.Append(".*");    
+                        }
+                    }
+                } else if (c == '?') {
+                    sb.Append(".{1}");
+                } else {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
+
+        public static IMatcher<string> MatchingRegex(String expectRegex)
+        {
+            return MatchingRegex(expectRegex, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        }
+
+        public static IMatcher<string> MatchingRegex(String expectRegex,RegexOptions options)
+        {
+            return MatchingRegex (new Regex (expectRegex, RegexOptions.Compiled | options));
+        }
+
+        public static IMatcher<string> MatchingRegex(Regex expect)
+        {
+            return Matchers.Function((string actual) => actual != null && expect.IsMatch(actual), "a string matching regex '" + expect.ToString() + "'");
         } 
 
         public static IMatcher<string> TrimmedLength(IMatcher<int?> intMatcher)
