@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using TestFirst.Net.Lang;
 using TestFirst.Net.Matcher.Internal;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace TestFirst.Net.Matcher
 {
@@ -267,6 +269,29 @@ namespace TestFirst.Net.Matcher
                 return Matches(actual as IEnumerable, diagnostics);
             }
 
+            protected override bool isValidType(Object actual){
+                Type itemType = GetItemType (actual);
+                return itemType != null && typeof(T).IsAssignableFrom(itemType);
+            }
+
+            protected override IEnumerable<T> wrap(Object actual){
+                //Mono seems to have issue casting IList<T> to IEnumerable<Nullable<T>> when T is a value type
+                Type itemType = GetItemType (actual);
+                if (itemType.IsValueType) {
+                    return new ValueTypeEnumerableWrapper<T>((IEnumerable)actual);
+                }
+                return (IEnumerable<T>)actual;
+            }
+
+            private Type GetItemType(object someCollection)
+            {
+                var type = someCollection.GetType();
+                var ienum = type.GetInterface(typeof(IEnumerable<>).Name);
+                return ienum != null
+                    ? ienum.GetGenericArguments()[0]
+                        : null;
+            }
+
             internal static IList AsEfficientList(IEnumerable items)
             {
                 if (items == null)
@@ -287,6 +312,7 @@ namespace TestFirst.Net.Matcher
             }
 
             public abstract bool Matches(IEnumerable actual, IMatchDiagnostics diagnostics);
+
         }
 
         private class IsEmptyMatcher<T>:NumItemsMatcher<T>
@@ -315,6 +341,63 @@ namespace TestFirst.Net.Matcher
                 return diag.TryMatch(count, "count", m_countMatcher);
             }
 
+        }
+
+        private class ValueTypeEnumerableWrapper<T> : System.Collections.Generic.IEnumerable<T>,IEnumerable
+        {
+            private readonly IEnumerable actual;
+
+            public ValueTypeEnumerableWrapper(IEnumerable actual){
+                this.actual = actual;
+            }
+
+            public IEnumerator<T> GetEnumerator()
+            {
+                return new ValueTypeEnumerator(actual.GetEnumerator());
+            }
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                return this.GetEnumerator();
+            }
+
+            public override string ToString ()
+            {
+                return actual.ToString();
+            }
+
+            class ValueTypeEnumerator : IEnumerator<T> {
+                private readonly IEnumerator actual;
+
+                public ValueTypeEnumerator(IEnumerator actual){
+                    this.actual = actual;
+                }
+
+                object System.Collections.IEnumerator.Current
+                {
+                    get { return this.Current; }
+                }
+
+                public T Current {
+                    get { return (T)actual.Current; }
+                }
+
+                public bool MoveNext (){
+                    return actual.MoveNext();
+                }
+
+                public void Reset (){
+                    actual.Reset ();
+                }
+
+                public void Dispose (){
+                    IDisposable d = actual as IDisposable;
+                    if (d != null) {
+                        d.Dispose ();
+                    }
+                }
+
+            }
         }
 
 

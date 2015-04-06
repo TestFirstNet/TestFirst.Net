@@ -1,4 +1,9 @@
 using System;
+using System.Threading.Tasks;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 
 namespace TestFirst.Net
 {
@@ -11,18 +16,16 @@ namespace TestFirst.Net
             NonNullableType, Allowed, NotAllowed
         }
 
-        protected AbstractMatcher()
-        {
-            m_isNullable = IsNullableType(typeof (T))?Nulls.Allowed : Nulls.NonNullableType;
-        }
+        protected AbstractMatcher():this(true)
+        {}
 
         protected AbstractMatcher(bool allowNull)
         {
-            if (IsNullableType(typeof(T)))
-            {
+            if (IsNullableType (typeof(T))) {
                 m_isNullable = allowNull ? Nulls.Allowed : Nulls.NotAllowed;
+            } else {
+                m_isNullable = Nulls.NonNullableType;
             }
-            m_isNullable = Nulls.NonNullableType;
         }
 
         /// <summary>
@@ -64,23 +67,30 @@ namespace TestFirst.Net
                         return false;
                 }
             }
-            if (typeof(T).IsInstanceOfType(actual))
+            if(!isValidType(actual))
             {
-                return Matches((T)actual, diagnostics);
+                diagnostics.MisMatched(Description.With()
+                    .Text("Wrong type, expected {0} but got {1}", typeof (T).FullName, actual.GetType().FullName)
+                    .Value("actual",actual.GetType().FullName)
+                );
+                return false;
             }
-            
-            diagnostics.MisMatched(Description.With()
-                .Text("Wrong type, expected {0} but got {1}", typeof (T).FullName, actual.GetType().FullName)
-                .Value("actual",actual.GetType().FullName)
-            );
-            return false;
+
+            T val;
+            try {
+                val = wrap(actual);
+            } catch(InvalidCastException e){
+                throw new InvalidCastException(String.Format("Could not cast {0} to {1}", actual.GetType().FullName, typeof(T).FullName), e);
+            }
+            return Matches(val, diagnostics);
         }
 
-        private static bool IsNullableType(Type t)
-        {
-            if (!t.IsValueType) return true; // ref-type
-            if (Nullable.GetUnderlyingType(t) != null) return true; // Nullable<T>
-            return false; // value-type
+        protected virtual T wrap(object actual){
+            return (T)actual;
+        }
+
+        protected virtual bool isValidType(Object actual){
+            return typeof(T).IsAssignableFrom (actual.GetType ());
         }
 
         public override String ToString()
@@ -90,9 +100,17 @@ namespace TestFirst.Net
             return desc.ToString();
         }
 
+        private static bool IsNullableType(Type t)
+        {
+            if (!t.IsValueType) return true; // ref-type
+            if (Nullable.GetUnderlyingType(t) != null) return true; // Nullable<T>
+            return false; // value-type
+        }
+
         /// <summary>
         /// Sub classes must override this
         /// </summary>
         public abstract bool Matches(T actual, IMatchDiagnostics diag);
     }
+
 }
