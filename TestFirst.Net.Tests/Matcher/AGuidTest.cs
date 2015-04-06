@@ -28,8 +28,8 @@ namespace TestFirst.Net.Test.Matcher
             AssertPasses(guid, AGuid.NotEqualTo(Guid.NewGuid()));
             AssertPasses(guid, AGuid.NotEqualTo(Guid.Empty));
             AssertPasses(null, AGuid.NotEqualTo(Guid.NewGuid()));
+            AssertPasses(guid, AGuid.NotEqualTo(null));
 
-            AssertFails(guid, AGuid.NotEqualTo(null));
             AssertFails(null, AGuid.NotEqualTo(null));
             AssertFails(guid, AGuid.NotEqualTo(guid));
         }

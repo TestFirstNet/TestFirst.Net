@@ -18,7 +18,7 @@ namespace TestFirst.Net.Matcher
                     }
                     return expect.Value.Equals(actual.Value);
                 },
-                "a Guid == '" + expect + "'"
+                expect ==null?"a null Guid":"a Guid == '" + expect + "'"
              );
         }
 
@@ -36,7 +36,7 @@ namespace TestFirst.Net.Matcher
                     }
                     return !expect.Value.Equals(actual.Value);
                 },
-                "a Guid = '" + expect + "'"
+                expect==null?"a non null Guid":"a Guid != '" + expect + "'"
              );
         }
 
