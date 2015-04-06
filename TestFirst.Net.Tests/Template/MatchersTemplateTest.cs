@@ -55,8 +55,8 @@ namespace TestFirst.Net.Template
         private static DirectoryInfo GetProjectDir()
         {
             var dir = Directory.GetCurrentDirectory();
-            var idx1 = dir.LastIndexOf("\\TestFirst.Net.Tests");
-            var idx2 = dir.LastIndexOf("\\bin\\");
+            var idx1 = dir.LastIndexOf(Path.DirectorySeparatorChar  + "TestFirst.Net.Tests");
+            var idx2 = dir.LastIndexOf(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar);
             if (idx1 > 0 && idx2 > 0 && (idx2 > idx1))
             {
                 var path = dir.Substring(0, idx2);
