@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{EF8C3967-0099-41CF-AAE7-02555869C67A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -29,7 +27,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -53,7 +50,7 @@
     <Compile Include="AbstractMatcher.cs" />
     <Compile Include="AbstractScenarioTest.cs" />
     <Compile Include="Expect.cs" />
-    <Compile Include="Inject\DateTimeOffsetProvider.cs" />
+    <Compile Include="Inject\IClock.cs" />
     <Compile Include="Inject\IRequireClock.cs" />
     <Compile Include="Matcher\ADateTimeOffset.cs" />
     <Compile Include="Matcher\AFileInfo.cs" />
