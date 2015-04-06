@@ -53,15 +53,22 @@ namespace TestFirst.Net {
 
         public Expect<T> That<T>(T actual)
         {
-            return new Expect<T>(actual);
+            return new Expect<T>(actual,m_label);
         }
 
     }
     public class Expect<T> {
         private readonly T m_actual;
+        private readonly Object m_label;
 
         public Expect(T actual) {
             m_actual = actual;
+            m_label = null;
+        }
+
+        public Expect(T actual,Object label) {
+            m_actual = actual;
+            m_label = label;
         }
 
         public void Is(IMatcher<T> matcher) {
@@ -105,6 +112,10 @@ namespace TestFirst.Net {
         private void GenerateAndThrowFailMsg(IMatcher matcher, MatchDiagnostics diag)
         {
             var desc = new Description();
+
+            if (m_label != null) {
+                desc.Child("for", m_label);
+            }
 
             desc.Child("expected", matcher);
             desc.Child("but was", m_actual);
