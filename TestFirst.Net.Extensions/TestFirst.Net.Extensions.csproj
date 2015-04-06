@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{074926A9-0CF4-422F-886E-8CFBF4839284}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -83,7 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TestFirst.Net\TestFirst.Net.csproj">
-      <Project>{ef8c3967-0099-41cf-aae7-02555869c67a}</Project>
+      <Project>{EF8C3967-0099-41CF-AAE7-02555869C67A}</Project>
       <Name>TestFirst.Net</Name>
     </ProjectReference>
   </ItemGroup>

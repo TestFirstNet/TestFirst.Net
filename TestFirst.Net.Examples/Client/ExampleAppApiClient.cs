@@ -6,17 +6,17 @@ namespace TestFirst.Net.Examples.Client
 {
     public class ApiClient:IApiClient
     {
-        public TResponse Query<TResponse>(IReturn<TResponse> query)
+        public TResponse Invoke<TResponse>(IReturn<TResponse> query)
         {
-            return (TResponse)Query(query,typeof(TResponse));
+            return (TResponse)Invoke(query,typeof(TResponse));
         }
 
-        public TResponse Query<TQuery,TResponse>(TQuery query) where TResponse:class
+        public TResponse Invoke<TQuery,TResponse>(TQuery query) where TResponse:class
         {
-            return (TResponse)Query(query, typeof(TResponse));
+            return (TResponse)Invoke(query, typeof(TResponse));
         }
 
-        private Object Query(Object query, Type responseType)
+        private Object Invoke(Object query, Type responseType)
         {
             //serialize request
 

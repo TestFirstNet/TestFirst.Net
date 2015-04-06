@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{626EA6EB-4C7B-4271-9F3D-7A053C7F7EAC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -44,6 +42,9 @@
     <None Include="TestFirst.Net.Examples.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <Reference Include="log4net">
+      <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.5.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -57,26 +58,28 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Api\IApiClient.cs" />
+    <Compile Include="Net\Http\WebApiClient.cs" />
+    <Compile Include="Net\IApiClient.cs" />
     <Compile Include="Api\QueryResponse.cs" />
     <Compile Include="Api\Notification.cs" />
-    <Compile Include="Api\Query\IReturn.cs" />
+    <Compile Include="Net\IReturn.cs" />
     <Compile Include="Api\Query\NotificationQuery.cs" />
     <Compile Include="Client\ExampleAppApiClient.cs" />
+    <Compile Include="RequestHandler.cs" />
     <Compile Include="Service\Database\NotificationDto.cs" />
     <Compile Include="Service\ExampleApp.cs" />
     <Compile Include="Service\Handler\IHandler.cs" />
     <Compile Include="Service\Handler\Query\AbstractQueryHandler.cs" />
     <Compile Include="Service\Handler\Query\NotificationQueryHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service\Http\IRequestProcessor.cs" />
-    <Compile Include="Service\Http\IRequestProvider.cs" />
-    <Compile Include="Service\Http\SerializerRequestProcessor.cs" />
-    <Compile Include="Service\Http\Serializer\ISerializer.cs" />
-    <Compile Include="Service\Http\Serializer\JsonNetSerializer.cs" />
-    <Compile Include="Service\Http\SerializerCallback.cs" />
-    <Compile Include="Service\Http\Listener.cs" />
-    <Compile Include="Service\Http\Request.cs" />
+    <Compile Include="Net\Http\IRequestProcessor.cs" />
+    <Compile Include="Net\Http\IRequestProvider.cs" />
+    <Compile Include="Net\Http\SerializerRequestProcessor.cs" />
+    <Compile Include="Net\Http\Serializer\ISerializer.cs" />
+    <Compile Include="Net\Http\Serializer\JsonNetSerializer.cs" />
+    <Compile Include="Net\Http\SerializerCallback.cs" />
+    <Compile Include="Net\Http\SimpleServer.cs" />
+    <Compile Include="Net\Http\RequestContext.cs" />
     <Compile Include="Service\Inject\IProvider.cs" />
     <Compile Include="Service\Inject\IRequireAccount.cs" />
     <Compile Include="Service\Inject\DependencyInjector.cs" />

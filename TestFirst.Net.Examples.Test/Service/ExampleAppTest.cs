@@ -18,7 +18,7 @@ namespace TestFirst.Net.Examples.Service
             app.RegisterHandler(new MyHandler());
             var result = new object();
             //when
-            var response = app.Query(new MyQuery{ReturnMe = result});
+            var response = app.Invoke(new MyQuery{ReturnMe = result});
             //then
             Assert.AreSame(result, response.Result);
         }
@@ -34,7 +34,7 @@ namespace TestFirst.Net.Examples.Service
                 .Given(app = new ExampleApp())
                 .Given(() => app.RegisterHandler(new MyHandler()))
                 .Given(result = new Object())
-                .When(response = app.Query(new MyQuery {ReturnMe = result}))
+                .When(response = app.Invoke(new MyQuery {ReturnMe = result}))
                 .Then(ExpectThat(response), Is(AResponse.With().Result(result)));
         }
 

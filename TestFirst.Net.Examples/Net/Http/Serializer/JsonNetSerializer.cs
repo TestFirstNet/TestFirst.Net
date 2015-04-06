@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace TestFirst.Net.Examples.Service.Http
 {
-    class JsonNetSerializer : ISerializer
+    public class JsonNetSerializer : ISerializer
     {
         private readonly JsonSerializer m_serializer = new JsonSerializer();
 

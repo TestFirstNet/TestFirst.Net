@@ -12,7 +12,7 @@ namespace TestFirst.Net.Examples.Service.Http
         [Test]
         public void Test()
         {
-            var listener = Listener.With()
+            var listener = SimpleServer.With()
                 .Host("localhost")
                 .FindFreePort()
                 .AuthScheme(AuthenticationSchemes.Anonymous)

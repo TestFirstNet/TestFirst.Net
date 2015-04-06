@@ -11,7 +11,7 @@ namespace TestFirst.Net.Examples.Service.Http
     /// 
     /// TODO:make worker queue external? why should we control threading?
     /// </summary>
-    internal class Listener : IDisposable
+    internal class SimpleServer : IDisposable
     {
         public String Host { get; private set; }
         public int Port { get; private set; }
@@ -31,7 +31,7 @@ namespace TestFirst.Net.Examples.Service.Http
             return new Builder();
         }
 
-        private Listener(String host, int port, AuthenticationSchemes scheme, AuthenticationSchemeSelector authSchemeSelector, IRequestProcessor requestProcessor)
+        private SimpleServer(String host, int port, AuthenticationSchemes scheme, AuthenticationSchemeSelector authSchemeSelector, IRequestProcessor requestProcessor)
         {
             Host = host;
             Port = port;
@@ -153,12 +153,12 @@ namespace TestFirst.Net.Examples.Service.Http
             }
         }
 
-        private Request GetRequestFor(IAsyncResult result)
+        private RequestContext GetRequestFor(IAsyncResult result)
         {
             if (m_listener.IsListening)
             {
                 var ctxt = m_listener.EndGetContext(result);
-                return new Request(Guid.NewGuid(), ctxt.Request, ctxt.Response);
+                return new RequestContext(Guid.NewGuid(), ctxt.Request, ctxt.Response);
             }
             //TODO:should allow all existing requests to finish no?
             throw new InvalidOperationException("Listener is no longer listening, can't provide any more work");
@@ -167,16 +167,16 @@ namespace TestFirst.Net.Examples.Service.Http
         private class RequestProvider : IRequestProvider
         {
             private readonly IAsyncResult m_result;
-            private readonly Listener m_listener;
-            private Request m_request;
+            private readonly SimpleServer m_listener;
+            private RequestContext m_request;
 
-            public RequestProvider(Listener listener, IAsyncResult result)
+            public RequestProvider(SimpleServer listener, IAsyncResult result)
             {
                 m_result = result;
                 m_listener = listener;
             }
 
-            public Request Take()
+            public RequestContext Take()
             {
                 //TODO:any memory barriers around here?
                 if(m_request == null)
@@ -236,14 +236,14 @@ namespace TestFirst.Net.Examples.Service.Http
                 return this;
             }
 
-            public Listener Build()
+            public SimpleServer Build()
             {
                 var port = m_port;
                 if (port <= 0)
                 {
                     port = FindFreePortOn(m_host);
                 }
-                return new Listener(m_host, port, m_authScheme, m_authSchemeSelector, m_requestProcessor);
+                return new SimpleServer(m_host, port, m_authScheme, m_authSchemeSelector, m_requestProcessor);
             }
 
             private int FindFreePortOn(string host)
