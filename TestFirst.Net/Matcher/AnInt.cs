@@ -14,7 +14,7 @@ namespace TestFirst.Net.Matcher
 
         public static IMatcher<int?> EqualTo(int expect)
         {
-            return Matchers.Function((int? actual) => actual == expect, "an integer == " + expect);
+            return Matchers.Function((int? actual) => actual.Equals(expect), "an integer == " + expect);
         }
 
         public static IMatcher<int?> GreaterThan(int expect)
