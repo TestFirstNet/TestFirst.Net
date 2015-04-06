@@ -79,7 +79,7 @@ namespace TestFirst.Net.Test.Matcher
         }
 
         [Test]
-        public void InAnyOrderAtLeastOutOfOrderItemsFPassesTest()
+        public void InAnyOrderAtLeastOutOfOrderItemsPassesTest()
         {
             AssertPasses(
                 Items("two", "one", "three"),

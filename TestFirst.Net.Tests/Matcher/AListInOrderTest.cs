@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using TestFirst.Net.Matcher;
+using System;
 
 namespace TestFirst.Net.Test.Matcher
 {
@@ -39,6 +40,30 @@ namespace TestFirst.Net.Test.Matcher
             AssertFails(
                 Items("one", "two"),
                 AList.InOrder().WithOnly(AString.EqualToValues("one", "two", "three"))
+            );
+        }
+
+        [Test]
+        public void InOrderAtLeastPrimitiveIntItemsPass()
+        {
+            AssertPasses(
+                Items(1, 2, 3),
+                AList.InOrder().WithAtLeast(AnInt.EqualTo(1))
+            );
+        }
+
+        [Test]
+        public void InOrderAtLeastPrimitiveGuidItemsPass()
+        {
+			System.Collections.Generic.IEnumerable<Guid> list = new System.Collections.Generic.List<Guid> ();
+
+			if (!typeof(System.Collections.Generic.IEnumerable<Guid>).IsInstanceOfType (list)) {
+				throw new ArgumentException ("types don't match");
+			}
+            Guid g = Guid.NewGuid();
+            AssertPasses(
+                Items(g, Guid.NewGuid()),
+                AList.InOrder().WithAtLeast(AGuid.EqualTo(g))
             );
         }
 
