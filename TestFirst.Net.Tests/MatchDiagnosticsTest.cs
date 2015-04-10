@@ -77,10 +77,10 @@ namespace TestFirst.Net.Test
             expect.AppendLine("Mismatch!");
             expect.AppendLine(Indent + "named:MyProperty");
             expect.AppendLine(Indent + "matcherType:" + matcher.GetType());
-            expect.AppendLine(Indent + "expect:" );
+            expect.AppendLine(Indent + "expected:" );
             expect.AppendLine(Indent + Indent + "Equals:MyValue" );
-            expect.AppendLine(Indent + "but was:" );
-            expect.AppendLine(Indent + Indent + "MyWrongValue" );
+            expect.AppendLine(Indent + "but was (string,length 12,quoted):" );
+            expect.AppendLine(Indent + Indent + "'MyWrongValue'" );
             expect.AppendLine(Indent + "Mismatch!");
             expect.AppendLine(Indent + Indent + "expected:MyValue");
             expect.AppendLine(Indent + Indent + "actual:MyWrongValue");
