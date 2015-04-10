@@ -1,4 +1,5 @@
 ﻿using System;
+using TestFirst.Net.Matcher.Internal;
 
 namespace TestFirst.Net {
 
@@ -39,6 +40,37 @@ namespace TestFirst.Net {
         /// <returns></returns>
         public static Expect<T> That<T>(T actual) {
             return new Expect<T>(actual);
+        }
+
+        public static void PrintExpectButGot(IDescription desc, Object actual, IMatcher matcher){
+            if (desc.IsNull) {
+                return;
+            }
+            desc.Value ("matcherType", GetMatcherType (matcher));
+            desc.Child("expected", matcher);
+            String s = actual as String;
+            if(s != null){
+                int len = s.Length;
+                if (len == 0) {
+                    desc.Child ("but was (empty string,quoted)", "'" + actual + "'");
+                } else if(s.Trim().Length == 0){
+                    desc.Child ("but was (blank string,length " + len + ",quoted)", "'" + actual + "'");
+                } else {
+                    desc.Child ("but was (string,length " + len + ",quoted)", "'" + actual + "'");
+                }
+            } else {
+                desc.Child ("but was", actual);
+            }
+        }
+
+        private static String GetMatcherType(IMatcher matcher)
+        {
+            var prettyfier = matcher as IProvidePrettyTypeName;
+            if (prettyfier != null)
+            {
+                return prettyfier.GetPrettyTypeName();
+            }
+            return matcher.GetType().FullName;
         }
     }
     
@@ -116,16 +148,14 @@ namespace TestFirst.Net {
             if (m_label != null) {
                 desc.Child("for", m_label);
             }
-
-            desc.Child("expected", matcher);
-            if (m_actual is String) {
-                desc.Child ("but was", "'" + m_actual + "'");
-            } else {
-                desc.Child ("but was", m_actual);
-            }
+            Expect.PrintExpectButGot(desc, m_actual, matcher);
             desc.Text("==== Diagnostics ====");
             desc.Child(diag);
             TestFirstAssert.Fail(Environment.NewLine + desc.ToString());
         }
+
+
     }
+
+
 }

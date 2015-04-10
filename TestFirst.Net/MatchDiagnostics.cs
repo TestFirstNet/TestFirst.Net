@@ -71,11 +71,8 @@ namespace TestFirst.Net
             }
             if (!matched)
             {
-                desc
-                    .Value("matcherType", GetMatcherType(childMatcher))
-                    .Child("expect", childMatcher)
-                    .Child("but was", actual)
-                    .Value(childDiag);
+                Expect.PrintExpectButGot(desc, actual, childMatcher);
+                desc.Value(childDiag);
             }
             else
             {
@@ -83,16 +80,6 @@ namespace TestFirst.Net
             }   
             Child(desc);
             return matched;
-        }
-
-        private String GetMatcherType(IMatcher matcher)
-        {
-            var prettyfier = matcher as IProvidePrettyTypeName;
-            if (prettyfier != null)
-            {
-                return prettyfier.GetPrettyTypeName();
-            }
-            return matcher.GetType().FullName;
         }
 
         public IMatchDiagnostics Matched(string text, params object[] args)
