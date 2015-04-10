@@ -118,7 +118,11 @@ namespace TestFirst.Net {
             }
 
             desc.Child("expected", matcher);
-            desc.Child("but was", m_actual);
+            if (m_actual is String) {
+                desc.Child ("but was", "'" + m_actual + "'");
+            } else {
+                desc.Child ("but was", m_actual);
+            }
             desc.Text("==== Diagnostics ====");
             desc.Child(diag);
             TestFirstAssert.Fail(Environment.NewLine + desc.ToString());

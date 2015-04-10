@@ -27,9 +27,10 @@ namespace TestFirst.Net.Util
             {
                 return null;
             }
-            if (val is String) {
+           /* if (val is String)
+            {
                 return "'" + val + "'";
-            }
+            }*/
             if (val is float)
             {
                 return ((float)val).ToString("R") + "F";

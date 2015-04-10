@@ -326,7 +326,11 @@ namespace TestFirst.Net
                 var desc = new Description();
                 desc.Child("Steps were",  StepsToString());
                 desc.Child("expected", matcher);
-                desc.Child("but was", actual);
+                if (actual is String) {
+                    desc.Child ("but was", "'" + actual + "'");
+                } else {
+                    desc.Child ("but was", actual);
+                }
                 desc.Text("==== Diagnostics ====");
                 desc.Child(diagnostics);
 

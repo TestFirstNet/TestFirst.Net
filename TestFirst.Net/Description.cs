@@ -265,7 +265,7 @@ namespace TestFirst.Net
         {
             if (desc != this)//prevent accidental self recursion
             {
-                desc.Value(ToString());
+                desc.Text(ToString());
             }            
         }
         
