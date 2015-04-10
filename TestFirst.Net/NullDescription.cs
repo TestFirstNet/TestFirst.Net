@@ -23,6 +23,10 @@ namespace TestFirst.Net
             return new NullDescription();
         }
 
+        public bool IsNull{
+            get {return true;}
+        }
+
         public IDescription Text(string line, params object[] args)
         {                        
             return this;

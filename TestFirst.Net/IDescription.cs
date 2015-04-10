@@ -6,6 +6,17 @@ namespace TestFirst.Net
     public interface IDescription:ISelfDescribing
     {
         /// <summary>
+        /// Return whether this is a null description. That is, a description which ignores all input
+        /// 
+        /// Useful if some diagnostic information could be expensive to generate and we only want to 
+        /// generate this on failure
+        /// </summary>
+        /// <returns><c>true</c> if this instance is a null description; otherwise, <c>false</c>.</returns>
+        bool IsNull {
+            get;
+        }
+
+        /// <summary>
         /// Append a line of text using passed in args to format. 
         /// </summary>
         /// <param name="line"></param>

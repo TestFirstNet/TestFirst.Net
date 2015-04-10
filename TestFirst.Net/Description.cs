@@ -60,6 +60,10 @@ namespace TestFirst.Net
             return new Description();
         }
 
+        public bool IsNull{
+            get {return false;}
+        }
+
         public IDescription Text(string line, params object[] args)
         {                        
             RequireIndent();
