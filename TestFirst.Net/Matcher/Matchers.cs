@@ -26,13 +26,30 @@ namespace TestFirst.Net.Matcher
             return new FuncTypeName<T>(matchFunc, mismatchMessageFactory);
         }
 
+        public static IMatcher<T> Function<T>(Func<T, bool> matchFunc, Action<IDescription> mismatchMessageFactory)
+        {
+            if (matchFunc == null)
+            {
+                throw new NullReferenceException("Expected non null matching function");
+            }
+            return new FuncTypeName<T>(matchFunc, mismatchMessageFactory);
+        }
+
         public static IMatcher<TActual> Function<TActual>(Func<TActual, IMatchDiagnostics, bool> matchFunc, string mismatchDesc)
         {
             return Function(matchFunc, ()=>mismatchDesc);
         }
 
-        
         public static IMatcher<TActual> Function<TActual>(Func<TActual, IMatchDiagnostics, bool> matchFunc, Func<string> mismatchMessageFactory)
+        {
+            if (matchFunc == null)
+            {
+                throw new NullReferenceException("Expected non null matching function");
+            }
+            return new FuncWithDiagnosticsTypeName<TActual>(matchFunc, mismatchMessageFactory);
+        }
+
+        public static IMatcher<TActual> Function<TActual>(Func<TActual, IMatchDiagnostics, bool> matchFunc, Action<IDescription> mismatchMessageFactory)
         {
             if (matchFunc == null)
             {
@@ -68,11 +85,20 @@ namespace TestFirst.Net.Matcher
         {
             private readonly Func<T, bool> m_matchFunc;
             private readonly Func<string> m_mismatchMessageFactory;
+            private readonly Action<IDescription> m_mismatchMessageFactory2;
 
             public FuncTypeName(Func<T, bool> matchFunc, Func<string> mismatchMessageFactory): base()
             {
                 m_matchFunc = matchFunc;
                 m_mismatchMessageFactory = mismatchMessageFactory;
+                m_mismatchMessageFactory = null;
+            }
+
+            public FuncTypeName(Func<T, bool> matchFunc, Action<IDescription> mismatchMessageFactory): base()
+            {
+                m_matchFunc = matchFunc;
+                m_mismatchMessageFactory = null;
+                m_mismatchMessageFactory2 = mismatchMessageFactory;
             }
 
             public override bool Matches(T instance, IMatchDiagnostics diag)
@@ -82,7 +108,13 @@ namespace TestFirst.Net.Matcher
 
             public override void DescribeTo(IDescription description)
             {
-                description.Text(m_mismatchMessageFactory.Invoke());
+                if (m_mismatchMessageFactory2 != null) {
+                    m_mismatchMessageFactory2.Invoke (description);
+                } else if (m_mismatchMessageFactory != null) {
+                    description.Text (m_mismatchMessageFactory.Invoke ());
+                } else {
+                    description.Text ("No description for " + GetType().Name + "@" + GetHashCode());
+                }
             }
 
             public String GetPrettyTypeName()
@@ -96,11 +128,20 @@ namespace TestFirst.Net.Matcher
             private readonly Func<TActual, IMatchDiagnostics, bool> m_matchFunc;
 
             private readonly Func<string> m_mismatchMessageFactory;
+            private readonly Action<IDescription> m_mismatchMessageFactory2;
 
             public FuncWithDiagnosticsTypeName(Func<TActual, IMatchDiagnostics, bool> matchFunc, Func<string> mismatchMessageFactory)
             {
                 m_matchFunc = matchFunc;
                 m_mismatchMessageFactory = mismatchMessageFactory;
+                m_mismatchMessageFactory2 = null;
+            }
+
+            public FuncWithDiagnosticsTypeName(Func<TActual, IMatchDiagnostics, bool> matchFunc, Action<IDescription> mismatchMessageFactory)
+            {
+                m_matchFunc = matchFunc;
+                m_mismatchMessageFactory = null;
+                m_mismatchMessageFactory2 = mismatchMessageFactory;
             }
 
             public override bool Matches(TActual instance, IMatchDiagnostics diag)
@@ -110,7 +151,13 @@ namespace TestFirst.Net.Matcher
 
             public override void DescribeTo(IDescription description)
             {
-                description.Text(m_mismatchMessageFactory.Invoke());
+                if (m_mismatchMessageFactory2 != null) {
+                    m_mismatchMessageFactory2.Invoke (description);
+                } else if (m_mismatchMessageFactory != null) {
+                    description.Text (m_mismatchMessageFactory.Invoke ());
+                } else {
+                    description.Text ("No description for " + GetType().Name + "@" + GetHashCode());
+                }
             }
 
             public String GetPrettyTypeName()

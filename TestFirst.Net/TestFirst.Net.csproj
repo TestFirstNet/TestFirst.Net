@@ -145,6 +145,7 @@
     <Compile Include="Rand\TypeExtensions.cs" />
     <Compile Include="SimpleStepArgInjector.cs" />
     <Compile Include="Inject\SystemClock.cs" />
+    <Compile Include="Matcher\AKeyValuePair.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />
