@@ -1,5 +1,7 @@
 ﻿using System;
 using TestFirst.Net.Util;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace TestFirst.Net.Matcher
 {
@@ -15,14 +17,14 @@ namespace TestFirst.Net.Matcher
             return Matchers.Function((T t) => true, "Any " + typeof(T).FullName);
         }
 
-        public static IMatcher<Object> Null()
+        public static IMatcher Null()
         {
             return Null<Object>();
         }
   
         public static IMatcher<T> Null<T>() where T : class
         {
-            return EqualTo((T)null);
+            return Matchers.Function((T actual) => actual == null, String.Format("a null <{0}>", typeof(T).FullName));
         }
 
         public static IMatcher<Object> NotNull()
@@ -37,6 +39,28 @@ namespace TestFirst.Net.Matcher
         
         public static IMatcher<T> EqualTo<T>(T expect)
         {
+            if (expect != null) {
+                if (expect is String) {
+                   return (IMatcher<T>) AString.EqualTo (expect as String);
+                }
+                Type t = typeof(T);
+                if (t.IsPrimitive || t.IsValueType ) {
+                    return Matchers.Function ((T actual) => actual.Equals (expect), typeof(T).Name + " == " + expect);
+                }
+                if (expect is TimeSpan) {
+                    return (IMatcher<T>) ATimeSpan.EqualTo (expect as TimeSpan?);
+                }
+                if (expect is Uri) {
+                    return (IMatcher<T>) AnUri.EqualTo (expect as Uri);
+                }
+                if (expect is DateTime) {
+                    return (IMatcher<T>) ADateTime.EqualTo (expect as DateTime?);
+                }
+                if (expect is DateTimeOffset) {
+                    return (IMatcher<T>) ADateTimeOffset.EqualTo (expect as DateTimeOffset?);
+                }
+            }
+
             return EqualTo(expect, () =>
                 {
                     if (expect != null)
