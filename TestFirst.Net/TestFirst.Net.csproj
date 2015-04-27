@@ -146,6 +146,7 @@
     <Compile Include="SimpleStepArgInjector.cs" />
     <Compile Include="Inject\SystemClock.cs" />
     <Compile Include="Matcher\AKeyValuePair.cs" />
+    <Compile Include="Matcher\AChar.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />

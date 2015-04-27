@@ -86,6 +86,7 @@
     <Compile Include="Matcher\PropertyMatcherTest.cs" />
     <Compile Include="TypeExtensionsTest.cs" />
     <Compile Include="Matcher\AKeyValuePairTest.cs" />
+    <Compile Include="Matcher\ACharTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Lang\" />
