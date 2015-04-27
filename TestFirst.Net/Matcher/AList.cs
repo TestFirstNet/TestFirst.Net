@@ -21,47 +21,47 @@ namespace TestFirst.Net.Matcher
     /// </summary>
     public static class AList
     {
-        public static ListOfMatchBuilder<int> ofInts(){
-            return new ListOfMatchBuilder<int> ();
+        public static ListOfMatchBuilder<int> OfInts(){
+            return Of<int> ();
         }
 
-        public static ListOfMatchBuilder<DateTime> ofDateTimes(){
-            return new ListOfMatchBuilder<DateTime> ();
+        public static ListOfMatchBuilder<DateTime> OfDateTimes(){
+            return Of<DateTime> ();
         }
 
-        public static ListOfMatchBuilder<DateTimeOffset> ofDateTimeOffsets(){
-            return new ListOfMatchBuilder<DateTimeOffset> ();
+        public static ListOfMatchBuilder<DateTimeOffset> OfDateTimeOffsets(){
+            return Of<DateTimeOffset> ();
         }
 
-        public static ListOfMatchBuilder<Guid> ofGuids(){
-            return new ListOfMatchBuilder<Guid> ();
+        public static ListOfMatchBuilder<Guid> OfGuids(){
+            return Of<Guid> ();
         }
 
-        public static ListOfMatchBuilder<float> ofFloats(){
-            return new ListOfMatchBuilder<float> ();
+        public static ListOfMatchBuilder<float> OfFloats(){
+            return Of<float> ();
         }
 
-        public static ListOfMatchBuilder<long> ofLongs(){
+        public static ListOfMatchBuilder<long> OfLongs(){
             return new ListOfMatchBuilder<long> ();
         }
 
-        public static ListOfMatchBuilder<char> ofChars(){
-            return new ListOfMatchBuilder<char> ();
+        public static ListOfMatchBuilder<char> OfChars(){
+            return Of<char> ();
         }
 
-        public static ListOfMatchBuilder<double> ofDoubles(){
-            return new ListOfMatchBuilder<double> ();
+        public static ListOfMatchBuilder<double> OfDoubles(){
+            return Of<double> ();
         }
 
-        public static ListOfMatchBuilder<String> ofStrings(){
-            return new ListOfMatchBuilder<String> ();
+        public static ListOfMatchBuilder<String> OfStrings(){
+            return Of<String> ();
         }
 
-        public static ListOfMatchBuilder<Object> ofObjects(){
-            return new ListOfMatchBuilder<Object> ();
+        public static ListOfMatchBuilder<Object> OfObjects(){
+            return Of<Object> ();
         }
 
-        public static ListOfMatchBuilder<T> of<T>(){
+        public static ListOfMatchBuilder<T> Of<T>(){
             return new ListOfMatchBuilder<T> ();
         }
 
@@ -294,6 +294,11 @@ namespace TestFirst.Net.Matcher
 
             /// <summary>
             /// Return a matcher which requires only that all matchers match once, so additional non matched items are allowed
+            /// 
+            /// Usage:
+            /// 
+            ///     AList.OfStrings().InOrder().WithOnly(x=>AString.Containing("x"),listOfStrings);
+            /// 
             /// </summary>
             public IAcceptMoreMatchers<T> WithOnly<TVal>(Func<TVal,IMatcher<T>> valueToMatchFunc, IEnumerable<TVal> values)
             {
