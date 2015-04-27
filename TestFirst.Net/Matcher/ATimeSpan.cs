@@ -3,6 +3,12 @@ using TestFirst.Net.Util;
 
 namespace TestFirst.Net.Matcher
 {
+    /// <summary>
+    /// Usage:
+    /// 
+    /// ATimeSpan.GreaterOrEqualTo(3).Minutes();
+    /// 
+    /// </summary>
     public static class ATimeSpan
     {
         public static IMatcher<TimeSpan?> EqualTo(TimeSpan? expect)
