@@ -6,11 +6,65 @@ using TestFirst.Net.Lang;
 using TestFirst.Net.Matcher.Internal;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace TestFirst.Net.Matcher
 {
+    /// <summary>
+    /// Usage:
+    /// 
+    /// AList
+    ///     .InOrder()
+    ///         .WithOnly(AString.containing("x"))
+    ///         .And(AString.EqualTo("foo"))
+    /// 
+    /// </summary>
     public static class AList
     {
+        public static ListOfMatchBuilder<int> ofInts(){
+            return new ListOfMatchBuilder<int> ();
+        }
+
+        public static ListOfMatchBuilder<DateTime> ofDateTimes(){
+            return new ListOfMatchBuilder<DateTime> ();
+        }
+
+        public static ListOfMatchBuilder<DateTimeOffset> ofDateTimeOffsets(){
+            return new ListOfMatchBuilder<DateTimeOffset> ();
+        }
+
+        public static ListOfMatchBuilder<Guid> ofGuids(){
+            return new ListOfMatchBuilder<Guid> ();
+        }
+
+        public static ListOfMatchBuilder<float> ofFloats(){
+            return new ListOfMatchBuilder<float> ();
+        }
+
+        public static ListOfMatchBuilder<long> ofLongs(){
+            return new ListOfMatchBuilder<long> ();
+        }
+
+        public static ListOfMatchBuilder<char> ofChars(){
+            return new ListOfMatchBuilder<char> ();
+        }
+
+        public static ListOfMatchBuilder<double> ofDoubles(){
+            return new ListOfMatchBuilder<double> ();
+        }
+
+        public static ListOfMatchBuilder<String> ofStrings(){
+            return new ListOfMatchBuilder<String> ();
+        }
+
+        public static ListOfMatchBuilder<Object> ofObjects(){
+            return new ListOfMatchBuilder<Object> ();
+        }
+
+        public static ListOfMatchBuilder<T> of<T>(){
+            return new ListOfMatchBuilder<T> ();
+        }
+
         /// <summary>
         /// Create a list of matchers, one for each of the given instances using the factory method provided.
         /// 
@@ -77,6 +131,61 @@ namespace TestFirst.Net.Matcher
             return new NumItemsMatcher<Object>(matcher);
         } 
 
+        public class ListOfMatchBuilder<T>{
+
+            /// <summary>
+            /// A list with only one element. If you need more use InOrder()/InAnyOrder() ...
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <param name="matcher"></param>
+            /// <returns></returns>
+            public IListMatcher<T> WithOnly(IMatcher<T> matcher)
+            {
+                return InOrder().WithOnly(matcher);
+            }
+
+            public IAcceptMoreMatchers<T> Without(IMatcher<T> matcher)
+            {
+                return new AListNotContains<T>().And(matcher);
+            }
+
+            /// <summary>
+            /// Return a matcher which allows matchers to match in any order. Currently as soon as a matcher is matched
+            /// it is removed from trying to match the remainign items. The matchers are applied in the order they were added
+            /// against each item in the list. As soon as a matcher matches a given item both the items and matcher are removed
+            /// from further processing. The process then moves on to the next item in the list
+            /// </summary>
+            /// <returns></returns>
+            public InAnyOrderMatchBuilder InAnyOrder()
+            {
+                return new InAnyOrderMatchBuilder();
+            }
+
+            /// <summary>
+            /// Return a matcher which requires all matchers to match in order
+            /// </summary>
+            /// <returns></returns>
+            public InOrderMatchBuilder InOrder()
+            {
+                return new InOrderMatchBuilder();
+            }
+
+            public IListMatcher<T> NoItems()
+            {
+                return new IsEmptyMatcher<T>();
+            }
+
+            public IListMatcher<T> WithNumItems(int count)
+            {
+                return WithNumItems(AnInt.EqualTo(count));
+            } 
+
+            public IListMatcher<T> WithNumItems(IMatcher<int?> matcher)
+            {
+                return new NumItemsMatcher<T>(matcher);
+            } 
+        }
+
         /// <summary>
         /// For items matchers where item order is important
         /// </summary>
@@ -88,25 +197,26 @@ namespace TestFirst.Net.Matcher
            /// </summary>
            public IAcceptMoreMatchers<T> WithOnly<T>(params IMatcher<T>[] itemMatchers)
            {
-               return WithOnly((IEnumerable<IMatcher<T>>) itemMatchers);
+                return OfType<T>().WithOnly(itemMatchers);
            }
-
-           public IAcceptMoreMatchers<string> WithOnly(params string[] values)
-           {
-               return WithOnly(AList.From(val=>AString.EqualTo(val), values));
-           }
-
+           
+           [Obsolete("Use WithOnlyValues(...) instead")]
            public IAcceptMoreMatchers<int?> WithOnly(params int?[] values)
            {
-               return WithOnly(AList.From(val => AnInt.EqualTo(val), values));
+                return OfType<int?>().WithOnlyValues(values);
            }
 
+           [Obsolete("Use WithOnlyValues(...) instead")]
+           public IAcceptMoreMatchers<String> WithOnly(params String[] values)
+           {
+                return OfType<String>().WithOnlyValues(values);
+           }
            /// <summary>
            /// Return a matcher which requires all items to match
            /// </summary>
            public IAcceptMoreMatchers<T> WithOnly<T,TVal>(Func<TVal,IMatcher<T>> valueToMatchFunc, IEnumerable<TVal> values)
-           {               
-               return WithOnly(Matchers.MatchersFromValues(valueToMatchFunc,values));
+           {    
+                return OfType<T>().WithOnly(valueToMatchFunc, values);
            }
 
            /// <summary>
@@ -114,26 +224,32 @@ namespace TestFirst.Net.Matcher
            /// </summary>
            public IAcceptMoreMatchers<T> WithOnly<T>(IEnumerable<IMatcher<T>> itemMatchers)
            {
-               PreConditions.AssertNotNull(itemMatchers, "itemMatchers");
-               return new AListInOrderWithOnlyMatcher<T>(itemMatchers);
+                return OfType<T>().WithOnly(itemMatchers);
            }
 
-           public IAcceptMoreMatchers<string> WithAtLeast(params string[] values)
-           {
-               return WithAtLeast(AList.From(val => AString.EqualTo(val), values));
-           }
+            public IAcceptMoreMatchers<T> WithAtLeastValues<T>(params T[] values)
+            {
+                return OfType<T>().WithAtLeastValues(values);
+            }
 
-           public IAcceptMoreMatchers<int?> WithAtLeast(params int?[] values)
-           {
-               return WithAtLeast(AList.From(val => AnInt.EqualTo(val), values));
-           }
+            [Obsolete("Use WithAtLeastValues(...) instead")]
+            public IAcceptMoreMatchers<String> WithAtLeast(params String[] values)
+            {
+                return OfType<String>().WithAtLeastValues(values);
+            }
+
+            [Obsolete("Use WithAtLeastValues(...) instead")]
+            public IAcceptMoreMatchers<int?> WithAtLeast(params int?[] values)
+            {
+                return OfType<int?>().WithAtLeastValues(values);
+            }
 
            /// <summary>
            /// Return a matcher which requires only that all matchers match once, so additional non matched items are allowed
            /// </summary>
            public IAcceptMoreMatchers<T> WithAtLeast<T>(params IMatcher<T>[] itemMatchers)
            {
-               return WithAtLeast((IEnumerable<IMatcher<T>>)itemMatchers);
+                return OfType<T>().WithAtLeast(itemMatchers);
            }
 
            /// <summary>
@@ -141,7 +257,7 @@ namespace TestFirst.Net.Matcher
            /// </summary>
            public IAcceptMoreMatchers<T> WithAtLeast<T,TVal>(Func<TVal,IMatcher<T>> valueToMatchFunc, IEnumerable<TVal> values)
            {               
-               return WithAtLeast(Matchers.MatchersFromValues(valueToMatchFunc,values));
+                return OfType<T>().WithAtLeast(valueToMatchFunc,values);
            }
 
            /// <summary>
@@ -149,11 +265,80 @@ namespace TestFirst.Net.Matcher
            /// </summary>
            public IAcceptMoreMatchers<T> WithAtLeast<T>(IEnumerable<IMatcher<T>> itemMatchers)
            {
-                PreConditions.AssertNotNull(itemMatchers, "itemMatchers");
-                return new AListInOrderAtLeast<T>(itemMatchers);
+                return OfType<T>().WithAtLeast (itemMatchers);
+           }
+
+           private InOrderMatchBuilder<T> OfType<T>(){
+                return new InOrderMatchBuilder<T> ();
            }
         }
 
+        /// <summary>
+        /// For items matchers where item order is important
+        /// </summary>
+        // ReSharper disable PossibleMultipleEnumeration
+        public class InOrderMatchBuilder<T>
+        {
+            /// <summary>
+            /// Return a matcher which requires all items to match
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithOnly(params IMatcher<T>[] itemMatchers)
+            {
+                return WithOnly((IEnumerable<IMatcher<T>>) itemMatchers);
+            }
+
+            public IAcceptMoreMatchers<T> WithOnlyValues(params T[] values)
+            {
+                return WithOnly(AList.From(val=>AnInstance.EqualTo(val), values));
+            }
+
+            /// <summary>
+            /// Return a matcher which requires only that all matchers match once, so additional non matched items are allowed
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithOnly<TVal>(Func<TVal,IMatcher<T>> valueToMatchFunc, IEnumerable<TVal> values)
+            {
+                return WithOnly(Matchers.MatchersFromValues(valueToMatchFunc,values));
+            }
+
+            /// <summary>
+            /// Return a matcher which requires all items to match
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithOnly(IEnumerable<IMatcher<T>> itemMatchers)
+            {
+                PreConditions.AssertNotNull(itemMatchers, "itemMatchers");
+                return new AListInOrderWithOnlyMatcher<T>(itemMatchers);
+            }
+
+            public IAcceptMoreMatchers<T> WithAtLeastValues(params T[] values)
+            {
+                return WithAtLeast(AList.From(val => AnInstance.EqualTo(val), values));
+            }
+
+            /// <summary>
+            /// Return a matcher which requires only that all matchers match once, so additional non matched items are allowed
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithAtLeast(params IMatcher<T>[] itemMatchers)
+            {
+                return WithAtLeast((IEnumerable<IMatcher<T>>)itemMatchers);
+            }
+
+            /// <summary>
+            /// Return a matcher which requires only that all matchers match once, so additional non matched items are allowed
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithAtLeast<TVal>(Func<TVal,IMatcher<T>> valueToMatchFunc, IEnumerable<TVal> values)
+            {               
+                return WithAtLeast(Matchers.MatchersFromValues(valueToMatchFunc,values));
+            }
+
+            /// <summary>
+            /// Return a matcher which requires only that all matchers match once, so additional non matched items are allowed
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithAtLeast(IEnumerable<IMatcher<T>> itemMatchers)
+            {
+                PreConditions.AssertNotNull(itemMatchers, "itemMatchers");
+                return new AListInOrderAtLeast<T>(itemMatchers);
+            }
+        }
         public class InAnyOrderMatchBuilder
         {
            /// <summary>
@@ -161,17 +346,24 @@ namespace TestFirst.Net.Matcher
            /// </summary>
            public IAcceptMoreMatchers<T> WithOnly<T>()
            {
-               return new AListInAnyOrderWithOnly<T>();
+                return ofType<T> ().WithOnly();
            }
 
+           [Obsolete("Use WithOnly(...) instead")]
            public IAcceptMoreMatchers<string> WithOnly(params string[] values)
            {
-               return WithOnly(AList.From(val => AString.EqualTo(val), values));
+                return ofType<String> ().WithOnlyValues(values);
            }
 
+           [Obsolete("Use WithOnly(...) instead")]
            public IAcceptMoreMatchers<int?> WithOnly(params int?[] values)
            {
-               return WithOnly(AList.From(val => AnInt.EqualTo(val), values));
+                return ofType<int?> ().WithOnlyValues(values);
+           }
+
+           public IAcceptMoreMatchers<T> WithOnlyValues<T>(params T[] values)
+           {
+                return ofType<T> ().WithOnlyValues(values);
            }
 
            /// <summary>
@@ -179,7 +371,7 @@ namespace TestFirst.Net.Matcher
            /// </summary>
            public IAcceptMoreMatchers<T> WithOnly<T>(params IMatcher<T>[] itemMatchers)
            {
-               return WithOnly((IEnumerable<IMatcher<T>>) itemMatchers);
+                return ofType<T> ().WithOnly(itemMatchers);
            }
 
            /// <summary>
@@ -187,7 +379,7 @@ namespace TestFirst.Net.Matcher
            /// </summary>
            public IAcceptMoreMatchers<T> WithOnly<T,TVal>(Func<TVal,IMatcher<T>> valueToMatchFunc, IEnumerable<TVal> values)
            {               
-               return WithOnly(Matchers.MatchersFromValues(valueToMatchFunc,values));
+                return ofType<T> ().WithOnly(valueToMatchFunc,values);
            }
 
            /// <summary>
@@ -195,34 +387,39 @@ namespace TestFirst.Net.Matcher
            /// </summary>
            public IAcceptMoreMatchers<T> WithOnly<T>(IEnumerable<IMatcher<T>> itemMatchers)
            {
-               PreConditions.AssertNotNull(itemMatchers, "itemMatchers");
-               return new AListInAnyOrderWithOnly<T>(itemMatchers);
+                return ofType<T> ().WithOnly(itemMatchers);
            }
 
+           [Obsolete("Use WithAtLeast(...) instead")]
            public IAcceptMoreMatchers<string> WithAtLeast(params string[] values)
            {
-               return WithAtLeast(AList.From(val => AString.EqualTo(val), values));
+                return ofType<String> ().WithAtLeastValues(values);
            }
 
+           [Obsolete("Use WithAtLeast(...) instead")]
            public IAcceptMoreMatchers<int?> WithAtLeast(params int?[] values)
            {
-               return WithAtLeast(AList.From(val => AnInt.EqualTo(val), values));
+                return ofType<int?> ().WithAtLeastValues(values);
            }
-
+           
+           public IAcceptMoreMatchers<T> WithAtLeastValues<T>(params T[] values)
+           {
+                return ofType<T> ().WithAtLeastValues(values);
+           }
            /// <summary>
            /// Return a matcher which requires only that all matchers match once, so additional non matched items are allowed
            /// </summary>
            public IAcceptMoreMatchers<T> WithAtLeast<T>(params IMatcher<T>[] itemMatchers)
            {
-               return WithAtLeast((IEnumerable<IMatcher<T>>)itemMatchers);
+                return ofType<T> ().WithAtLeast (itemMatchers);
            }
 
            /// <summary>
            /// Return a matcher which requires only that all matchers match once, so additional non matched items are allowed
            /// </summary>
            public IAcceptMoreMatchers<T> WithAtLeast<T,TVal>(Func<TVal,IMatcher<T>> valueToMatchFunc, IEnumerable<TVal> values)
-           {               
-               return WithAtLeast(Matchers.MatchersFromValues(valueToMatchFunc,values));
+           {    
+                return ofType<T> ().WithAtLeast (valueToMatchFunc,values);
            }
 
            /// <summary>
@@ -230,12 +427,88 @@ namespace TestFirst.Net.Matcher
            /// </summary>
            public IAcceptMoreMatchers<T> WithAtLeast<T>(IEnumerable<IMatcher<T>> itemMatchers)
            {
+                return ofType<T> ().WithAtLeast (itemMatchers);
+           }
+
+            private InAnyOrderMatchBuilder<T> ofType<T>(){
+                return new InAnyOrderMatchBuilder<T> ();
+            }
+
+        }
+
+        public class InAnyOrderMatchBuilder<T>
+        {
+            /// <summary>
+            /// Return a matcher which requires all items to match
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithOnly()
+            {
+                return new AListInAnyOrderWithOnly<T>();
+            }
+
+            public IAcceptMoreMatchers<T> WithOnlyValues(params T[] values)
+            {
+                return WithOnly(AList.From(val => AnInstance.EqualTo(val), values));
+            }
+
+            /// <summary>
+            /// Return a matcher which requires all items to match
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithOnly(params IMatcher<T>[] itemMatchers)
+            {
+                return WithOnly((IEnumerable<IMatcher<T>>) itemMatchers);
+            }
+
+            /// <summary>
+            /// Return a matcher which requires all items to match
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithOnly<TVal>(Func<TVal,IMatcher<T>> valueToMatchFunc, IEnumerable<TVal> values)
+            {               
+                return WithOnly(Matchers.MatchersFromValues(valueToMatchFunc,values));
+            }
+
+            /// <summary>
+            /// Return a matcher which requires all items to match
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithOnly(IEnumerable<IMatcher<T>> itemMatchers)
+            {
+                PreConditions.AssertNotNull(itemMatchers, "itemMatchers");
+                return new AListInAnyOrderWithOnly<T>(itemMatchers);
+            }
+
+            public IAcceptMoreMatchers<T> WithAtLeastValues(params T[] values)
+            {
+                return WithAtLeast(AList.From(val => AnInstance.EqualTo(val), values));
+            }
+
+            /// <summary>
+            /// Return a matcher which requires only that all matchers match once, so additional non matched items are allowed
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithAtLeast(params IMatcher<T>[] itemMatchers)
+            {
+                return WithAtLeast((IEnumerable<IMatcher<T>>)itemMatchers);
+            }
+
+            /// <summary>
+            /// Return a matcher which requires only that all matchers match once, so additional non matched items are allowed
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithAtLeast<TVal>(Func<TVal,IMatcher<T>> valueToMatchFunc, IEnumerable<TVal> values)
+            {               
+                return WithAtLeast(Matchers.MatchersFromValues(valueToMatchFunc,values));
+            }
+
+            /// <summary>
+            /// Return a matcher which requires only that all matchers match once, so additional non matched items are allowed
+            /// </summary>
+            public IAcceptMoreMatchers<T> WithAtLeast(IEnumerable<IMatcher<T>> itemMatchers)
+            {
                 PreConditions.AssertNotNull(itemMatchers, "itemMatchers");
                 return new AListInAnyOrderWithAtLeast<T>(itemMatchers);
-           }
+            }
 
 
         }
+
          // ReSharper enable PossibleMultipleEnumeration
 
         public interface IListMatcher<in T> :IMatcher<IEnumerable<T>>,IMatcher<IEnumerable>
