@@ -1,5 +1,8 @@
 ﻿using System;
 using TestFirst.Net.Matcher.Internal;
+using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+using TestFirst.Net.Matcher;
 
 namespace TestFirst.Net {
 
@@ -14,7 +17,7 @@ namespace TestFirst.Net {
         /// Usage:
         ///     
         /// foreach(var x in bar){
-        ///     Expect.For(x)  -- this is simply printed on failure, not used for matching
+        ///     Expect.For("x=" + x)  -- this is simply printed on failure, not used for matching
         ///         .That(Something(x))
         ///         .Is(AFoo.With()...);
         /// }
@@ -40,6 +43,18 @@ namespace TestFirst.Net {
         /// <returns></returns>
         public static Expect<T> That<T>(T actual) {
             return new Expect<T>(actual);
+        }
+
+        /// <summary>
+        /// Usage:
+        /// 
+        /// Expect.That(()=>Foo.MyThrowsMethod()).Throws(AnException.With().Message("something"));
+        /// 
+        /// </summary>
+        /// <param name="action">The action which is expected to throw an exception</param>
+        public static ExpectThrows That(Action action)
+        {
+            return new ExpectThrows (action);
         }
 
         public static void PrintExpectButGot(IDescription desc, Object actual, IMatcher matcher){
@@ -73,7 +88,10 @@ namespace TestFirst.Net {
             return matcher.GetType().FullName;
         }
     }
-    
+
+    /// <summary>
+    /// Adds additional information to the failure message
+    /// </summary>
     public class ExpectWithLabel
     {
         private readonly Object m_label;
@@ -88,8 +106,31 @@ namespace TestFirst.Net {
             return new Expect<T>(actual,m_label);
         }
 
+        public ExpectThrows That(Action action)
+        {
+            return new ExpectThrows (action);
+        }
     }
-    public class Expect<T> {
+
+    public class ExpectThrows : BaseExpect {
+        private readonly Action action;
+
+        public ExpectThrows(Action action){
+            this.action = action;
+        }
+
+        public void Throws(IMatcher<Exception> matcher){
+            Exception thrown = null;
+            try {
+                action ();
+            } catch(Exception e){
+                thrown = e;
+            }
+            MatchOrFail (thrown, matcher, null);
+        }
+    }
+
+    public class Expect<T> : BaseExpect {
         private readonly T m_actual;
         private readonly Object m_label;
 
@@ -101,6 +142,18 @@ namespace TestFirst.Net {
         public Expect(T actual,Object label) {
             m_actual = actual;
             m_label = label;
+        }
+
+        public void IsNull() {
+            AssertMatches(AnInstance.Null());
+        }
+
+        public void IsNotNull() {
+            Is(AnInstance.NotNull<T>());
+        }
+
+        public void IsEqualTo(T expect) {
+            Is(AnInstance.EqualTo(expect));
         }
 
         public void Is(IMatcher<T> matcher) {
@@ -123,37 +176,41 @@ namespace TestFirst.Net {
             AssertMatches(matcher);
         }
 
-        private void AssertMatches(IMatcher<T> matcher) {
-            var diag = new MatchDiagnostics();
-            if (!matcher.Matches(m_actual, diag))
-            {
-                GenerateAndThrowFailMsg(matcher, diag);
-            }
+        private void AssertMatches(IMatcher matcher) {
+            MatchOrFail(m_actual, matcher, m_label);
         }
 
         private void AssertMatches<TNull>(IMatcher<TNull?> matcher)
         where TNull : struct, T
         {
+            MatchOrFail(m_actual, matcher, m_label);
+        }
+
+    }
+
+    public class BaseExpect {
+
+        protected void MatchOrFail(Object actual,IMatcher matcher, Object label){
             var diag = new MatchDiagnostics();
-            if (!matcher.Matches(m_actual, diag)) 
+
+            if (!matcher.Matches(actual, diag)) 
             {
-                GenerateAndThrowFailMsg(matcher, diag);
+                GenerateAndThrowFailMsg(actual, matcher, diag, label);
             }
         }
 
-        private void GenerateAndThrowFailMsg(IMatcher matcher, MatchDiagnostics diag)
+        private void GenerateAndThrowFailMsg(Object actual,IMatcher matcher, MatchDiagnostics diag, Object label)
         {
             var desc = new Description();
 
-            if (m_label != null) {
-                desc.Child("for", m_label);
+            if (label != null) {
+                desc.Child("for", label);
             }
-            Expect.PrintExpectButGot(desc, m_actual, matcher);
+            Expect.PrintExpectButGot(desc, actual, matcher);
             desc.Text("==== Diagnostics ====");
             desc.Child(diag);
             TestFirstAssert.Fail(Environment.NewLine + desc.ToString());
         }
-
 
     }
 

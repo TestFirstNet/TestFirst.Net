@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using TestFirst.Net.Util;
+using System;
 
 namespace TestFirst.Net.Test.Matcher
 {
@@ -9,6 +10,38 @@ namespace TestFirst.Net.Test.Matcher
     /// </summary>
     public class BaseMatcherTest
     {
+        protected void AssertPasses(Action action, String errorMsg=null)
+        {
+            Exception thrown = null;
+            try {
+                action();
+            } catch (Exception e){
+                thrown = e;
+            }
+            Assert.IsNull (thrown, "expect no failure" + appendMsg(errorMsg));
+        }
+
+        protected void AssertFails(Action action, String errorMsg=null)
+        {
+            AssertionFailedException thrownAssertion = null;
+            Exception thrown = null;
+            try {
+                action();
+            } catch (AssertionFailedException e){
+                thrownAssertion = e;
+            } catch (Exception e){
+                thrown = e;
+            } 
+
+
+            Assert.IsNotNull (thrownAssertion, "expected assertion failure " + appendMsg(errorMsg));
+            Assert.IsNull (thrown, errorMsg,"expected assertion failure not this exception" + appendMsg(errorMsg));
+        }
+
+        private static String appendMsg(String msg){
+            return msg == null ? "" : ". " + msg;
+        }
+
         protected void AssertPasses<T>(IEnumerable<T> items, IList<IMatcher<T>> matchers)
         {
             var itemsAsList = new List<T>(items);

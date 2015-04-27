@@ -87,6 +87,7 @@
     <Compile Include="TypeExtensionsTest.cs" />
     <Compile Include="Matcher\AKeyValuePairTest.cs" />
     <Compile Include="Matcher\ACharTest.cs" />
+    <Compile Include="ExpectTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Lang\" />
