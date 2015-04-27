@@ -86,6 +86,7 @@ namespace TestFirst.Net.Matcher
             internal DateTimeEqualsMatcher EqualTo(DateTime? expect)
             {
                 m_expect = expect;
+                m_inclusive = false;
                 return this;
             }
 

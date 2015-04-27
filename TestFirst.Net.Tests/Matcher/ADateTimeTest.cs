@@ -21,6 +21,20 @@ namespace TestFirst.Net.Test.Matcher
         }
 
         [Test]
+        public void EqualDownToMilliseconds()
+        {
+            var now = DateTime.Now;
+            var dateTime = new DateTime(now.Year,now.Month,now.Day,now.Hour,now.Minute,now.Second,now.Millisecond);
+
+            AssertPasses(dateTime, ADateTime.EqualTo(dateTime));
+            AssertPasses(dateTime, ADateTime.EqualTo(new DateTime(now.Year,now.Month,now.Day,now.Hour,now.Minute,now.Second,now.Millisecond)));
+           
+            AssertFails(dateTime, ADateTime.EqualTo(new DateTime(now.Year,now.Month,now.Day,now.Hour,now.Minute,now.Second,now.Millisecond + 1)));
+            AssertFails(dateTime, ADateTime.EqualTo(new DateTime(now.Year,now.Month,now.Day,now.Hour,now.Minute,now.Second,now.Millisecond - 1)));
+
+        }
+
+        [Test]
         public void NullTest()
         {
             AssertPasses(null, ADateTime.Null());
