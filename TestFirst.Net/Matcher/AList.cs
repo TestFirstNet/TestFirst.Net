@@ -511,7 +511,7 @@ namespace TestFirst.Net.Matcher
 
          // ReSharper enable PossibleMultipleEnumeration
 
-        public interface IListMatcher<in T> :IMatcher<IEnumerable<T>>,IMatcher<IEnumerable>
+        public interface IListMatcher<in T> :IMatcher<IEnumerable<T>>,IMatcher<IEnumerable>,IMatcher
         {
         }
 
