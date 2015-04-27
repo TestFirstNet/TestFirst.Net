@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using TestFirst.Net.Matcher;
+using System;
 
 namespace TestFirst.Net.Test.Matcher
 {
@@ -18,6 +19,8 @@ namespace TestFirst.Net.Test.Matcher
             AssertFails(new byte[] { }, AnArray.EqualTo(new byte[] { 1 }));
 
             AssertPasses(new byte[] { 1, 2, 3 }, AnArray.EqualTo(new byte[] { 1, 2, 3 }));
+            AssertPasses(new String[] { "Alice","Bob","Tim" }, AnArray.EqualTo(new String[] { "Alice", "Bob", "Tim" }));
+
             var b = RandomBytes();
             AssertPasses(b, AnArray.EqualTo(b));
         }
