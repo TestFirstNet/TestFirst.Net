@@ -9,7 +9,11 @@ namespace TestFirst.Net.Matcher
 
         public static IMatcher<Exception> Any()
         {
+<<<<<<< HEAD
             return AnInstance.Any();
+=======
+            return Matchers.Any();
+>>>>>>> 345c82108655872ff6bf201f5601d9033032c330
         }
 
         public static AnException Of()
