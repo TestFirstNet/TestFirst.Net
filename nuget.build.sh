@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 local_nuget_pkg_dir=~/workspace/local-nuget-repo
 
