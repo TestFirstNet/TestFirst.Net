@@ -12,7 +12,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Performance testing extensions to core TestFirst.Net</description>
     <!--<releaseNotes></releaseNotes>-->
-    <copyright>Copyright © TestFirst.Net 2014</copyright>
+    <copyright>Copyright © TestFirst.Net 2014 - 2015</copyright>
     <tags>testing bdd fluent performance</tags>
   </metadata>
   <!-- don't include /content/ in nupkg -->

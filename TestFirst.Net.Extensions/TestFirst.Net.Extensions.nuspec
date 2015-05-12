@@ -12,7 +12,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>NUnit and Moq extensions to core TestFirst.Net</description>
     <!--<releaseNotes></releaseNotes>-->
-    <copyright>Copyright © TestFirst.Net 2014</copyright>
+    <copyright>Copyright © TestFirst.Net 2014 - 2015</copyright>
     <tags>testing bdd fluent nunit moq</tags>
   </metadata>
   <!-- don't include /content/ in nupkg -->

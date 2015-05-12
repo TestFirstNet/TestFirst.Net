@@ -10,20 +10,18 @@
     <projectUrl>https://github.com/TestFirstNet/TestFirst.Net/</projectUrl>
     <iconUrl>http://testfirstnet.github.io/TestFirst.Net/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Testing library providing a fluent bdd testing approach. Can be easily integrated into your own testing tools (nunit, xunit, moq, etc)</description>
+    <description>Testing library providing a fluent tdd/bdd testing approach. Can be easily integrated into your own testing tools (nunit, xunit, moq, etc)</description>
     <releaseNotes>
-      Noteable changes
-      * Breaking: Moved Random and RandomFiller from TestFirst.Net.Random to TestFirst.Net.Rand to avoid naming clashes
-      * Updated : Random.TimeSpan now generates values using the entire resolution (not just down to seconds)
-      * Updated : Random.DateTime now uses a wider range and uses the fll resolution of DateTime
-      * New : FluentMock now supports asserting number of times methods/property-access is called
-      * New : Actually implement AnArray.EqualTo
-      * New : Add convenience string and int matcher methods on AList.InOrder and AList.AnyOrder
-      * New : Add AString.Empty and AString.EmptyOrNull
-      * New : Add Random.DateTimeOffset
+    Noteable changes
+      * Updated : Various bug fixes
+      * Updated : AList now better supports mixed lists
+      * Updated : Improved diagnostic error messages
+      * Updated : Addition of new match methods on various matchers 
+      * New : Add new matchers AnException,AChar
+      * New : Add Expect.That(..).Throws(..) for exception testing
     </releaseNotes>
-    <copyright>Copyright © TestFirst.Net 2014</copyright>
-    <tags>testing bdd fluent nunit moq</tags>
+    <copyright>Copyright © TestFirst.Net 2014 - 2015</copyright>
+    <tags>testing tdd bdd fluent nunit moq</tags>
   </metadata>
   <!-- don't include /content/ in nupkg -->
   <files />
