@@ -7,9 +7,9 @@ namespace TestFirst.Net.Matcher
         //for refactor friendly support
         private static readonly Exception PropertyNames = null;
 
-        public static AnException Any()
+        public static IMatcher<Exception> Any()
         {
-            return With();
+            return AnInstance.Any();
         }
 
         public static AnException Of()
