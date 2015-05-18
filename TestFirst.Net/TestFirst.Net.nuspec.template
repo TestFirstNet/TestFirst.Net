@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>TestFirst.Net</id>
+    <version>$version$</version>
+    <title>TestFirst.Net</title>
+    <authors>TestFirst.Net</authors>
+    <owners>TestFirst.Net</owners>
+    <licenseUrl>http://testfirstnet.github.io/TestFirst.Net/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/TestFirstNet/TestFirst.Net/</projectUrl>
+    <iconUrl>http://testfirstnet.github.io/TestFirst.Net/icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>Fluent testing library to make tdd/bdd testing easy. Easily integrated into your own testing tools (nunit, xunit, moq, etc)</summary>
+    <description>
+        TOKEN_MAIN_DESCRIPTON
+    </description>
+    <releaseNotes>
+        TOKEN_MAIN_RELEASENOTES
+    </releaseNotes>
+    <copyright>Copyright © TestFirst.Net 2014 - 2015</copyright>
+    <tags>testing tdd bdd fluent nunit moq</tags>
+  </metadata>
+  <files>
+    <file src="obj/Release/TestFirst.Net*.dll" target="/lib/net/40/"/>
+  </files>
+</package>
