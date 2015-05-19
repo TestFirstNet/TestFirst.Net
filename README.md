@@ -10,35 +10,35 @@ The driving concepts behind this library are:
 Comprehension
 ------------
 
-    * tests should be easy to understand. Tests are read far more often than they are written. Focus on the read part
-    * if possible make tests easy to write too. Easy to write tests result in more test code and more fun
-    * keep tests as close to natural language as possible as this is quicker to parse, though try to eliminate ambiguity
+* tests should be easy to understand. Since code is read far more than written, focus on the read part.
+* keep tests as close to natural language as possible, though try to eliminate ambiguity
+* if possible also make tests easy to write. This results in more test code and more fun
 
 Making the IDE work for you
 ------------
    
-    * support autocomplete.
-    * support refactoring.
-    * make it easy to jump directly to code doing the actual work.
+* support autocomplete.
+* support refactoring.
+* make it easy to jump directly to code doing the actual work.
 
 Integration
 ------------
 
-    * easily integrate with existing test infrastructure
+* easily integrate with existing test infrastructure
 
 Extensibility
 ------------
         
-    * make it easy to customise your tests.
-    * infrastructure should aid you not hinder.
-    * allow you to do your own thing when required. Replace the bits you need without having to reimplement all the parts
-    * not force you to do it a certain way, though following conventions helps.
+* make it easy to customise your tests.
+* infrastructure should aid not hinder.
+* allow you to do your own thing when required. Replace the bits you need without having to reimplement all the parts
+* not force you to do it a certain way, though following conventions helps.
 
 Discoverability
 ------------
 
-    * discovery of things should be easy without the need to go and read the documentation. 
-    * a consistent and easy to guess naming pattern.
+* discovery of things should be easy without the need to go and read the documentation. 
+* a consistent and easy to guess naming pattern.
 
 Diagnostics
 ------------
@@ -52,14 +52,17 @@ DRY
 Don't repeat the same boring string assertion, or complex relationship tests across all your tests. Put it 
 in a single place (your Matcher).
 
-For example, the scenario:
+Example
+------------
+
+The scenario:
 
     "Given a registered user, with an account balance of 10 dollars, when 6 dollars is debited, then 
     expect that the account only has 4 dollars, and the transaction ledger records a 6 dollar debit"
 
 can be written in TestFirst.Net as:
 
-    `Scenario()
+    Scenario()
         .Given(user = UserInTheDb().WithDefaults())
         .Given(account = AccountInTheDb().For(user).Balance(10).Dollars())
         
@@ -70,7 +73,7 @@ can be written in TestFirst.Net as:
             Is(AnAcccount.With().Balance(4).Dollars())
         .Then(
             ExpectThat(TheAccountLedgerInTheDb.For(account)),
-            Is(AnLedger.With().Debit(6).Dollars());`
+            Is(AnLedger.With().Debit(6).Dollars());
     
 Which depending on the number of beers you've drunk resembles the natural english version fairly closely without the need of an additional
 template translation step in the process (so refactoring won't kill things, find references still work, can step directly to the assertion code)    
@@ -83,11 +86,11 @@ on the objects and services under test. Naming convention is that matchers names
 
 Examples:
 
-    `AString.Contains(...)
+    AString.Contains(...)
     AnInt.Between(2,5)
     ADateTime.Now().Within(3).Seconds()
     ACookie.With().Name("foo").Value(AString.MatchingAndPattern("?bar*)).Expires(ADateTime.After(DateTime.Now)));
-    AFoo.With().Bar("123").Fibble(AFibble.With().BigEars().NoMoustache());`
+    AFoo.With().Bar("123").Fibble(AFibble.With().BigEars().NoMoustache());
 
 The idea is that as you flesh out your tests over time, more and more of the test code can be reused. This is
 versus all the assertions repeated in your test. So for example if there is a concept of a 'valid' email address, 
@@ -140,37 +143,36 @@ Examples:
 
 Scenario based
 ----------
-
 Setup scenarios which provide injection, db creation, db insertion and retrieval, service startup, resource cleanup. 
 
 You can still roll it as you wish by combining or swapping out the parts yourself. This still integrates with your existing test classes.
 
 If extending fo NUnit or Moq, include nuget package TestFirst.Net.Extensions
 
-[TestFixture]
-MyTestScenario : AbstractNUnitScenarioTest {...//or AbstractNUnitMoqScenarioTest or ScenarioFluency
+    [TestFixture]
+    MyTestScenario : AbstractNUnitScenarioTest {...//or AbstractNUnitMoqScenarioTest or ScenarioFluency
 
-    [Test]
-    public void HappyPathUserCorrectlyRegistered(){
-        RegistrationService service;
-        Registration reg;            
+        [Test]
+        public void HappyPathUserCorrectlyRegistered(){
+            RegistrationService service;
+            Registration reg;            
 
-        Scenario() <-- passes back a 'Scenario' object with an injector
-            .Given(reg = UserRegistration.With().Defaults().Age(123).RandomPassword()..)
-            .Given(service = NewRegistrationService())    <--this is disposed at end of test
-            .When(service.register(reg))//<!--interesting part of test
-            .Then(
-                ExpectThat(UserInTheDb.With().UserName(reg.UserName)), <-- UserInTheDb is a 'Fetcher'
-                Is(AUserInTheDb.With().Age(reg.Age)...))
-            .Then(
-                ExpectThat(LoginInTheDb.With().UserName(reg.UserName)),
-                Is(ALoginInTheDb.With().Password(reg.Password)...))
-            .Then(
-                ExpectThat(AccountInTheDb.With().UserName(reg.UserName)),
-                Is(AnAccount.With().Created(ADateTime.After(now)...))
+            Scenario() <-- passes back a 'Scenario' object with an injector
+                .Given(reg = UserRegistration.With().Defaults().Age(123).RandomPassword()..)
+                .Given(service = NewRegistrationService())    <--this is disposed at end of test
+                .When(service.register(reg))//<!--interesting part of test
+                .Then(
+                    ExpectThat(UserInTheDb.With().UserName(reg.UserName)), <-- UserInTheDb is a 'Fetcher'
+                    Is(AUserInTheDb.With().Age(reg.Age)...))
+                .Then(
+                    ExpectThat(LoginInTheDb.With().UserName(reg.UserName)),
+                    Is(ALoginInTheDb.With().Password(reg.Password)...))
+                .Then(
+                    ExpectThat(AccountInTheDb.With().UserName(reg.UserName)),
+                    Is(AnAccount.With().Created(ADateTime.After(now)...))
 
+        }
     }
-}
 
 Test now clearly shows the setup, the operation(s) we're testing, and the expected result
 
