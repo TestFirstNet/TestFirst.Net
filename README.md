@@ -5,7 +5,7 @@ Summary
 Testing library providing a fluent tdd/bdd testing approach. Can be easily integrated 
 into your own testing tools (nunit, xunit, moq, etc)
 
-The driving concepts behind this library are:
+The goals behind this library are:
 
 Comprehension
 ------------
@@ -32,7 +32,7 @@ Extensibility
 * make it easy to customise your tests.
 * infrastructure should aid not hinder.
 * allow you to do your own thing when required. Replace the bits you need without having to reimplement all the parts
-* not force you to do it a certain way, though following conventions helps.
+* not force you to do it a certain way, though encouraging conventions helps.
 
 Discoverability
 ------------
