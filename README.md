@@ -311,6 +311,31 @@
         
         Any part of the above can be replaced with your own implementation if you don't like how the provided classes work.
 
+        Output report will look something like:
+    
+            Generated At: XXXX
+                 Metrics: "<path-to-results>.csv"
+                 Summary:
+            For metric 'metric1'
+                    Total Metric Count: 10
+                              Ok Count: 8
+                           Error Count: 2 (ignored in calculations)
+                     Throughput/Second: 8
+                          Metric Units: ms
+                               Min Val: 0
+                              Mean Val: 4.75
+                            Median Val: 5
+                               Max Val: 10
+                          StdDeviation: 3.56195171219375
+                StdDeviation % of Mean: 74.9884570988158%
+               68% confidence interval (+/-1 std deviation)
+                                      : 1.18804828780625 to 8.31195171219375
+               95% confidence interval (+/-2 std deviations)
+                                      : -2.3739034243875 to 11.8739034243875
+            For metric 'metric2'
+                .....
+
+
 8. Automatic Matcher code generation
 
     In a T4 template, use the following:
