@@ -1,8 +1,19 @@
+V0.3.0
+====
+
 Noteable changes
 
-* Updated : Various bug fixes
 * Updated : AList now better supports mixed lists
 * Updated : Improved diagnostic error messages
 * Updated : Addition of new match methods on various matchers 
+* Updated : Various bug fixes
+* Updated : Improve documentation
 * New : Add new matchers AnException,AChar
 * New : Add Expect.That(..).Throws(..) for exception testing
+
+V0.2.1
+====
+
+* Release as NuGet package
+
+

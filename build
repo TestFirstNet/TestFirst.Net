@@ -43,7 +43,7 @@ function filterTemplate(){
     from=$1
     to=$2 
     log "filtering template $from to $to"
-
+    
     mkdir -p $TMP_DIR
 
     cp -f "$from" "$to"

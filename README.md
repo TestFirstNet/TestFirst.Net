@@ -2,12 +2,15 @@
 Summary
 ============
 
-Testing library providing a fluent tdd/bdd testing approach. Can be easily integrated 
-into your own testing tools (nunit, xunit, moq, etc).
+Testing library providing a fluent tdd/bdd testing approach. Can be easily extended and integrated 
+into your own testing tools (nunit, xunit, moq, etc). 
+
+Encourages the creation of easier to read and maintain testing code via the use of fluent builders for scenario's, given/when/thens, 
+Moq verification, List and Dictionary matchers
 
 Compatible on both the Windows .Net runtime and Mono
 
-For example, the scenario:
+As a quick example, the scenario:
 
     "Given a registered user, with an account balance of 10 dollars, when 6 dollars is debited, then 
     expect that the account only has 4 dollars, and the transaction ledger records a 6 dollar debit"
@@ -39,17 +42,19 @@ Comprehension
 * keep tests as close to natural language as possible, though try to eliminate ambiguity
 * if possible also make tests easy to write. This results in more test code and more fun
 
+Integration
+------------
+
+* don't get in the way of my existing tests
+* don't force (but maybe encourage) how I should write and integrate my test code
+* make integration easy
+
 Making the IDE work for you
 ------------
    
 * support autocomplete.
 * support refactoring.
 * make it easy to jump directly to code doing the actual work.
-
-Integration
-------------
-
-* easily integrate with existing test infrastructure
 
 Extensibility
 ------------
@@ -75,7 +80,7 @@ DRY
 ------------
 
 Don't copy and paste the same boring assertion, or complex relationship assertion all through your tests. Put them 
-in a single place (your Matcher). This makes changes to business behvaiour much easier to manage.
+in a single place (a Matcher). This makes changes to business behvaiour much easier to manage.
 
 Matchers
 ============
@@ -409,4 +414,23 @@ For further options run:
 
     ./build help
 
+Contributing
+============
+
+Updates and suggestions welcome and actively encouraged. Improvements and additions, better documention, more tests, yes yes and yes!
+
+Will accept email diffs (if not massive) if you want to protect your identity (e.g. corporate).
+
+Preference is for pull requests though.
+
+Prefer many smaller changes rather than a massive refactor (will then likely reject). Try to keep a patch focused on one aspect. If 
+multiple changes try to stagger in a sensible way so each step can be tested along the way.
+
+TODO
+===========
+
+* Flesh out examples
+* More documentation
+* Flesh out public database testing code
+* Add base UI testing
 
