@@ -272,35 +272,35 @@ Extend AbstractNUnitMoqScenarioTest to provide easy creation and registration of
 
 If using MatcherMoqExtensions, a fullish example would be:
 
-[TestFixture]
-MyTestClass : AbstractNUnitMoqScenarioTest {
+    [TestFixture]
+    MyTestClass : AbstractNUnitMoqScenarioTest {
 
-    [Test]
-    public void myTest(){
-     
-        MyClass foo;
-        String response;
+        [Test]
+        public void myTest(){
+         
+            MyClass foo;
+            String response;
 
-        Scenario() //this will set the scenario name to the name of your test method, in this case 'myTest'
-             .Given(foo=AMock<MyClass>() //setup the mock
-                     .WhereMethod(f=>f.DoIt(
-                         ArgIs(AString.EndingWith("It")),
-                         ArgIs(AnInt.GreaterThan(0))
-                     )
-                     .Returns("done!")
-                     .WhereMethod(f=>f.DoneIt(
-                         ArgIs(AString.EqualTo("done!"))
-                     )
-                     .Instance //returns the mock object and assigns to foo
-             )
-         .When(response=foo.DoIt("WorkIt",2)) //invoke the 1st method
-         .Then(ExpectThat(response),Is(AString.EqualTo("done!"))
-         .When(foo.DoneIt(response)) //invoke the 2nd method
-         .Then(Nothing())//you shoud assert something here
+            Scenario() //this will set the scenario name to the name of your test method, in this case 'myTest'
+                 .Given(foo=AMock<MyClass>() //setup the mock
+                         .WhereMethod(f=>f.DoIt(
+                             ArgIs(AString.EndingWith("It")),
+                             ArgIs(AnInt.GreaterThan(0))
+                         )
+                         .Returns("done!")
+                         .WhereMethod(f=>f.DoneIt(
+                             ArgIs(AString.EqualTo("done!"))
+                         )
+                         .Instance //returns the mock object and assigns to foo
+                 )
+             .When(response=foo.DoIt("WorkIt",2)) //invoke the 1st method
+             .Then(ExpectThat(response),Is(AString.EqualTo("done!"))
+             .When(foo.DoneIt(response)) //invoke the 2nd method
+             .Then(Nothing())//you shoud assert something here
 
-        //Moq's Mock.VerifyAll will be automatically called at the end of the scenario
+            //Moq's Mock.VerifyAll will be automatically called at the end of the scenario
+        }
     }
-}
 
 Performance testing
 ============
