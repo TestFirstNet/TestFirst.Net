@@ -43,13 +43,13 @@ function filterTemplate(){
 
     cp -f "$from" "$to"
     filterHtml "../README.md" > "$TMP_DIR/README.md.clean"
-    filterHtml "../RELEASENOTES.txt" > "$TMP_DIR/RELEASENOTES.txt.clean"
+    filterHtml "../RELEASENOTES.md" > "$TMP_DIR/RELEASENOTES.md.clean"
 
     sed -i -e "/TOKEN_MAIN_DESCRIPTON/{r $TMP_DIR/README.md.clean" -e 'd}' $to
-    sed -i -e "/TOKEN_MAIN_RELEASENOTES/{r $TMP_DIR/RELEASENOTES.txt.clean" -e 'd}' $to
+    sed -i -e "/TOKEN_MAIN_RELEASENOTES/{r $TMP_DIR/RELEASENOTES.md.clean" -e 'd}' $to
     
     rm -f "$TMP_DIR/README.md.clean"
-    rm -f "$TMP_DIR/RELEASENOTES.txt"
+    rm -f "$TMP_DIR/RELEASENOTES.md.clean"
     
     rm -fR $TMP_DIR
 }
