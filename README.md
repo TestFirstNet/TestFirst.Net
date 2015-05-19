@@ -3,7 +3,32 @@ Summary
 ============
 
 Testing library providing a fluent tdd/bdd testing approach. Can be easily integrated 
-into your own testing tools (nunit, xunit, moq, etc)
+into your own testing tools (nunit, xunit, moq, etc).
+
+Compatible on both the Windows .Net runtime and Mono
+
+For example, the scenario:
+
+    "Given a registered user, with an account balance of 10 dollars, when 6 dollars is debited, then 
+    expect that the account only has 4 dollars, and the transaction ledger records a 6 dollar debit"
+
+can be written in TestFirst.Net as:
+
+    Scenario()
+        .Given(user = UserInTheDb().WithDefaults())
+        .Given(account = AccountInTheDb().For(user).Balance(10).Dollars())
+        
+        .When(()=>account.debit(6))
+
+        .Then(
+            ExpectThat(TheAccountInTheDb.For(account)),
+            Is(AnAcccount.With().Balance(4).Dollars())
+        .Then(
+            ExpectThat(TheAccountLedgerInTheDb.For(account)),
+            Is(AnLedger.With().Debit(6).Dollars());
+    
+Which depending on the number of beers you've drunk resembles the natural english version fairly closely without the need for additional
+template translation steps in the process (so refactoring won't kill things, find references still work, can step directly to the assertion code)    
 
 The goals behind this library are:
 
@@ -43,40 +68,14 @@ Discoverability
 Diagnostics
 ------------
 
-If a test fails tell explain why and provide as much info as possible why it failed. Don't tell me foo is wrong, 
-tell me why and what was expected and what was actually found, and any other related info.
+If a test fails tell explain why and provide as much info as possible why it failed. Don't tell just say test failed,
+provide as much information about what was expected and what was actually found along with any other related information.
 
 DRY
 ------------
 
-Don't repeat the same boring string assertion, or complex relationship tests across all your tests. Put it 
-in a single place (your Matcher).
-
-Example
-------------
-
-The scenario:
-
-    "Given a registered user, with an account balance of 10 dollars, when 6 dollars is debited, then 
-    expect that the account only has 4 dollars, and the transaction ledger records a 6 dollar debit"
-
-can be written in TestFirst.Net as:
-
-    Scenario()
-        .Given(user = UserInTheDb().WithDefaults())
-        .Given(account = AccountInTheDb().For(user).Balance(10).Dollars())
-        
-        .When(()=>account.debit(6))
-
-        .Then(
-            ExpectThat(TheAccountInTheDb.For(account)),
-            Is(AnAcccount.With().Balance(4).Dollars())
-        .Then(
-            ExpectThat(TheAccountLedgerInTheDb.For(account)),
-            Is(AnLedger.With().Debit(6).Dollars());
-    
-Which depending on the number of beers you've drunk resembles the natural english version fairly closely without the need of an additional
-template translation step in the process (so refactoring won't kill things, find references still work, can step directly to the assertion code)    
+Don't copy and paste the same boring assertion, or complex relationship assertion all through your tests. Put them 
+in a single place (your Matcher). This makes changes to business behvaiour much easier to manage.
 
 Matchers
 ============
@@ -113,7 +112,7 @@ There are basic matchers for most of the primitive types, along for other base t
 Some existing ones are 'AString', 'AnInt', 'ADecimal', 'ADateTime', 'AList','ADictionary', 'AnInstance'. Others are 
 for you to write for your own objects. The neat thing is this can then be reused across tests. 
 
-There is a code generator to generate matchers automatically for each of your objects.
+There is a code generator to generate matchers automatically for each of your objects. See the section on code generation.
 
 Usage
 ============
@@ -121,7 +120,7 @@ Usage
 Using just the assertions
 ----------
 
-This is useful if you only want to make use of the matchers and/or sprinkle your existing tests with a bit of TestFirst.Net
+This is useful if you only want to sprinkle your existing tests with a bit of TestFirst.Net
 
 Examples:
 
@@ -147,7 +146,7 @@ Setup scenarios which provide injection, db creation, db insertion and retrieval
 
 You can still roll it as you wish by combining or swapping out the parts yourself. This still integrates with your existing test classes.
 
-If extending fo NUnit or Moq, include nuget package TestFirst.Net.Extensions
+If extending for NUnit or Moq include the nuget package 'TestFirst.Net.Extensions'
 
     [TestFixture]
     MyTestScenario : AbstractNUnitScenarioTest {...//or AbstractNUnitMoqScenarioTest or ScenarioFluency
@@ -157,7 +156,7 @@ If extending fo NUnit or Moq, include nuget package TestFirst.Net.Extensions
             RegistrationService service;
             Registration reg;            
 
-            Scenario() <-- passes back a 'Scenario' object with an injector
+            Scenario() <-- passes back a 'Scenario' object with an injector, uses the current test's name
                 .Given(reg = UserRegistration.With().Defaults().Age(123).RandomPassword()..)
                 .Given(service = NewRegistrationService())    <--this is disposed at end of test
                 .When(service.register(reg))//<!--interesting part of test
@@ -399,7 +398,8 @@ In a T4 template, use the following:
 Building
 =============
 
-This library is built and tested on mono. It uses Nuget and xbuild. It should 'just' build in Visual Studio.
+
+This library is built and tested on mono. It uses Nuget and xbuild. In visual studio it should 'just' build.
 
 To build and test from  the command line (bash), run the build script:
 
