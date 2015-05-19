@@ -170,7 +170,7 @@ function buildAll(){
 
 
 function testAll(){
-    log "TODO! Test not yst implemented"
+    log "Running tests"
 
     runner="$SOLUTIONDIR/packages/NUnit.Runners.$NUNIT_VERSION/tools/nunit-console.exe"
     if [ ! -f "$runner" ]; then
