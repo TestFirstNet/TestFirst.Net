@@ -396,5 +396,17 @@ In a T4 template, use the following:
     
     template.RenderToFile("MyMatchers.cs");<--will write all the generated matchers to the given file
     
+Building
+=============
+
+This library is built and tested on mono. It uses Nuget and xbuild. It should 'just' build in Visual Studio.
+
+To build and test from  the command line (bash), run the build script:
+
+    ./build clean build test
+
+For further options run:
+
+    ./build help
 
 
