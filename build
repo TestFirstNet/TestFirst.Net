@@ -1,7 +1,7 @@
 #!/bin/bash
 
 VERBOSITY=normal
-#VERBOSITY=detailed
+#VERBOSITY=quiet,  minimal,  normal, detailed, diagnostic
 CONFIG=Release
 #CONFIG=Debug
 
@@ -9,10 +9,25 @@ VERSION=0.0.0
 LOCAL_REPO=~/workspace/local-nuget-repo
 TMP_DIR=obj/tmp
 PROJECTS="TestFirst.Net TestFirst.Net.Extensions TestFirst.Net.Performance"
+TEST_PROJECTS="TestFirst.Net.Tests TestFirst.Net.Extensions.Test TestFirst.Net.Performance.Test"
+NUNIT_VERSION="2.6.4"
+NUGET_SRC=http://www.nuget.org/api/v2/ 
+
+# reliably get the solution dir
+pushd `dirname $0` > /dev/null
+SOLUTIONDIR=`pwd -P`
+popd > /dev/null
+
+cd $SOLUTIONDIR
 
 function log(){
     echo "[BUILD] $1"
 }
+
+function error(){
+    echo "[BUILD] [ERROR!] $1"
+}
+
 
 function filterHtml(){
     in="$1"
@@ -43,7 +58,10 @@ function nupack(){
     projName="$1"
 
     log "packing $projName"
-    pushd "$projName"
+
+    requireVersion
+
+    pushd "$projName" > /dev/null
 
         #main package
         log "building main nuget package"
@@ -58,7 +76,7 @@ function nupack(){
         #rm -f ${projName}.nuspec
 
         #todo: gitlink
-    popd
+    popd > /dev/null
 }
 
 function cleanLocalRepo(){
@@ -76,16 +94,11 @@ function nuPush(){
     proj=$1
     pkg="$proj.nupkg"
     log "pushing nuget pkg $pkg"
-    pushd $proj
+    pushd $proj > /dev/null
         nuget Push $pkg    
-    popd
+    popd > /dev/null
 }
 
-function nuPushAll(){
-    for proj in $PROJECTS; do
-        nuPush $proj
-    done
-}
 
 function removeOldNuPkgs(){
     find . -name \*.nupkg | xargs -i rm {}
@@ -100,10 +113,18 @@ function copyNuPkgsToLocalRepo(){
     ls -l $LOCAL_REPO
 }
 
+function requireVersion(){
+   if [ "$VERSION" == "0.0.0" ]; then
+        read -p "Build as nuget version: " VERSION
+   fi
+}
+
 # ------------- build targets ---------------
 
 function tagGit(){
     log "tagging git"
+    requireVersion
+
     while true; do
         read -p "tag git with version v$VERSION? yn :" yn
         case $yn in
@@ -121,9 +142,22 @@ function tagGit(){
 
 function cleanAll(){
     log "clean all"
+
+    for proj in $PROJECTS; do
+        rm -fR "$proj/bin/*"
+        rm -fR "$proj/obj/*"
+    done
+    for proj in $TEST_PROJECTS; do
+        rm -fR "$proj/bin/*"
+        rm -fR "$proj/obj/*"
+    done
+
     removeOldNuPkgs
-    xbuild TestFirst.Net.sln /t:Clean 
-    xbuild TestFirst.Net.sln /t:Clean  /p:Configuration=$CONFIG
+    xbuild TestFirst.Net.sln /t:Clean  /verbosity:quiet /nologo
+    xbuild TestFirst.Net.sln /t:Clean  /p:Configuration=Release  /verbosity:quiet /nologo
+    xbuild TestFirst.Net.sln /t:Clean  /p:Configuration=Debug  /verbosity:quiet /nologo
+    xbuild TestFirst.Net.sln /t:Clean  /p:Configuration=$CONFIG  /verbosity:quiet /nologo
+    # remove generated nuspec files
     find . -name *.nuspec | xargs -i rm {}
 }
 
@@ -134,12 +168,33 @@ function buildAll(){
     xbuild TestFirst.Net.sln /t:Build /p:Configuration=$CONFIG /verbosity:$VERBOSITY
 }
 
+
 function testAll(){
     log "TODO! Test not yst implemented"
+
+    runner="$SOLUTIONDIR/packages/NUnit.Runners.$NUNIT_VERSION/tools/nunit-console.exe"
+    if [ ! -f "$runner" ]; then
+        log "downloading nunit console runner"    
+        nuget install NUnit.Runners -Source "$NUGET_SRC" -OutputDir $SOLUTIONDIR/packages -Version $NUNIT_VERSION
+    fi
+    if [ ! -f "$runner" ]; then
+        error "couldn't install nunit runner. Looking for $runner. Tried to install from $NUGET_SRC"      
+        exit -1
+    fi
+    #e.g. ./TestFirst.Net.Performance.Test/obj/Release/TestFirst.Net.Performance.Test.dll
+    for proj in $TEST_PROJECTS; do
+        log "Executing tests in $proj"
+        pushd $proj/bin/$CONFIG/ > /dev/null
+            # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
+            dll_name=`echo $proj | sed 's/\(.*\)s$/\1/'`
+            mono $runner -nologo $dll_name.dll
+        popd > /dev/null
+        log "finished running test $proj"
+    done
 }
 
-function buildRelease(){
-    read -p "Build as nuget version: " VERSION
+function releaseBuild(){
+    requireVersion
 
     removeOldNuPkgs
     cleanAll
@@ -147,6 +202,13 @@ function buildRelease(){
     testAll
     packAll
     copyNuPkgsToLocalRepo
+}
+
+
+function releasePush(){
+    for proj in $PROJECTS; do
+        nuPush $proj
+    done
 }
 
 function release(){
@@ -158,7 +220,9 @@ function release(){
 }
 
 function printHelp() {
-    log "targets:"
+    log "USAGE:"
+    log "   ./build target [target..] [varname1=value1..]"
+    log "TARGETS:"
     log "  clean : remove all built artifacts (*.dll)"
     log "  clean-repo : remove all *.nupkg files from local repo $LOCAL_REPO"
     log "  clean-all : clean,clean-repo"
@@ -168,11 +232,36 @@ function printHelp() {
     log "  release-build : clean, build, test, pack"
     log "  release-push : push all the nuget packages to the nuget repo"
     log "  release : release-build,git-tag"
+    log "VARIABLES:"
+    log "  config : the solution config to use. Debug|Release. Current $CONFIG"
+    log "  version : version to release at. Format MAJOR.MINOR.BUILD. Current $VERSION"
+    log "  verbosity : xbuild verbosity. quiet|minimal|normal|detailed|diagnostic. Current $VERBOSITY"
+    log "  local_repo : path to local nuget test repo. Current $LOCAL_REPO"
+    log "  nunit_version : Version of nunit to use for testing. Current $NUNIT_VERSION"
+    log "  nuget_src : Nuget source to install nunit runner from. Current $NUGET_SRC"
+    log "To set script variables, pass in <name>=<value>, as in './build release version=1.2.3' (name is case insensitive)"
 }
 
 log "-------- TestFirst.Net Build -----"
     
-for target in "$@"; do    
+#extract variable assignment. Expect VAR=VAL on command line
+for arg in "$@"; do  
+    if [[ $arg == *"="* ]]; then
+        name=`echo $arg | sed 's/\(.*\)=.*/\1/' | awk '{print toupper($0)}'`
+        val=`echo $arg | sed 's/.*=\(.*\)/\1/'`
+        log "set $name ==> $val"
+        declare $name=$val
+    fi    
+done
+ 
+has_target=0
+for target in "$@"; do  
+
+    #skip variable assignment
+    if [[ $target == *"="* ]]; then
+        continue
+    fi    
+  
     log "executing target '$target'"
 
     case $target in
@@ -196,7 +285,7 @@ for target in "$@"; do
             packAll
             ;; 
         'release-push' )
-            nuPushAll
+            releasePush
             ;; 
         'release-build' )
             releaseBuild
@@ -211,4 +300,9 @@ for target in "$@"; do
             echo "No build target '$target'. For help run target '$0 help'";
             exit -1
     esac
+    has_target=1
 done
+
+if [ $has_target == 0 ]; then
+    echo "no build target provided. For help run target '$0 help'"
+fi
