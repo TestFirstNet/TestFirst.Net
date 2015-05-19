@@ -215,7 +215,7 @@ function release(){
     log "This will build and package TestFirst.Net and then tag git"
     log "This will place a copy of the built packages into $LOCAL_REPO for testing"
 
-    buildRelease
+    releaseBuild
     tagGit
 }
 
