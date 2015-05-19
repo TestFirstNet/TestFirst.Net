@@ -1,14 +1,15 @@
-
-Summary
+TestFirst.Net
 ============
 
-Testing library providing a fluent tdd/bdd testing approach. Can be easily extended and integrated 
+![TestFirst.Net](icon.png)
+
+Testing library providing a fluent tdd/bdd testing approach. Easily extended and integrated 
 into your own testing tools (nunit, xunit, moq, etc). 
 
 Encourages the creation of easier to read and maintain testing code via the use of fluent builders for scenario's, given/when/thens, 
 Moq verification, List and Dictionary matchers
 
-Compatible on both the Windows .Net runtime and Mono
+Available as via NuGet and compatible on both the Windows and Mono
 
 As a quick example, the scenario:
 
@@ -129,32 +130,58 @@ This is useful if you only want to sprinkle your existing tests with a bit of Te
 
 Examples:
 
-    ...do stuff in your test
+    using TestFirst.Net;
+    using TestFirst.Net.Matcher;
+    using TestFirst.Net.Extensions.NUnit;
+    using ...
 
-    Expect
-        .That(foolist) <--thing we want to assert
-        .Is(AList.InAnyOrder().WithOnly("a").And("b")); <--'Matcher' we are using to perform the 
+    namespace ...
 
-    Expect
-        .That(()=>foo.DoIt())
-        .Throws(AnException.Of().Type<MyException>().Message(AString.ContainingIgnorePunctuationAndCase("Some bad thing")));
+    [TestFixture]
+    public class MyTest : AbstractNUnitScenarioTest
+    {
+        [Test ()]
+        public void TestSomething()
+        {
+
+            ...do stuff in your test
+
+            Expect
+                .That(foolist) <--thing we want to assert
+                .Is(AList.InAnyOrder().WithOnly("a").And("b")); <--'Matcher' we are using to perform the 
+
+            Expect
+                .That(()=>foo.DoIt())
+                .Throws(AnException.Of().Type<MyException>().Message(AString.ContainingIgnorePunctuationAndCase("Some bad thing")));
+            
+            Expect
+                .That(()=>foo.map())
+                .Is(ADictionary
+                    .KeyMatching("a","value_a")
+                    .KeyMatching("foo",AFoo.With().FloppyEars().SunHat()));
+        }
+    }
     
-    Expect
-        .That(()=>foo.map())
-        .Is(ADictionary
-            .KeyMatching("a","value_a")
-            .KeyMatching("foo",AFoo.With().FloppyEars().SunHat()));
 
 Scenario based
 ----------
+
 Setup scenarios which provide injection, db creation, db insertion and retrieval, service startup, resource cleanup. 
 
 You can still roll it as you wish by combining or swapping out the parts yourself. This still integrates with your existing test classes.
 
 If extending for NUnit or Moq include the nuget package 'TestFirst.Net.Extensions'
 
+    using NUnit.Framework;
+    using TestFirst.Net;
+    using TestFirst.Net.Matcher;
+    using TestFirst.Net.Extensions.NUnit;
+    using ...
+    
+    namespace ...
+
     [TestFixture]
-    MyTestScenario : AbstractNUnitScenarioTest {...//or AbstractNUnitMoqScenarioTest or ScenarioFluency
+    public class MyTestScenario : AbstractNUnitScenarioTest {...//or AbstractNUnitMoqScenarioTest or ScenarioFluency
 
         [Test]
         public void HappyPathUserCorrectlyRegistered(){
@@ -275,9 +302,16 @@ Include nuget package TestFirst.Net.Extensions
 Extend AbstractNUnitMoqScenarioTest to provide easy creation and registration of Moq mocks.
 
 If using MatcherMoqExtensions, a fullish example would be:
-
+    
+    using TestFirst.Net;
+    using TestFirst.Net.Matcher;
+    using TestFirst.Net.Extensions.Moq;
+    using ...
+    
+    namespace ...
+    
     [TestFixture]
-    MyTestClass : AbstractNUnitMoqScenarioTest {
+    public class MyTestClass : AbstractNUnitMoqScenarioTest {
 
         [Test]
         public void myTest(){
@@ -313,6 +347,14 @@ Include nuget package TestFirst.Net.Performance
 
 Example:
 
+    using TestFirst.Net;
+    using TestFirst.Net.Matcher;
+    using TestFirst.Net.Extensions.NUnit;
+    using TestFirst.Net.Performance;
+    using ...
+
+    namespace ...
+    
     [TestFixture]
     public class MyPerfTest:AbstractNUnitScenarioTest
     {
@@ -403,7 +445,6 @@ In a T4 template, use the following:
 Building
 =============
 
-
 This library is built and tested on mono. It uses Nuget and xbuild. In visual studio it should 'just' build.
 
 To build and test from  the command line (bash), run the build script:
@@ -417,7 +458,7 @@ For further options run:
 Contributing
 ============
 
-Updates and suggestions welcome and actively encouraged. Improvements and additions, better documention, more tests, yes yes and yes!
+Updates and suggestions welcome and actively encouraged. Bug fixes, improvements, better documention, more tests, yes yes and yes!
 
 Will accept email diffs (if not massive) if you want to protect your identity (e.g. corporate).
 
