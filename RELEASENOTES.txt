@@ -1,8 +1,8 @@
+Noteable changes
 
-    Noteable changes
-      * Updated : Various bug fixes
-      * Updated : AList now better supports mixed lists
-      * Updated : Improved diagnostic error messages
-      * Updated : Addition of new match methods on various matchers 
-      * New : Add new matchers AnException,AChar
-      * New : Add Expect.That(..).Throws(..) for exception testing
+* Updated : Various bug fixes
+* Updated : AList now better supports mixed lists
+* Updated : Improved diagnostic error messages
+* Updated : Addition of new match methods on various matchers 
+* New : Add new matchers AnException,AChar
+* New : Add Expect.That(..).Throws(..) for exception testing
