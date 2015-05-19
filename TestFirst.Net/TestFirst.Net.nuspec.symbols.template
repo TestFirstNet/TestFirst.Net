@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>TestFirst.Net</id>
+    <version>$version$</version>
+    <title>TestFirst.Net</title>
+    <authors>TestFirst.Net</authors>
+    <owners>TestFirst.Net</owners>
+    <licenseUrl>http://testfirstnet.github.io/TestFirst.Net/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/TestFirstNet/TestFirst.Net/</projectUrl>
+    <iconUrl>http://testfirstnet.github.io/TestFirst.Net/icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright © TestFirst.Net 2014 - 2015</copyright>
+    <description>Symbols for TestFirst.Net</description>
+  </metadata>
+  <files>
+    <file src="obj/Release/TestFirst.Net*.dll" target="/lib/net/40/"/>
+    <file src="obj/Release/TestFirst.Net*.pdb" target="/lib/net/40/"/>
+    <file src="**/*.cs" target="/src"/>
+  </files>
+</package>

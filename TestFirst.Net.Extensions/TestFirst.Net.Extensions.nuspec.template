@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>TestFirst.Net.Extensions</id>
     <version>$version$</version>
@@ -22,6 +22,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="obj/Release/TestFirst.Net.Examples*.dll" target="/lib/net/40/"/>
+    <file src="obj/Release/TestFirst.Net.Extensions*.dll" target="/lib/net/40/"/>
   </files>
 </package>
