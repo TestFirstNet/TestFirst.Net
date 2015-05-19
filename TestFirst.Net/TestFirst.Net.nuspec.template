@@ -12,34 +12,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>Fluent testing library to make tdd/bdd testing easy. Easily integrated into your own testing tools (nunit, xunit, moq, etc)</summary>
     <description>
-Testing library providing a fluent tdd/bdd testing approach. Can be easily extended and integrated 
-into your own testing tools (nunit, xunit, moq, etc). 
-
-Encourages the creation of easier to read and maintain testing code via the use of fluent builders for scenario's, given/when/thens, 
-Moq verification, List and Dictionary matchers
-
-For example, the scenario:
-
-    "Given a registered user, with an account balance of 10 dollars, when 6 dollars is debited, then 
-    expect that the account only has 4 dollars, and the transaction ledger records a 6 dollar debit"
-
-can be written in TestFirst.Net as:
-
-    Scenario()
-        .Given(user = UserInTheDb().WithDefaults())
-        .Given(account = AccountInTheDb().For(user).Balance(10).Dollars())
-        
-        .When(()=>account.debit(6))
-
-        .Then(
-            ExpectThat(TheAccountInTheDb.For(account)),
-            Is(AnAcccount.With().Balance(4).Dollars())
-        .Then(
-            ExpectThat(TheAccountLedgerInTheDb.For(account)),
-            Is(AnLedger.With().Debit(6).Dollars());
-
-See the project page for notes on usage
-
+        TOKEN_MAIN_DESCRIPTON
     </description>
     <releaseNotes>
         TOKEN_MAIN_RELEASENOTES
