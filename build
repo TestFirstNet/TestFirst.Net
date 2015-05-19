@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# reliably get the solution dir
+pushd `dirname $0` > /dev/null
+SOLUTION_DIR=`pwd -P`
+popd > /dev/null
+
 VERBOSITY=normal
 #VERBOSITY=quiet,  minimal,  normal, detailed, diagnostic
 CONFIG=Release
@@ -11,14 +16,13 @@ TMP_DIR=obj/tmp
 PROJECTS="TestFirst.Net TestFirst.Net.Extensions TestFirst.Net.Performance"
 TEST_PROJECTS="TestFirst.Net.Tests TestFirst.Net.Extensions.Test TestFirst.Net.Performance.Test"
 NUNIT_VERSION="2.6.4"
-NUGET_SRC=http://www.nuget.org/api/v2/ 
+NUGET_SRC=http://www.nuget.org/api/v2/
+NUGET_PKG_DIR="$SOLUTION_DIR/packages"
+NUGET_CONFIG="$SOLUTION_DIR/.nuget/NuGet.Config"
+SOLUTION=TestFirst.Net.sln
 
-# reliably get the solution dir
-pushd `dirname $0` > /dev/null
-SOLUTIONDIR=`pwd -P`
-popd > /dev/null
-
-cd $SOLUTIONDIR
+#ensure we run from a known location
+cd $SOLUTION_DIR
 
 function log(){
     echo "[BUILD] $1"
@@ -28,17 +32,18 @@ function error(){
     echo "[BUILD] [ERROR!] $1"
 }
 
-
+#convert html entities into something the nuspec parser can handle
 function filterHtml(){
     in="$1"
     cat $in | sed -e 's/</\&#8249;/g' -e 's/>/\&#8250;/g'
 }
 
+#filter a template (replace tokens)
 function filterTemplate(){
     from=$1
     to=$2 
-    
     log "filtering template $from to $to"
+
     mkdir -p $TMP_DIR
 
     cp -f "$from" "$to"
@@ -73,10 +78,18 @@ function nupack(){
         #symbols package
         filterTemplate ${projName}.nuspec.template ${projName}.nuspec
         nuget pack ${projName}.nuspec  -Symbols -Prop Configuration=$CONFIG -Version $VERSION 
-        #rm -f ${projName}.nuspec
+        rm -f ${projName}.nuspec
 
         #todo: gitlink
     popd > /dev/null
+}
+
+function invokeNuget(){
+    if [ -f "$NUGET_CONFIG" ]; then
+        nuget "$@" -OutputDir $NUGET_PKG_DIR -NonInteractive -ConfigFile "$NUGET_CONFIG"
+    else
+        nuget "$@" -OutputDir $NUGET_PKG_DIR -NonInteractive
+    fi
 }
 
 function cleanLocalRepo(){
@@ -95,10 +108,9 @@ function nuPush(){
     pkg="$proj.nupkg"
     log "pushing nuget pkg $pkg"
     pushd $proj > /dev/null
-        nuget Push $pkg    
+        invokeNuget Push $pkg    
     popd > /dev/null
 }
-
 
 function removeOldNuPkgs(){
     find . -name \*.nupkg | xargs -i rm {}
@@ -120,6 +132,10 @@ function requireVersion(){
 }
 
 # ------------- build targets ---------------
+
+function nugetRestore(){
+    invokeNuget restore $SOLUTION
+}
 
 function tagGit(){
     log "tagging git"
@@ -153,10 +169,10 @@ function cleanAll(){
     done
 
     removeOldNuPkgs
-    xbuild TestFirst.Net.sln /t:Clean  /verbosity:quiet /nologo
-    xbuild TestFirst.Net.sln /t:Clean  /p:Configuration=Release  /verbosity:quiet /nologo
-    xbuild TestFirst.Net.sln /t:Clean  /p:Configuration=Debug  /verbosity:quiet /nologo
-    xbuild TestFirst.Net.sln /t:Clean  /p:Configuration=$CONFIG  /verbosity:quiet /nologo
+    xbuild $SOLUTION /t:Clean  /verbosity:quiet /nologo
+    xbuild $SOLUTION /t:Clean  /p:Configuration=Release  /verbosity:quiet /nologo
+    xbuild $SOLUTION /t:Clean  /p:Configuration=Debug  /verbosity:quiet /nologo
+    xbuild $SOLUTION /t:Clean  /p:Configuration=$CONFIG  /verbosity:quiet /nologo
     # remove generated nuspec files
     find . -name *.nuspec | xargs -i rm {}
 }
@@ -165,17 +181,17 @@ function buildAll(){
     log "building all"
     # TODO:detect mono and use xbuild (if in cygwin env)
     #msbuild.exe TestFirst.Net.sln -t:Clean,Build -p:Configuration=Release
-    xbuild TestFirst.Net.sln /t:Build /p:Configuration=$CONFIG /verbosity:$VERBOSITY
+    xbuild $SOLUTION /t:Build /p:Configuration=$CONFIG /verbosity:$VERBOSITY
 }
 
 
 function testAll(){
     log "Running tests"
 
-    runner="$SOLUTIONDIR/packages/NUnit.Runners.$NUNIT_VERSION/tools/nunit-console.exe"
+    runner="$SOLUTION_DIR/packages/NUnit.Runners.$NUNIT_VERSION/tools/nunit-console.exe"
     if [ ! -f "$runner" ]; then
         log "downloading nunit console runner"    
-        nuget install NUnit.Runners -Source "$NUGET_SRC" -OutputDir $SOLUTIONDIR/packages -Version $NUNIT_VERSION
+        invokeNuget install NUnit.Runners -Source "$NUGET_SRC" -Version $NUNIT_VERSION
     fi
     if [ ! -f "$runner" ]; then
         error "couldn't install nunit runner. Looking for $runner. Tried to install from $NUGET_SRC"      
@@ -226,6 +242,7 @@ function printHelp() {
     log "  clean : remove all built artifacts (*.dll)"
     log "  clean-repo : remove all *.nupkg files from local repo $LOCAL_REPO"
     log "  clean-all : clean,clean-repo"
+    log "  restore : restore nuget packages to dir $NUGET_PKG_DIR"
     log "  build : build the solution using msbuild/xbuild"
     log "  test : run the unit tests"
     log "  pack : pack the built artifacts into nuget packages"
@@ -274,6 +291,9 @@ for target in "$@"; do
         'clean-all' )
             cleanLocalRepo
             cleanAll
+            ;;
+        'restore' )
+            nugetRestore
             ;;
         'build' )
             buildAll
