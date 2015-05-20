@@ -105,10 +105,13 @@ function packAll(){
 
 function nuPush(){
     proj=$1
-    pkg="$proj.nupkg"
-    log "pushing nuget pkg $pkg"
+
+    requireVersion
+
+    pkg="$proj.$VERSION.nupkg"
+    log "pushing nuget pkg $proj/$pkg"
     pushd $proj > /dev/null
-        invokeNuget Push $pkg    
+        nuget Push $pkg    
     popd > /dev/null
 }
 
