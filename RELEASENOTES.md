@@ -1,3 +1,13 @@
+V0.3.2
+===
+
+* New : new match methods on AnArray and AByteArray
+
+V0.3.1
+====
+
+* New : AList.InOrder().WithOnlyValues(..)
+
 V0.3.0
 ====
 
