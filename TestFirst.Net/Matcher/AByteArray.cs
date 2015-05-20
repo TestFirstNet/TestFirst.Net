@@ -20,6 +20,16 @@ namespace TestFirst.Net.Matcher
             return AnArray.NotEmpty<byte>();
         }
 
+        public static IMatcher<byte[]> Empty()
+        {
+            return AnArray.Empty<byte>();
+        }
+
+        public static IMatcher<byte[]> EmptyOrNull()
+        {
+            return AnArray.EmptyOrNull<byte>();
+        }
+
         public static IMatcher<byte[]> EqualTo(byte[] expect)
         {
             return AnArray.EqualTo(expect);

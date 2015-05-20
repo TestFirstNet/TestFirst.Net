@@ -38,6 +38,16 @@ namespace TestFirst.Net.Matcher
             return Matchers.Function((T[] actual) =>actual != null && actual.Length > 0,"a non null or empty array of " + typeof(T).Name);
         }
 
+        public static IMatcher<T[]> EmptyOrNull<T>()
+        {
+            return Matchers.Function((T[] actual) =>actual == null || actual.Length == 0,"a null or empty array of " + typeof(T).Name);
+        }
+
+        public static IMatcher<T[]> Empty<T>()
+        {
+            return Matchers.Function((T[] actual) =>actual != null && actual.Length == 0,"a non null empty array of " + typeof(T).Name);
+        }
+
         private class ArrayMatcher<T> : AbstractMatcher<T[]>
         {
             private static readonly Func<T, T, bool> DefaultObjectEqualsMatcher = new Func<T, T, bool>((expect, actual) => { return expect.Equals(actual); });

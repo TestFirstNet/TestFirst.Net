@@ -88,6 +88,7 @@
     <Compile Include="Matcher\AKeyValuePairTest.cs" />
     <Compile Include="Matcher\ACharTest.cs" />
     <Compile Include="ExpectTest.cs" />
+    <Compile Include="Matcher\AByteArray.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Lang\" />
