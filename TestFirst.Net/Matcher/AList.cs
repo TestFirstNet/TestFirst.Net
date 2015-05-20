@@ -211,6 +211,12 @@ namespace TestFirst.Net.Matcher
            {
                 return OfType<String>().WithOnlyValues(values);
            }
+
+           public IAcceptMoreMatchers<T> WithOnlyValues<T>(params T[] values)
+           {
+                return OfType<T> ().WithOnlyValues(values);
+           }
+
            /// <summary>
            /// Return a matcher which requires all items to match
            /// </summary>
