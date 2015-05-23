@@ -42,6 +42,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Runtime.Serialization" />
     <None Include="packages.config" />
+    <None Include="TestFirst.Net.nuspec.template" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractMatcher.cs" />
