@@ -58,6 +58,12 @@ namespace TestFirst.Net.Matcher
             return new FuncWithDiagnosticsTypeName<TActual>(matchFunc, mismatchMessageFactory);
         }
 
+        /// <summary>
+        /// Returns a matcher which requires all of the provided matchers to
+        /// match.
+        /// </summary>
+        /// <param name="matchers">the matchers to match. Not null</param>
+        /// <typeparam name="T">The type of the object to match</typeparam>
         public static IMatcher<T> All<T>(params IMatcher<T>[] matchers)
         {
             if (matchers.Count()==1)
@@ -67,6 +73,12 @@ namespace TestFirst.Net.Matcher
             return new AllMatchers<T>(matchers);
         }
 
+        /// <summary>
+        /// Returns a matcher which requires at least one of the provided matchers to
+        /// match.
+        /// </summary>
+        /// <param name="matchers">the matchers to match. Not null</param>
+        /// <typeparam name="T">The type of the object to match</typeparam>
         public static IMatcher<T> Any<T>(params IMatcher<T>[] matchers)
         {
             if (matchers.Count() == 1)

@@ -144,6 +144,8 @@
     <Compile Include="Inject\SystemClock.cs" />
     <Compile Include="Matcher\AKeyValuePair.cs" />
     <Compile Include="Matcher\AChar.cs" />
+    <Compile Include="Matcher\All.cs" />
+    <Compile Include="Matcher\Any.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />

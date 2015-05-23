@@ -60,7 +60,7 @@ namespace TestFirst.Net.Test.Matcher
                 new FooPoco() { StringProp = "MyString"},
                 ExpectFoo()
                     .WithProperty("StringProp", AString.EqualTo("MyWrongString")),
-                Matchers.All(
+                All.Of(
                     AString.Containing("property:StringProp"),
                     AString.Containing("the string 'MyWrongString'")
                 )
