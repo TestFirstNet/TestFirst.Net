@@ -89,13 +89,25 @@ namespace TestFirst.Net.Matcher
 
             public FuncTypeName(Func<T, bool> matchFunc, Func<string> mismatchMessageFactory): base()
             {
+                if(matchFunc==null){
+                    throw new NullReferenceException("Expect a match function");
+                }
+                if(mismatchMessageFactory==null){
+                    throw new NullReferenceException("Expect a message factory function");
+                }
                 m_matchFunc = matchFunc;
                 m_mismatchMessageFactory = mismatchMessageFactory;
-                m_mismatchMessageFactory = null;
+                m_mismatchMessageFactory2 = null;
             }
 
             public FuncTypeName(Func<T, bool> matchFunc, Action<IDescription> mismatchMessageFactory): base()
             {
+                if(matchFunc==null){
+                    throw new NullReferenceException("Expect a match function");
+                }
+                if(mismatchMessageFactory==null){
+                    throw new NullReferenceException("Expect a message factory action");
+                }
                 m_matchFunc = matchFunc;
                 m_mismatchMessageFactory = null;
                 m_mismatchMessageFactory2 = mismatchMessageFactory;
@@ -132,6 +144,13 @@ namespace TestFirst.Net.Matcher
 
             public FuncWithDiagnosticsTypeName(Func<TActual, IMatchDiagnostics, bool> matchFunc, Func<string> mismatchMessageFactory)
             {
+                if(matchFunc==null){
+                    throw new NullReferenceException("Expect a match function");
+                }
+                if(mismatchMessageFactory==null){
+                    throw new NullReferenceException("Expect a message factory function");
+                }
+
                 m_matchFunc = matchFunc;
                 m_mismatchMessageFactory = mismatchMessageFactory;
                 m_mismatchMessageFactory2 = null;
@@ -139,6 +158,12 @@ namespace TestFirst.Net.Matcher
 
             public FuncWithDiagnosticsTypeName(Func<TActual, IMatchDiagnostics, bool> matchFunc, Action<IDescription> mismatchMessageFactory)
             {
+                if(matchFunc==null){
+                    throw new NullReferenceException("Expect a match function");
+                }
+                if(mismatchMessageFactory==null){
+                    throw new NullReferenceException("Expect a message factory action");
+                }
                 m_matchFunc = matchFunc;
                 m_mismatchMessageFactory = null;
                 m_mismatchMessageFactory2 = mismatchMessageFactory;

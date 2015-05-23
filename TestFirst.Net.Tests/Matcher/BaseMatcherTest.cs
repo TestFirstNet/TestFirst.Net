@@ -93,7 +93,23 @@ namespace TestFirst.Net.Test.Matcher
             {
                 Assert.Fail("Matcher was expected to fail but didn't for:\n" + actual.ToPrettyString() + "\nexpected:\n" + diagnostics);
             }
-           // Console.WriteLine(diagnostics.ToString());
+        }
+
+        /// <summary>
+        /// Expect the matcher to fail on the given actual. Tests the failure message
+        /// </summary>
+        protected void AssertFails<T>(T actual, IMatcher<T> matcher,IMatcher<String> messageMatcher)
+        {
+            var diagnostics = new MatchDiagnostics();
+            if (diagnostics.TryMatch(actual, matcher))
+            {
+                Assert.Fail("Matcher was expected to fail but didn't for:\n" + actual.ToPrettyString() + "\nexpected:\n" + diagnostics);
+            } else {
+                String msg = matcher.ToString();
+                if(!messageMatcher.Matches(msg)){
+                    Assert.Fail ("Expected diagnostics failure message string match:\n" + messageMatcher + "\n but got '" + msg + "'");
+                }
+            }
         }
 
         /// <summary>

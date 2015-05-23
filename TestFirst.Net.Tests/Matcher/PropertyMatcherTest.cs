@@ -54,6 +54,20 @@ namespace TestFirst.Net.Test.Matcher
         }
 
         [Test]
+        public void MissMatchingPropertyMessageTest()
+        {
+            AssertFails(
+                new FooPoco() { StringProp = "MyString"},
+                ExpectFoo()
+                    .WithProperty("StringProp", AString.EqualTo("MyWrongString")),
+                Matchers.All(
+                    AString.Containing("property:StringProp"),
+                    AString.Containing("the string 'MyWrongString'")
+                )
+            );
+        }
+
+        [Test]
         public void PartialPropertiesMatchTest()
         {
             AssertPasses(
