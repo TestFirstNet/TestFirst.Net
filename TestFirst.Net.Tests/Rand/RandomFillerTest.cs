@@ -144,7 +144,7 @@ namespace TestFirst.Net.Test.Rand
         public void CustomGeneratorFillTest()
         {
             var filler = new RandomFiller.Builder()
-                .GeneratorForType(typeof(String), () => "MyCustomValue")
+                .ValueFactoryForType(typeof(String), () => "MyCustomValue")
                 .EnableLogging(true)
                 .Build();
 

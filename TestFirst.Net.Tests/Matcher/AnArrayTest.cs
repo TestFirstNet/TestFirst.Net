@@ -86,7 +86,7 @@ namespace TestFirst.Net.Test.Matcher
 
         private static byte[] RandomBytes()
         {
-            return new TestFirst.Net.Random.Random().Bytes();
+            return new TestFirst.Net.Rand.Random().Bytes();
         }
     }
 }

@@ -14,8 +14,6 @@ namespace TestFirst.Net.Performance
     /// </summary>
     public class ContentionLoadRunner : PerformanceSuite.ILoadRunner
     {
-        private readonly ILogger Log = Logger.GetLogger<ContentionLoadRunner>();
-
         private readonly IList<IPerformanceTest> m_tests;
         private readonly TimeSpan m_runTimeout;
         private readonly ThreadPriority m_threadPriority;
@@ -85,7 +83,6 @@ namespace TestFirst.Net.Performance
         {
             private IList<IPerformanceTest> m_tests;
             private TimeSpan? m_runTimeout;
-            private bool m_failOnError = true;
             private ThreadPriority m_threadPriority = ThreadPriority.Normal;
             private int m_maxNumTests = 1000;
 
@@ -100,12 +97,6 @@ namespace TestFirst.Net.Performance
             public Builder Priority(ThreadPriority priority)
             {
                 m_threadPriority = priority;
-                return this;
-            }
-
-            public Builder FailOnError(bool b)
-            {
-                m_failOnError = b;
                 return this;
             }
 

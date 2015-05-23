@@ -27,7 +27,6 @@ namespace TestFirst.Net.Examples.Service.Handler
         [Test]
         public void QueryAll_WithNone_ReturnsNone()
         {
-            Notification notification;
             NotificationQueryHandler handler;
             NotificationQuery.Response response;
 

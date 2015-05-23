@@ -241,7 +241,6 @@ namespace TestFirst.Net.Matcher
         internal class TypeSafePropertyMatcher : ISelfDescribing,IMatcher<Object>, IProvidePrettyTypeName
         {
             internal string PropertyName { get; private set; }
-            private readonly Type m_containingType;
             private readonly Type m_propertyType;
             private readonly bool m_isNullableType;
             private readonly IMatcher m_propertyValueMatcher;
@@ -253,7 +252,6 @@ namespace TestFirst.Net.Matcher
             {
                 PropertyName = propertyName;
                 m_propertyType = propertyType;
-                m_containingType = containingType;
                 m_propertyValueMatcher = propertyValueMatcher;
                 m_isNullableType = IsNullableType(propertyType);
             }

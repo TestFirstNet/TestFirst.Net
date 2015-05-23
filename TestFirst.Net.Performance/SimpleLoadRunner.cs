@@ -10,8 +10,6 @@ namespace TestFirst.Net.Performance
 {
     public class SimpleLoadRunner : PerformanceSuite.ILoadRunner
     {
-        private readonly ILogger Log = Logger.GetLogger<SimpleLoadRunner>();
-
         private readonly int m_numThreads;
         private readonly TimeSpan m_delayBetweenTests;
         private readonly double m_testDelayVariance;
