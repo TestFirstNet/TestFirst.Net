@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		icon_60x71.png = icon_60x71.png
 		LICENSE.txt = LICENSE.txt
 		build = build
+		RELEASENOTES.md = RELEASENOTES.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F4BAE0B6-2EF4-4C93-BB36-80784F995BCB}"

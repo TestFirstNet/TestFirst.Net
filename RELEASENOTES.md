@@ -1,3 +1,9 @@
+V0.3.3
+===
+
+* Updated : Fix regression issue on mismatch messages
+* New : New matchers All.Of and Any.Of to improve fluency vs the use of Matchers.All and Matchers.Any
+
 V0.3.2
 ===
 
