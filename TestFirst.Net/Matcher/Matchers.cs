@@ -19,19 +19,11 @@ namespace TestFirst.Net.Matcher
 
         public static IMatcher<T> Function<T>(Func<T, bool> matchFunc, Func<string> mismatchMessageFactory)
         {
-            if (matchFunc == null)
-            {
-                throw new NullReferenceException("Expected non null matching function");
-            }
             return new FuncTypeName<T>(matchFunc, mismatchMessageFactory);
         }
 
         public static IMatcher<T> Function<T>(Func<T, bool> matchFunc, Action<IDescription> mismatchMessageFactory)
         {
-            if (matchFunc == null)
-            {
-                throw new NullReferenceException("Expected non null matching function");
-            }
             return new FuncTypeName<T>(matchFunc, mismatchMessageFactory);
         }
 
@@ -42,19 +34,11 @@ namespace TestFirst.Net.Matcher
 
         public static IMatcher<TActual> Function<TActual>(Func<TActual, IMatchDiagnostics, bool> matchFunc, Func<string> mismatchMessageFactory)
         {
-            if (matchFunc == null)
-            {
-                throw new NullReferenceException("Expected non null matching function");
-            }
             return new FuncWithDiagnosticsTypeName<TActual>(matchFunc, mismatchMessageFactory);
         }
 
         public static IMatcher<TActual> Function<TActual>(Func<TActual, IMatchDiagnostics, bool> matchFunc, Action<IDescription> mismatchMessageFactory)
         {
-            if (matchFunc == null)
-            {
-                throw new NullReferenceException("Expected non null matching function");
-            }
             return new FuncWithDiagnosticsTypeName<TActual>(matchFunc, mismatchMessageFactory);
         }
 
