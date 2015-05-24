@@ -12,7 +12,6 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>Performance testing extensions to core TestFirst.Net</summary>
     <description>Provides the performance testing classes for TestFirst.Net. See TestFirst.Net docs on performance testing</description>
-    <!--<releaseNotes></releaseNotes>-->
     <copyright>Copyright © TestFirst.Net 2014 - 2015</copyright>
     <tags>testing tdd bdd fluent performance</tags>
    <dependencies>

@@ -38,7 +38,10 @@ can be written in TestFirst.Net as:
         .Then(
             ExpectThat(TheAccountLedgerInTheDb.For(account)),
             Is(AnLedger.With().Debit(6).Dollars());
-    
+
+
+for more info see http://testfirstnet.github.io/TestFirst.Net/README.md
+
     </description>
     <releaseNotes>
         TOKEN_MAIN_RELEASENOTES

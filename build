@@ -47,15 +47,21 @@ function filterTemplate(){
     mkdir -p $TMP_DIR
 
     cp -f "$from" "$to"
-    filterHtml "../README.md" > "$TMP_DIR/README.md.clean"
-    filterHtml "../RELEASENOTES.md" > "$TMP_DIR/RELEASENOTES.md.clean"
 
-    sed -i -e "/TOKEN_MAIN_DESCRIPTON/{r $TMP_DIR/README.md.clean" -e 'd}' $to
-    sed -i -e "/TOKEN_MAIN_RELEASENOTES/{r $TMP_DIR/RELEASENOTES.md.clean" -e 'd}' $to
-    
-    rm -f "$TMP_DIR/README.md.clean"
-    rm -f "$TMP_DIR/RELEASENOTES.md.clean"
-    
+    filterHtml "../README.md" > "$TMP_DIR/MAIN_README.md.clean"
+    filterHtml "../RELEASENOTES.md" > "$TMP_DIR/MAIN_RELEASENOTES.md.clean"
+    sed -i -e "/TOKEN_MAIN_DESCRIPTON/{r $TMP_DIR/MAIN_README.md.clean" -e 'd}' $to
+    sed -i -e "/TOKEN_MAIN_RELEASENOTES/{r $TMP_DIR/MAIN_RELEASENOTES.md.clean" -e 'd}' $to
+
+    if [ -f "./README.md" ]; then
+        filterHtml "./README.md" > "$TMP_DIR/README.md.clean"
+        sed -i -e "/TOKEN_README/{r $TMP_DIR/README.md.clean" -e 'd}' $to
+    fi
+    if [ -f "./RELEASENOTES.md" ]; then
+        filterHtml "./RELEASENOTES.md" > "$TMP_DIR/RELEASENOTES.md.clean"
+        sed -i -e "/TOKEN_RELEASENOTES/{r $TMP_DIR/RELEASENOTES.md.clean" -e 'd}' $to
+    fi
+
     rm -fR $TMP_DIR
 }
 
@@ -130,7 +136,9 @@ function copyNuPkgsToLocalRepo(){
 
 function requireVersion(){
    if [ "$VERSION" == "0.0.0" ]; then
-        read -p "Build as nuget version: " VERSION
+        log "Tagged git versions:"
+        git tag | grep 'v' | sed 's/^v//'
+        read -p "[BUILD] Build as nuget version: " VERSION
    fi
 }
 
