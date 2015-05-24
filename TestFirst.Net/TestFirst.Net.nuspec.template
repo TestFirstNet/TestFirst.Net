@@ -40,7 +40,7 @@ can be written in TestFirst.Net as:
             Is(AnLedger.With().Debit(6).Dollars());
 
 
-for more info see http://testfirstnet.github.io/TestFirst.Net/README.md
+for more info see project page
 
     </description>
     <releaseNotes>
