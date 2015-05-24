@@ -192,6 +192,9 @@ namespace TestFirst.Net.Matcher
             private readonly List<IMatcher<T>> m_matchers;
             public AllMatchers(IEnumerable<IMatcher<T>> matchers) : base()
             {
+                if(matchers==null){
+                    throw new NullReferenceException("Expect a non null list of matchers");
+                }
                 m_matchers = new List<IMatcher<T>>(matchers);
             }
 
@@ -213,6 +216,9 @@ namespace TestFirst.Net.Matcher
             public AnyMatchers(IEnumerable<IMatcher<T>> matchers)
                 : base()
             {
+                if(matchers==null){
+                    throw new NullReferenceException("Expect a non null list of matchers");
+                }
                 m_matchers = new List<IMatcher<T>>(matchers);
             }
 
