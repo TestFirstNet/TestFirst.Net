@@ -19,10 +19,7 @@ namespace TestFirst.Net
             {
                 throw new AssertionFailedException(failureMessage, e);
             }
-            else
-            {
-                throw new AssertionFailedException(string.Format(failureMessage, args), e);
-            }
+            throw new AssertionFailedException(string.Format(failureMessage, args), e);
         }
 
         public static void Fail(string failureMessage, params object[] args)
@@ -31,10 +28,7 @@ namespace TestFirst.Net
             {
                 throw new AssertionFailedException(failureMessage);
             }
-            else
-            {
-                throw new AssertionFailedException(string.Format(failureMessage, args));
-            }
+            throw new AssertionFailedException(string.Format(failureMessage, args));
         }
     }
 }

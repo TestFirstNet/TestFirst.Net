@@ -100,7 +100,7 @@ namespace TestFirst.Net.Matcher
                     TType valueFromInstance = valueExtractor.Invoke(instance);
                     return diag.TryMatch(valueFromInstance, valueMatcher);
                 },
-                "'" + valueDescription + "' is " + valueMatcher.ToString()
+                "'" + valueDescription + "' is " + valueMatcher
             );
             WithMatcher(instanceMatcher);
             return this;

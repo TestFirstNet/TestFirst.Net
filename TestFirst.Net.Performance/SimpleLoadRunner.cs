@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using TestFirst.Net.Lang;
-using TestFirst.Net.Logging;
 using TestFirst.Net.Util;
 
 namespace TestFirst.Net.Performance
@@ -138,8 +137,8 @@ namespace TestFirst.Net.Performance
             private bool m_failOnError = true;
             private ThreadPriority m_threadPriority = ThreadPriority.Normal;
             private TimeSpan m_startDelay = TimeSpan.FromSeconds(0);
-            private double m_startDelayVariance = 0;
-            private double m_testDelayVariance = 0;
+            private double m_startDelayVariance;
+            private double m_testDelayVariance;
 
             public PerformanceSuite.ILoadRunner Build()
             {

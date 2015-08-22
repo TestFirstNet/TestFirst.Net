@@ -31,7 +31,7 @@ namespace TestFirst.Net.Test
 
         Action ActionWithMsg(CallChainAssert chain, string msg)
         {
-            return new Action(() => chain.Called(msg));
+            return () => chain.Called(msg);
         }
 
         IInserter InserterWithMsg(CallChainAssert chain,string msg)

@@ -148,7 +148,7 @@ namespace TestFirst.Net
 
         public T GetOrAdd<T>(Func<T> factory) where T : IInserter, ICloneable
         {
-            return WithOrAdd<T>(DefaultIndex, factory);
+            return WithOrAdd(DefaultIndex, factory);
         }
 
         public IEnumerable<T> GetAll<T>() where T : IInserter, ICloneable
@@ -201,7 +201,7 @@ namespace TestFirst.Net
             var internalKey = ToKey(typeof(T), key);
             if (!m_insertersByKey.TryGetValue(internalKey, out inserter))
             {
-                var pairs = m_insertersByKey.Select((pair) => pair.Key + "=" + pair.Value.GetType().FullName);
+                var pairs = m_insertersByKey.Select(pair => pair.Key + "=" + pair.Value.GetType().FullName);
                 var availableKeysAndTypes = String.Join(",", pairs);
                 throw new InvalidOperationException(String.Format("no inserter of type '{0}' with key {1}. Have [{2}]", typeof(T).FullName, key, availableKeysAndTypes));
             }
@@ -220,7 +220,7 @@ namespace TestFirst.Net
             string internalKey = ToKey(typeof(T), index);
             if (!m_insertersByKey.TryGetValue(internalKey, out inserter))
             {
-                var pairs = m_insertersByKey.Select((pair) => pair.Key + "=" + pair.Value.GetType().FullName);
+                var pairs = m_insertersByKey.Select(pair => pair.Key + "=" + pair.Value.GetType().FullName);
                 var availableKeysAndTypes = String.Join(",", pairs);
                 throw new InvalidOperationException(String.Format("no inserter of type '{0}' with index {1}. Have [{2}]", typeof(T).FullName, index, availableKeysAndTypes));
             }
@@ -239,7 +239,7 @@ namespace TestFirst.Net
             if (!m_insertersByKey.TryGetValue(internalKey, out inserter))
             {
                 //lets add it
-                inserter = Add<T>(factory.Invoke(),index);
+                inserter = Add(factory.Invoke(),index);
             }
             return (T)inserter;
         }

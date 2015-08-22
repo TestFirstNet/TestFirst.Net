@@ -1,9 +1,8 @@
 ﻿using System;
-using Moq.Language.Flow;
-using System.Linq.Expressions;
-using TestFirst.Net.Util;
-using System.Threading;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using Moq.Language.Flow;
+using TestFirst.Net.Util;
 
 namespace TestFirst.Net.Extensions.Moq
 {
@@ -42,7 +41,7 @@ namespace TestFirst.Net.Extensions.Moq
                     m_setup.Returns(returner.NextValue);
                     break;
                 case 1: 
-                    m_setup.Returns(new Func<Object, TResult>((arg0) => returner.NextValue()));
+                    m_setup.Returns(new Func<Object, TResult>(arg0 => returner.NextValue()));
                     break;
                 case 2:
                     m_setup.Returns(new Func<Object, Object, TResult>((arg0,arg1) => returner.NextValue()));
@@ -147,7 +146,7 @@ namespace TestFirst.Net.Extensions.Moq
 
         public TimesBuilder<int, FluentMethodReturns<T,TResult>> IsCalled(int num)
         {
-            return new TimesBuilder<int, FluentMethodReturns<T, TResult>>(num, (val) =>
+            return new TimesBuilder<int, FluentMethodReturns<T, TResult>>(num, val =>
             {
                 var counter = new InvocationCounter(val, m_expression);
                 m_setup.Callback(counter.Increment);

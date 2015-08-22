@@ -1,4 +1,3 @@
-using System;
 using TestFirst.Net.Util;
 
 namespace TestFirst.Net.Matcher

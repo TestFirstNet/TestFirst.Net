@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
 using Moq;
-using TestFirst.Net.Matcher;
 
 namespace TestFirst.Net.Extensions.Moq
 {

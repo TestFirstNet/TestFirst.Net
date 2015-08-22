@@ -14,12 +14,12 @@ namespace TestFirst.Net.Test
 
         protected Action DoNothingAction()
         {
-            return new Action(() => { /*Do nothing*/ });
+            return () => { /*Do nothing*/ };
         }
 
         protected Func<T> FuncReturn<T>(T instance)
         {
-            return new Func<T>(() => instance);
+            return () => instance;
         }
 
         protected void AssertFails(Action action)

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using TestFirst.Net.Inject;
+﻿using TestFirst.Net.Inject;
 
 namespace TestFirst.Net
 {
@@ -12,7 +10,7 @@ namespace TestFirst.Net
         public IClock Clock {get;set;}
 
         public SimpleStepArgInjector(){
-            Clock = new Inject.SystemClock();
+            Clock = new SystemClock();
         }
 
         override public void InjectDependencies<T>(T instance)

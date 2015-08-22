@@ -120,11 +120,8 @@ namespace TestFirst.Net.Test
                     diag.Matched(Description.With().Value("value", actual));
                     return true;
                 }
-                else
-                {
-                    diag.MisMatched(Description.With().Value("expected", m_expectVal).Value("actual", actual));
-                    return false;
-                }
+                diag.MisMatched(Description.With().Value("expected", m_expectVal).Value("actual", actual));
+                return false;
             }
         } 
 

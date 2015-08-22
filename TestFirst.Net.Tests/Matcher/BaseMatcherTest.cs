@@ -1,7 +1,7 @@
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using TestFirst.Net.Util;
-using System;
 
 namespace TestFirst.Net.Test.Matcher
 {

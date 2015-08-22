@@ -127,7 +127,7 @@ namespace TestFirst.Net.Concurrent
         private class ActionWrapper
         {
             private readonly Action m_action;
-            private volatile bool m_complete = false;
+            private volatile bool m_complete;
             private readonly Barrier m_barrier;
             private volatile Exception m_actionException;
             private volatile int m_threadId;

@@ -143,7 +143,7 @@ namespace TestFirst.Net.Rand
 
         public T FillWithRandom<T>(T instance)
         {
-            return (T)InternalFillWithRandom((Object)instance);
+            return (T)InternalFillWithRandom(instance);
         }
 
         public Object FillWithRandom(Object instance)
@@ -241,7 +241,7 @@ namespace TestFirst.Net.Rand
             if (m_recursionLimit.TryGetValue(onType, prop.Name, prop.PropertyType, out limit))
             {
                 //count parents
-                var depth = m_parentTypes.Count((type) => type == prop.PropertyType);
+                var depth = m_parentTypes.Count(type => type == prop.PropertyType);
                 if (depth < limit)
                 {
                     return true;
@@ -339,7 +339,7 @@ namespace TestFirst.Net.Rand
 
         private RandomValueViaFunction<object> NewClassInstanceFactory()
         {
-            var factory = new RandomValueViaFunction<Object>((genType) =>
+            var factory = new RandomValueViaFunction<Object>(genType =>
                 {
                     Object propertyInstance;
                     try
@@ -358,7 +358,7 @@ namespace TestFirst.Net.Rand
 
         private RandomValueViaFunction<object> NewInterfaceFactoryFor(Type onInstanceType, string propertyName, Type type)
         {
-            var factory = new RandomValueViaFunction<Object>((genType) =>
+            var factory = new RandomValueViaFunction<Object>(genType =>
                 {
                     var propertyInstance = NewInstanceFromInterface(onInstanceType, propertyName, type);
                     InternalFillWithRandom(propertyInstance);
@@ -560,7 +560,7 @@ namespace TestFirst.Net.Rand
         {
             private static readonly Func<Type,PropertyInfo, bool> IncludeAllPropertiesFilter = (type,prop)=>true; 
 
-            private bool m_enableLogging = false;
+            private bool m_enableLogging;
             private bool m_failOnCircularDependency = true;
 
             private readonly Lookup<IRandomValueFactory> m_factories = new Lookup<IRandomValueFactory>();
@@ -682,7 +682,7 @@ namespace TestFirst.Net.Rand
             [Obsolete("Use ValueFactoryForType instead")]
             public Builder GeneratorForType<TPropertyType>(Func<TPropertyType> func)
             {
-                ValueFactoryForType<TPropertyType>(func); 
+                ValueFactoryForType(func); 
                 return this; 
             }
 

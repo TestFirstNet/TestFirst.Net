@@ -83,7 +83,7 @@ namespace TestFirst.Net.Matcher
             private readonly Func<string> m_mismatchMessageFactory;
             private readonly Action<IDescription> m_mismatchMessageFactory2;
 
-            public FuncTypeName(Func<T, bool> matchFunc, Func<string> mismatchMessageFactory): base()
+            public FuncTypeName(Func<T, bool> matchFunc, Func<string> mismatchMessageFactory)
             {
                 if(matchFunc==null){
                     throw new NullReferenceException("Expect a match function");
@@ -96,7 +96,7 @@ namespace TestFirst.Net.Matcher
                 m_mismatchMessageFactory2 = null;
             }
 
-            public FuncTypeName(Func<T, bool> matchFunc, Action<IDescription> mismatchMessageFactory): base()
+            public FuncTypeName(Func<T, bool> matchFunc, Action<IDescription> mismatchMessageFactory)
             {
                 if(matchFunc==null){
                     throw new NullReferenceException("Expect a match function");
@@ -190,7 +190,7 @@ namespace TestFirst.Net.Matcher
         private class AllMatchers<T>:AbstractMatcher<T>
         {
             private readonly List<IMatcher<T>> m_matchers;
-            public AllMatchers(IEnumerable<IMatcher<T>> matchers) : base()
+            public AllMatchers(IEnumerable<IMatcher<T>> matchers)
             {
                 if(matchers==null){
                     throw new NullReferenceException("Expect a non null list of matchers");
@@ -214,7 +214,6 @@ namespace TestFirst.Net.Matcher
         {
             private readonly List<IMatcher<T>> m_matchers;
             public AnyMatchers(IEnumerable<IMatcher<T>> matchers)
-                : base()
             {
                 if(matchers==null){
                     throw new NullReferenceException("Expect a non null list of matchers");
@@ -238,7 +237,7 @@ namespace TestFirst.Net.Matcher
         {
             private readonly IMatcher<T> m_matcher;
 
-            public NotMatcher(IMatcher<T> matcher) : base()
+            public NotMatcher(IMatcher<T> matcher)
             {
                 m_matcher = matcher;
             }

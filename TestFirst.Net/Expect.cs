@@ -1,8 +1,6 @@
 ﻿using System;
-using TestFirst.Net.Matcher.Internal;
-using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
 using TestFirst.Net.Matcher;
+using TestFirst.Net.Matcher.Internal;
 
 namespace TestFirst.Net {
 
@@ -209,7 +207,7 @@ namespace TestFirst.Net {
             Expect.PrintExpectButGot(desc, actual, matcher);
             desc.Text("==== Diagnostics ====");
             desc.Child(diag);
-            TestFirstAssert.Fail(Environment.NewLine + desc.ToString());
+            TestFirstAssert.Fail(Environment.NewLine + desc);
         }
 
     }

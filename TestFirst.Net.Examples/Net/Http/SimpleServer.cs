@@ -86,7 +86,7 @@ namespace TestFirst.Net.Examples.Service.Http
                 { 
                     while (m_listen && m_listener.IsListening)
                     {
-                        var ctxt = m_listener.BeginGetContext(new AsyncCallback(PushToWorker),m_listener);
+                        var ctxt = m_listener.BeginGetContext(PushToWorker,m_listener);
                         //sleep until a request comes in
                         try
                         {
@@ -189,7 +189,7 @@ namespace TestFirst.Net.Examples.Service.Http
 
         private void Log(String msg, params Object[] args)
         {
-            Console.WriteLine(String.Format("DEBUG [HttpListener] " + msg, args));
+            Console.WriteLine("DEBUG [HttpListener] " + msg, args);
         }
 
         public class Builder

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using TestFirst.Net.Examples.Api;
 
@@ -23,7 +20,7 @@ namespace TestFirst.Net.Examples
 
         private void GenerateCode()
         {
-            var template = new TestFirst.Net.Template.MatchersTemplate();
+            var template = new Template.MatchersTemplate();
 
             template.Defaults().Namespace("TestFirst.Net.Examples");
             

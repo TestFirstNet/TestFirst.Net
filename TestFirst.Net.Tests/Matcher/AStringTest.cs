@@ -22,7 +22,7 @@ namespace TestFirst.Net.Test.Matcher
 
             AssertFails("one", AString.EqualTo("One"));
             AssertFails("", AString.EqualTo("One"));
-            AssertFails((string)null, AString.EqualTo("One"));
+            AssertFails(null, AString.EqualTo("One"));
         }
 
         [Test]
@@ -37,7 +37,7 @@ namespace TestFirst.Net.Test.Matcher
         [Test]
         public void NullTest()
         {
-            AssertPasses((string)null, AString.Null());
+            AssertPasses(null, AString.Null());
             AssertFails("one", AString.Null());
             AssertFails("", AString.Null());
         }
@@ -45,7 +45,7 @@ namespace TestFirst.Net.Test.Matcher
         [Test]
         public void NotNullTest()
         {
-            AssertFails((string)null, AString.NotNull());
+            AssertFails(null, AString.NotNull());
             AssertPasses("one", AString.NotNull());
             AssertPasses("", AString.NotNull());
         }
@@ -57,7 +57,7 @@ namespace TestFirst.Net.Test.Matcher
             AssertPasses("ONE", AString.EqualToIgnoringCase("One"));
 
             AssertFails("", AString.EqualToIgnoringCase("One"));
-            AssertFails((string)null, AString.EqualToIgnoringCase("One"));
+            AssertFails(null, AString.EqualToIgnoringCase("One"));
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace TestFirst.Net.Test.Matcher
 
             AssertFails("", AString.Containing("cat"));
             AssertFails("ca", AString.Containing("cat"));
-            AssertFails((string)null, AString.Containing("cat"));
+            AssertFails(null, AString.Containing("cat"));
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace TestFirst.Net.Test.Matcher
 
             AssertFails("", AString.ContainingOfAnyCase("cat"));
             AssertFails("ca", AString.ContainingOfAnyCase("cat"));
-            AssertFails((string)null, AString.ContainingOfAnyCase("cat"));
+            AssertFails(null, AString.ContainingOfAnyCase("cat"));
         }
 
         [Test]
@@ -124,7 +124,7 @@ namespace TestFirst.Net.Test.Matcher
             AssertPasses("1", AString.As(AnInt.EqualTo(1)));
             AssertPasses("999", AString.As(AnInt.GreaterThan(50)));
 
-            AssertFails((string)null, AString.As(AnInt.EqualTo(0))); 
+            AssertFails(null, AString.As(AnInt.EqualTo(0))); 
             AssertFails("", AString.As(AnInt.EqualTo(0)));
             AssertFails(" ", AString.As(AnInt.EqualTo(0)));
             AssertFails("zero", AString.As(AnInt.EqualTo(0)));

@@ -1,31 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using TestFirst.Net;
 using TestFirst.Net.Matcher;
 
 namespace TestFirst.Net.Template {
 
-    public partial class ATestDto : PropertyMatcher<TestFirst.Net.Template.TestDto>{
+    public class ATestDto : PropertyMatcher<TestDto>{
 
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestDto PropertyNames = null;
+        private static readonly TestDto PropertyNames = null;
 
 
         public static ATestDto With(){
                 return new ATestDto();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDto> Null(){
-                return AnInstance.Null<TestFirst.Net.Template.TestDto>();
+        public static IMatcher<TestDto> Null(){
+                return AnInstance.Null<TestDto>();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDto> NotNull(){
-                return AnInstance.NotNull<TestFirst.Net.Template.TestDto>();
+        public static IMatcher<TestDto> NotNull(){
+                return AnInstance.NotNull<TestDto>();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDto> Instance(TestFirst.Net.Template.TestDto expect){
+        public static IMatcher<TestDto> Instance(TestDto expect){
                 return AnInstance.SameAs(expect);
         }
 
@@ -75,21 +73,21 @@ namespace TestFirst.Net.Template {
         }
 
         public ATestDto MyDictionaryNull() {
-            MyDictionary(AnInstance.EqualTo<System.Collections.Generic.IDictionary<string,int?>>(null));
+            MyDictionary(AnInstance.EqualTo<IDictionary<string,int?>>(null));
             return this;
         }
 
-        public ATestDto MyDictionary(IMatcher<System.Collections.Generic.IDictionary<string,int?>> matcher) {
+        public ATestDto MyDictionary(IMatcher<IDictionary<string,int?>> matcher) {
             WithProperty(()=>PropertyNames.MyDictionary,matcher);
             return this;
         }
 
         public ATestDto MyDictionaryOfStringsNull() {
-            MyDictionaryOfStrings(AnInstance.EqualTo<System.Collections.Generic.IDictionary<string,string>>(null));
+            MyDictionaryOfStrings(AnInstance.EqualTo<IDictionary<string,string>>(null));
             return this;
         }
 
-        public ATestDto MyDictionaryOfStrings(IMatcher<System.Collections.Generic.IDictionary<string,string>> matcher) {
+        public ATestDto MyDictionaryOfStrings(IMatcher<IDictionary<string,string>> matcher) {
             WithProperty(()=>PropertyNames.MyDictionaryOfStrings,matcher);
             return this;
         }
@@ -105,41 +103,41 @@ namespace TestFirst.Net.Template {
         }
 
         public ATestDto MyDto2Null() {
-            MyDto2(AnInstance.EqualTo<TestFirst.Net.Template.TestDto2>(null));
+            MyDto2(AnInstance.EqualTo<TestDto2>(null));
             return this;
         }
 
-        public ATestDto MyDto2(IMatcher<TestFirst.Net.Template.TestDto2> matcher) {
+        public ATestDto MyDto2(IMatcher<TestDto2> matcher) {
             WithProperty(()=>PropertyNames.MyDto2,matcher);
             return this;
         }
 
         public ATestDto MyDtoEnmerableNull() {
-            MyDtoEnmerable(AnInstance.EqualTo<TestFirst.Net.Template.TestDtoEnumerable>(null));
+            MyDtoEnmerable(AnInstance.EqualTo<TestDtoEnumerable>(null));
             return this;
         }
 
-        public ATestDto MyDtoEnmerable(IMatcher<TestFirst.Net.Template.TestDtoEnumerable> matcher) {
+        public ATestDto MyDtoEnmerable(IMatcher<TestDtoEnumerable> matcher) {
             WithProperty(()=>PropertyNames.MyDtoEnmerable,matcher);
             return this;
         }
 
         public ATestDto MyEnumerableOfStringsPropNull() {
-            MyEnumerableOfStringsProp(AnInstance.EqualTo<System.Collections.Generic.IEnumerable<string>>(null));
+            MyEnumerableOfStringsProp(AnInstance.EqualTo<IEnumerable<string>>(null));
             return this;
         }
 
-        public ATestDto MyEnumerableOfStringsProp(IMatcher<System.Collections.Generic.IEnumerable<string>> matcher) {
+        public ATestDto MyEnumerableOfStringsProp(IMatcher<IEnumerable<string>> matcher) {
             WithProperty(()=>PropertyNames.MyEnumerableOfStringsProp,matcher);
             return this;
         }
 
-        public ATestDto MyGuidProp(System.Guid expect) {
+        public ATestDto MyGuidProp(Guid expect) {
             MyGuidProp(AGuid.EqualTo(expect));
             return this;
         }
 
-        public ATestDto MyGuidProp(IMatcher<System.Guid?> matcher) {
+        public ATestDto MyGuidProp(IMatcher<Guid?> matcher) {
             WithProperty(()=>PropertyNames.MyGuidProp,matcher);
             return this;
         }
@@ -165,31 +163,31 @@ namespace TestFirst.Net.Template {
         }
 
         public ATestDto MyListOfListsPropNull() {
-            MyListOfListsProp(AnInstance.EqualTo<System.Collections.Generic.IEnumerable<System.Collections.Generic.IEnumerable<string>>>(null));
+            MyListOfListsProp(AnInstance.EqualTo<IEnumerable<IEnumerable<string>>>(null));
             return this;
         }
 
-        public ATestDto MyListOfListsProp(IMatcher<System.Collections.Generic.IEnumerable<System.Collections.Generic.IEnumerable<string>>> matcher) {
+        public ATestDto MyListOfListsProp(IMatcher<IEnumerable<IEnumerable<string>>> matcher) {
             WithProperty(()=>PropertyNames.MyListOfListsProp,matcher);
             return this;
         }
 
         public ATestDto MyListOfNullIntsPropNull() {
-            MyListOfNullIntsProp(AnInstance.EqualTo<System.Collections.Generic.IEnumerable<int?>>(null));
+            MyListOfNullIntsProp(AnInstance.EqualTo<IEnumerable<int?>>(null));
             return this;
         }
 
-        public ATestDto MyListOfNullIntsProp(IMatcher<System.Collections.Generic.IEnumerable<int?>> matcher) {
+        public ATestDto MyListOfNullIntsProp(IMatcher<IEnumerable<int?>> matcher) {
             WithProperty(()=>PropertyNames.MyListOfNullIntsProp,matcher);
             return this;
         }
 
         public ATestDto MyListOfStringsPropNull() {
-            MyListOfStringsProp(AnInstance.EqualTo<System.Collections.Generic.IEnumerable<string>>(null));
+            MyListOfStringsProp(AnInstance.EqualTo<IEnumerable<string>>(null));
             return this;
         }
 
-        public ATestDto MyListOfStringsProp(IMatcher<System.Collections.Generic.IEnumerable<string>> matcher) {
+        public ATestDto MyListOfStringsProp(IMatcher<IEnumerable<string>> matcher) {
             WithProperty(()=>PropertyNames.MyListOfStringsProp,matcher);
             return this;
         }
@@ -274,7 +272,7 @@ namespace TestFirst.Net.Template {
             return this;
         }
 
-        public ATestDto MyNullGuidProp(System.Guid? expect) {
+        public ATestDto MyNullGuidProp(Guid? expect) {
             MyNullGuidProp(AGuid.EqualTo(expect));
             return this;
         }
@@ -284,7 +282,7 @@ namespace TestFirst.Net.Template {
             return this;
         }
 
-        public ATestDto MyNullGuidProp(IMatcher<System.Guid?> matcher) {
+        public ATestDto MyNullGuidProp(IMatcher<Guid?> matcher) {
             WithProperty(()=>PropertyNames.MyNullGuidProp,matcher);
             return this;
         }
@@ -335,11 +333,11 @@ namespace TestFirst.Net.Template {
         }
 
         public ATestDto MyNullTimeSpanNull() {
-            MyNullTimeSpan(AnInstance.EqualTo<System.TimeSpan?>(null));
+            MyNullTimeSpan(AnInstance.EqualTo<TimeSpan?>(null));
             return this;
         }
 
-        public ATestDto MyNullTimeSpan(IMatcher<System.TimeSpan?> matcher) {
+        public ATestDto MyNullTimeSpan(IMatcher<TimeSpan?> matcher) {
             WithProperty(()=>PropertyNames.MyNullTimeSpan,matcher);
             return this;
         }
@@ -444,32 +442,32 @@ namespace TestFirst.Net.Template {
             return this;
         }
 
-        public ATestDto MyTestEnum(TestFirst.Net.Template.TestEnum? expect) {
+        public ATestDto MyTestEnum(TestEnum? expect) {
             MyTestEnum(AnInstance.EqualTo(expect));
             return this;
         }
 
-        public ATestDto MyTestEnum(IMatcher<TestFirst.Net.Template.TestEnum?> matcher) {
+        public ATestDto MyTestEnum(IMatcher<TestEnum?> matcher) {
             WithProperty(()=>PropertyNames.MyTestEnum,matcher);
             return this;
         }
 
-        public ATestDto MyTimeSpan(IMatcher<System.TimeSpan?> matcher) {
+        public ATestDto MyTimeSpan(IMatcher<TimeSpan?> matcher) {
             WithProperty(()=>PropertyNames.MyTimeSpan,matcher);
             return this;
         }
 
-        public ATestDto MyUri(System.Uri expect) {
+        public ATestDto MyUri(Uri expect) {
             MyUri(AnUri.EqualTo(expect));
             return this;
         }
 
         public ATestDto MyUriNull() {
-            MyUri(AnInstance.EqualTo<System.Uri>(null));
+            MyUri(AnInstance.EqualTo<Uri>(null));
             return this;
         }
 
-        public ATestDto MyUri(IMatcher<System.Uri> matcher) {
+        public ATestDto MyUri(IMatcher<Uri> matcher) {
             WithProperty(()=>PropertyNames.MyUri,matcher);
             return this;
         }
@@ -478,25 +476,25 @@ namespace TestFirst.Net.Template {
 
 namespace TestFirst.Net.Template {
 
-    public partial class ATestDto2 : PropertyMatcher<TestFirst.Net.Template.TestDto2>{
+    public class ATestDto2 : PropertyMatcher<TestDto2>{
 
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestDto2 PropertyNames = null;
+        private static readonly TestDto2 PropertyNames = null;
 
 
         public static ATestDto2 With(){
                 return new ATestDto2();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDto2> Null(){
-                return AnInstance.Null<TestFirst.Net.Template.TestDto2>();
+        public static IMatcher<TestDto2> Null(){
+                return AnInstance.Null<TestDto2>();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDto2> NotNull(){
-                return AnInstance.NotNull<TestFirst.Net.Template.TestDto2>();
+        public static IMatcher<TestDto2> NotNull(){
+                return AnInstance.NotNull<TestDto2>();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDto2> Instance(TestFirst.Net.Template.TestDto2 expect){
+        public static IMatcher<TestDto2> Instance(TestDto2 expect){
                 return AnInstance.SameAs(expect);
         }
 
@@ -524,25 +522,25 @@ namespace TestFirst.Net.Template {
 
 namespace TestFirst.Net.Template {
 
-    public partial class MyCustomName : PropertyMatcher<TestFirst.Net.Template.TestDto3>{
+    public class MyCustomName : PropertyMatcher<TestDto3>{
 
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestDto3 PropertyNames = null;
+        private static readonly TestDto3 PropertyNames = null;
 
 
         public static MyCustomName With(){
                 return new MyCustomName();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDto3> Null(){
-                return AnInstance.Null<TestFirst.Net.Template.TestDto3>();
+        public static IMatcher<TestDto3> Null(){
+                return AnInstance.Null<TestDto3>();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDto3> NotNull(){
-                return AnInstance.NotNull<TestFirst.Net.Template.TestDto3>();
+        public static IMatcher<TestDto3> NotNull(){
+                return AnInstance.NotNull<TestDto3>();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDto3> Instance(TestFirst.Net.Template.TestDto3 expect){
+        public static IMatcher<TestDto3> Instance(TestDto3 expect){
                 return AnInstance.SameAs(expect);
         }
 
@@ -570,25 +568,25 @@ namespace TestFirst.Net.Template {
 
 namespace TestFirst.Net.Template {
 
-    public partial class ATestDtoEnumerable : PropertyMatcher<TestFirst.Net.Template.TestDtoEnumerable>{
+    public class ATestDtoEnumerable : PropertyMatcher<TestDtoEnumerable>{
 
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestDtoEnumerable PropertyNames = null;
+        private static readonly TestDtoEnumerable PropertyNames = null;
 
 
         public static ATestDtoEnumerable With(){
                 return new ATestDtoEnumerable();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDtoEnumerable> Null(){
-                return AnInstance.Null<TestFirst.Net.Template.TestDtoEnumerable>();
+        public static IMatcher<TestDtoEnumerable> Null(){
+                return AnInstance.Null<TestDtoEnumerable>();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDtoEnumerable> NotNull(){
-                return AnInstance.NotNull<TestFirst.Net.Template.TestDtoEnumerable>();
+        public static IMatcher<TestDtoEnumerable> NotNull(){
+                return AnInstance.NotNull<TestDtoEnumerable>();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDtoEnumerable> Instance(TestFirst.Net.Template.TestDtoEnumerable expect){
+        public static IMatcher<TestDtoEnumerable> Instance(TestDtoEnumerable expect){
                 return AnInstance.SameAs(expect);
         }
 
@@ -636,7 +634,7 @@ namespace TestFirst.Net.Template {
 
 namespace MyNamespace {
 
-    public partial class ATestIndexedDto : PropertyMatcher<TestFirst.Net.Template.TestIndexedDto>{
+    public class ATestIndexedDto : PropertyMatcher<TestFirst.Net.Template.TestIndexedDto>{
 
         // provide IDE rename and find reference support
         private static readonly TestFirst.Net.Template.TestIndexedDto PropertyNames = null;
@@ -662,34 +660,34 @@ namespace MyNamespace {
 
 namespace TestFirst.Net.Template {
 
-    public partial class ATestDtoWithSubClass : PropertyMatcher<TestFirst.Net.Template.TestDtoWithSubClass>{
+    public class ATestDtoWithSubClass : PropertyMatcher<TestDtoWithSubClass>{
 
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestDtoWithSubClass PropertyNames = null;
+        private static readonly TestDtoWithSubClass PropertyNames = null;
 
 
         public static ATestDtoWithSubClass With(){
                 return new ATestDtoWithSubClass();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDtoWithSubClass> Null(){
-                return AnInstance.Null<TestFirst.Net.Template.TestDtoWithSubClass>();
+        public static IMatcher<TestDtoWithSubClass> Null(){
+                return AnInstance.Null<TestDtoWithSubClass>();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDtoWithSubClass> NotNull(){
-                return AnInstance.NotNull<TestFirst.Net.Template.TestDtoWithSubClass>();
+        public static IMatcher<TestDtoWithSubClass> NotNull(){
+                return AnInstance.NotNull<TestDtoWithSubClass>();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDtoWithSubClass> Instance(TestFirst.Net.Template.TestDtoWithSubClass expect){
+        public static IMatcher<TestDtoWithSubClass> Instance(TestDtoWithSubClass expect){
                 return AnInstance.SameAs(expect);
         }
 
         public ATestDtoWithSubClass SubDtoNull() {
-            SubDto(AnInstance.EqualTo<TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto>(null));
+            SubDto(AnInstance.EqualTo<TestDtoWithSubClass.SubTestDto>(null));
             return this;
         }
 
-        public ATestDtoWithSubClass SubDto(IMatcher<TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto> matcher) {
+        public ATestDtoWithSubClass SubDto(IMatcher<TestDtoWithSubClass.SubTestDto> matcher) {
             WithProperty(()=>PropertyNames.SubDto,matcher);
             return this;
         }
@@ -698,25 +696,25 @@ namespace TestFirst.Net.Template {
 
 namespace TestFirst.Net.Template {
 
-    public partial class ASubTestDto : PropertyMatcher<TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto>{
+    public class ASubTestDto : PropertyMatcher<TestDtoWithSubClass.SubTestDto>{
 
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto PropertyNames = null;
+        private static readonly TestDtoWithSubClass.SubTestDto PropertyNames = null;
 
 
         public static ASubTestDto With(){
                 return new ASubTestDto();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto> Null(){
-                return AnInstance.Null<TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto>();
+        public static IMatcher<TestDtoWithSubClass.SubTestDto> Null(){
+                return AnInstance.Null<TestDtoWithSubClass.SubTestDto>();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto> NotNull(){
-                return AnInstance.NotNull<TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto>();
+        public static IMatcher<TestDtoWithSubClass.SubTestDto> NotNull(){
+                return AnInstance.NotNull<TestDtoWithSubClass.SubTestDto>();
         }
 
-        public static IMatcher<TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto> Instance(TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto expect){
+        public static IMatcher<TestDtoWithSubClass.SubTestDto> Instance(TestDtoWithSubClass.SubTestDto expect){
                 return AnInstance.SameAs(expect);
         }
 

@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using Moq.Language.Flow;
 using TestFirst.Net.Util;
-using System.Linq.Expressions;
-using System.Collections.Generic;
 
 namespace TestFirst.Net.Extensions.Moq
 {
@@ -75,7 +75,7 @@ namespace TestFirst.Net.Extensions.Moq
 
         public TimesBuilder<int, FluentPropertyGet<T, TProperty>> IsCalled(int num)
         {
-            return new TimesBuilder<int, FluentPropertyGet<T, TProperty>>(num, (val) =>
+            return new TimesBuilder<int, FluentPropertyGet<T, TProperty>>(num, val =>
             {
                 var counter = new InvocationCounter(val, m_expression);
                 m_setup.Callback(counter.Increment);

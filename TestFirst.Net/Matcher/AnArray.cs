@@ -50,8 +50,8 @@ namespace TestFirst.Net.Matcher
 
         private class ArrayMatcher<T> : AbstractMatcher<T[]>
         {
-            private static readonly Func<T, T, bool> DefaultObjectEqualsMatcher = new Func<T, T, bool>((expect, actual) => { return expect.Equals(actual); });
-            private static readonly Func<T, object> DefaultPrettyValueConverter = new Func<T, object>(val=>val);
+            private static readonly Func<T, T, bool> DefaultObjectEqualsMatcher = (expect, actual) => { return expect.Equals(actual); };
+            private static readonly Func<T, object> DefaultPrettyValueConverter = val=>val;
             
             private readonly T[] m_expect;
             private readonly Func<T, T, bool> m_equalMatcher;

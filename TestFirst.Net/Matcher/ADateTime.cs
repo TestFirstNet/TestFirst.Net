@@ -92,7 +92,7 @@ namespace TestFirst.Net.Matcher
 
             public TimeSpanBuilder<DateTimeEqualsMatcher> Within(double val)
             {
-                return new TimeSpanBuilder<DateTimeEqualsMatcher>(val,(span)=>this.Within(span));
+                return new TimeSpanBuilder<DateTimeEqualsMatcher>(val,span=>Within(span));
             }
 
             /// <summary>
@@ -115,7 +115,7 @@ namespace TestFirst.Net.Matcher
             /// <returns></returns>
             public TimeSpanBuilder<DateTimeEqualsMatcher> PlusMax(double val)
             {
-                return new TimeSpanBuilder<DateTimeEqualsMatcher>(val,(span)=>this.PlusMax(span));
+                return new TimeSpanBuilder<DateTimeEqualsMatcher>(val,span=>PlusMax(span));
             }
 
             public DateTimeEqualsMatcher PlusMax(TimeSpan span)
@@ -132,7 +132,7 @@ namespace TestFirst.Net.Matcher
             /// <returns></returns>
             public TimeSpanBuilder<DateTimeEqualsMatcher> MinusMax(double val)
             {
-                return new TimeSpanBuilder<DateTimeEqualsMatcher>(val,(span)=>this.MinusMax(span));
+                return new TimeSpanBuilder<DateTimeEqualsMatcher>(val,span=>MinusMax(span));
             }
 
             /// <summary>
@@ -256,7 +256,7 @@ namespace TestFirst.Net.Matcher
             private DateTime? m_expectBefore;
             private TimeSpan? m_offset;
 
-            private bool m_inclusive = false;
+            private bool m_inclusive;
 
             internal DateTimeIntervalMatcher()
             {}
@@ -287,7 +287,7 @@ namespace TestFirst.Net.Matcher
 
             public TimeSpanBuilder<DateTimeIntervalMatcher> Within(double val)
             {
-                return new TimeSpanBuilder<DateTimeIntervalMatcher>(val,(span)=>this.Within(span));
+                return new TimeSpanBuilder<DateTimeIntervalMatcher>(val,span=>Within(span));
             }
 
             public DateTimeIntervalMatcher Within(TimeSpan span)

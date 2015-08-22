@@ -1,7 +1,4 @@
-﻿using System;
-using TestFirst.Net;
-using System.Collections.Generic;
-using TestFirst.Net.Matcher;
+﻿using System.Collections.Generic;
 
 namespace TestFirst.Net.Matcher
 {
@@ -19,7 +16,7 @@ namespace TestFirst.Net.Matcher
             return Matchers.Function ((KeyValuePair<K,V> actual,IMatchDiagnostics diag)=>{
                 return diag.TryMatch(actual.Key,keyMatcher) && diag.TryMatch(actual.Value,valueMatcher);
             },
-            (desc)=>{
+            desc=>{
                 desc.Text("KeyValuePair");
                 desc.Value("Key", keyMatcher);
                 desc.Text("Value", valueMatcher);

@@ -12,7 +12,7 @@ namespace TestFirst.Net.Test.Matcher
         public void AllPropertiesMatchesTest()
         {
             AssertPasses(
-                new FooPoco() { StringProp = "MyString", IntProp = 1 },
+                new FooPoco { StringProp = "MyString", IntProp = 1 },
                 ExpectFoo()
                     .WithProperty("StringProp", AString.EqualTo("MyString"))
                     .WithProperty("IntProp", AnInt.EqualTo(1))
@@ -22,7 +22,7 @@ namespace TestFirst.Net.Test.Matcher
         [Test]
         public void DuplicatePropertiesMatchesTest()
         {
-            var actual = new FooPoco() {StringProp = "MyString", IntProp = 1};
+            var actual = new FooPoco {StringProp = "MyString", IntProp = 1};
 
             AssertPasses(
                 actual,
@@ -46,7 +46,7 @@ namespace TestFirst.Net.Test.Matcher
         public void MissMatchingPropertyTest()
         {
             AssertFails(
-                new FooPoco() { StringProp = "MyString", IntProp = 1 },
+                new FooPoco { StringProp = "MyString", IntProp = 1 },
                 ExpectFoo()
                     .WithProperty("StringProp", AString.EqualTo("MyWrongString"))
                     .WithProperty("IntProp", AnInt.EqualTo(1))
@@ -57,7 +57,7 @@ namespace TestFirst.Net.Test.Matcher
         public void MissMatchingPropertyMessageTest()
         {
             AssertFails(
-                new FooPoco() { StringProp = "MyString"},
+                new FooPoco { StringProp = "MyString"},
                 ExpectFoo()
                     .WithProperty("StringProp", AString.EqualTo("MyWrongString")),
                 All.Of(
@@ -71,7 +71,7 @@ namespace TestFirst.Net.Test.Matcher
         public void PartialPropertiesMatchTest()
         {
             AssertPasses(
-                new FooPoco() { StringProp = "MyString", IntProp = 1 },
+                new FooPoco { StringProp = "MyString", IntProp = 1 },
                 ExpectFoo()
                     .WithProperty("StringProp", AString.EqualTo("MyString"))
                 );
@@ -81,7 +81,7 @@ namespace TestFirst.Net.Test.Matcher
         public void NullablePropertyMatchTest()
         {
             AssertPasses(
-                new FooPoco() { StringProp = null, IntProp = 1 },
+                new FooPoco { StringProp = null, IntProp = 1 },
                 ExpectFoo()
                     .WithProperty("StringProp", AString.EqualTo(null))
                 );
@@ -108,7 +108,7 @@ namespace TestFirst.Net.Test.Matcher
         public void PublicPropertiesTest()
         {
             AssertPasses(
-                new FooPoco() { PublicProp = "MyString" },
+                new FooPoco { PublicProp = "MyString" },
                 ExpectFoo()
                     .WithProperty("PublicProp", AString.EqualTo("MyString"))
                 );
@@ -119,8 +119,8 @@ namespace TestFirst.Net.Test.Matcher
         //classes which have subclasses
         public void CanSubClassMatcherAndMatchOnSuperTypePocoTest()
         {
-            IList<Employee> employees = new List<Employee>() { new Employee("Bob") };
-            IList<Human> humans = new List<Human>() { new Human("Bob") };
+            IList<Employee> employees = new List<Employee> { new Employee("Bob") };
+            IList<Human> humans = new List<Human> { new Human("Bob") };
 
             AssertPasses(
                 humans,

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using TestFirst.Net.Concurrent;
 using TestFirst.Net.Lang;
-using TestFirst.Net.Logging;
 using TestFirst.Net.Util;
 
 namespace TestFirst.Net.Performance
@@ -91,7 +90,7 @@ namespace TestFirst.Net.Performance
                 PreConditions.AssertNotNull(m_tests, "Tests");
                 PreConditions.AssertNotNull(m_runTimeout, "expect run timeout");
 
-                return new ContentionLoadRunner(m_tests,runTimeout:m_runTimeout.GetValueOrDefault(), threadPriority:m_threadPriority);
+                return new ContentionLoadRunner(m_tests,m_runTimeout.GetValueOrDefault(), m_threadPriority);
             }
 
             public Builder Priority(ThreadPriority priority)
