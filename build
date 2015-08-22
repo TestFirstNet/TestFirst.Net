@@ -21,6 +21,11 @@ NUGET_PKG_DIR="$SOLUTION_DIR/packages"
 NUGET_CONFIG="$SOLUTION_DIR/.nuget/NuGet.Config"
 SOLUTION=TestFirst.Net.sln
 
+NUGET_EXE=
+MSBUILD_EXE=
+XBUILD_EXE=
+MONO_EXE=
+
 #ensure we run from a known location
 cd $SOLUTION_DIR
 
@@ -30,6 +35,47 @@ function log(){
 
 function error(){
     echo "[BUILD] [ERROR!] $1"
+}
+
+function findBuildTools(){
+	if command -v MsBuild -version >/dev/null 2>&1; then
+		log "Using MSBuild on the path"
+		MSBUILD_EXE="MsBuild"
+	else
+		#find latest MSBuild 
+		MSBUILD_EXE=$(find $SYSTEMROOT\\Microsoft.NET\\Framework -type f -name MSBuild.exe | sort -r | sed -n '1p' 2>/dev/null)
+		if command -v "$MSBUILD_EXE" -version >/dev/null 2>&1; then
+			log "Using MSBuild at $MSBUILD_EXE"
+		elif command -v xbuild -version >/dev/null 2>&1; then
+			log "Using xbuild on the path"
+			XBUILD_EXE=xbuild
+			MSBUILD_EXE=null
+		else
+			error "Could not find MsBuild or xbuild. Make one available on the path. Also tried looking under $SYSTEMROOT\\Microsoft.NET\\Framework"
+			exit -1
+		fi
+	fi
+
+	if command -v nuget -version >/dev/null 2>&1; then
+		log "Using NuGet on the path"
+		NUGET_EXE="NuGet"
+	else
+		if [ -f $SOLUTION_DIR/.nuget/NuGet.exe ]; then
+			NUGET_EXE=$SOLUTION_DIR/.nuget/NuGet.exe
+			log "Using nuget at $NUGET_EXE"
+		elif [ -f ~/.nuget/NuGet.exe ]; then
+			NUGET_EXE=~/.nuget/NuGet.exe
+			log "Using nuget at $NUGET_EXE"
+		else
+			error "Could not find any installed nuget"
+			exit -1
+		fi
+	fi
+	
+	if command -v Mono -version >/dev/null 2>&1; then
+		log "Using Mono on the path"
+		MONO_EXE="Mono"
+	fi
 }
 
 #convert html entities into something the nuspec parser can handle
@@ -77,13 +123,13 @@ function nupack(){
         #main package
         log "building main nuget package"
         filterTemplate ${projName}.nuspec.template ${projName}.nuspec
-        nuget pack ${projName}.nuspec  -Prop Configuration=$CONFIG -Version $VERSION    
+        $NUGET_EXE pack ${projName}.nuspec  -Prop Configuration=$CONFIG -Version $VERSION    
         rm -f ${projName}.nuspec
 
         log "building symbols nuget package"
         #symbols package
         filterTemplate ${projName}.nuspec.template ${projName}.nuspec
-        nuget pack ${projName}.nuspec  -Symbols -Prop Configuration=$CONFIG -Version $VERSION 
+        $NUGET_EXE pack ${projName}.nuspec  -Symbols -Prop Configuration=$CONFIG -Version $VERSION 
         rm -f ${projName}.nuspec
 
         #todo: gitlink
@@ -92,9 +138,9 @@ function nupack(){
 
 function invokeNuget(){
     if [ -f "$NUGET_CONFIG" ]; then
-        nuget "$@" -OutputDir $NUGET_PKG_DIR -NonInteractive -ConfigFile "$NUGET_CONFIG"
+        $NUGET_EXE "$@" -OutputDir $NUGET_PKG_DIR -NonInteractive -ConfigFile "$NUGET_CONFIG"
     else
-        nuget "$@" -OutputDir $NUGET_PKG_DIR -NonInteractive
+        $NUGET_EXE "$@" -OutputDir $NUGET_PKG_DIR -NonInteractive
     fi
 }
 
@@ -117,7 +163,7 @@ function nuPush(){
     pkg="$proj.$VERSION.nupkg"
     log "pushing nuget pkg $proj/$pkg"
     pushd $proj > /dev/null
-        nuget Push $pkg    
+        $NUGET_EXE Push $pkg    
     popd > /dev/null
 }
 
@@ -145,7 +191,7 @@ function requireVersion(){
 # ------------- build targets ---------------
 
 function nugetRestore(){
-    invokeNuget restore $SOLUTION
+    invokeNuget restore $SOLUTION -PackagesDirectory
 }
 
 function tagGit(){
@@ -180,19 +226,29 @@ function cleanAll(){
     done
 
     removeOldNuPkgs
-    xbuild $SOLUTION /t:Clean  /verbosity:quiet /nologo
-    xbuild $SOLUTION /t:Clean  /p:Configuration=Release  /verbosity:quiet /nologo
-    xbuild $SOLUTION /t:Clean  /p:Configuration=Debug  /verbosity:quiet /nologo
-    xbuild $SOLUTION /t:Clean  /p:Configuration=$CONFIG  /verbosity:quiet /nologo
+	
+	if [ $MSBUILD_EXE ]; then
+		#msbuild complains about this
+		$MSBUILD_EXE $SOLUTION /t:Clean >/dev/null
+		
+	else
+		$XBUILD_EXE $SOLUTION /t:Clean  /verbosity:quiet /nologo
+		$XBUILD_EXE $SOLUTION /t:Clean  /p:Configuration=Release  /verbosity:quiet /nologo
+		$XBUILD_EXE $SOLUTION /t:Clean  /p:Configuration=Debug  /verbosity:quiet /nologo
+		$XBUILD_EXE $SOLUTION /t:Clean  /p:Configuration=$CONFIG  /verbosity:quiet /nologo
+	fi
+	
     # remove generated nuspec files
     find . -name *.nuspec | xargs -i rm {}
 }
 
 function buildAll(){
     log "building all"
-    # TODO:detect mono and use xbuild (if in cygwin env)
-    #msbuild.exe TestFirst.Net.sln -t:Clean,Build -p:Configuration=Release
-    xbuild $SOLUTION /t:Build /p:Configuration=$CONFIG /verbosity:$VERBOSITY
+	if [ $MSBUILD_EXE ]; then
+		$MSBUILD_EXE $SOLUTION -t:Clean,Build -p:Configuration=$CONFIG /verbosity:$VERBOSITY
+	else
+		$XBUILD_EXE $SOLUTION /t:Build /p:Configuration=$CONFIG /verbosity:$VERBOSITY
+	fi
 }
 
 
@@ -214,7 +270,11 @@ function testAll(){
         pushd $proj/bin/$CONFIG/ > /dev/null
             # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
             dll_name=`echo $proj | sed 's/\(.*\)s$/\1/'`
-            mono $runner -nologo $dll_name.dll
+			if [ $MONO_EXE ]; then
+				$MONO_EXE $runner -nologo $dll_name.dll
+			else
+				$runner -nologo $dll_name.dll	
+			fi
         popd > /dev/null
         log "finished running test $proj"
     done
@@ -249,6 +309,7 @@ function release(){
 function printHelp() {
     log "USAGE:"
     log "   ./build target [target..] [varname1=value1..]"
+	log "   eg ./build clean restore build test"
     log "TARGETS:"
     log "  clean : remove all built artifacts (*.dll)"
     log "  clean-repo : remove all *.nupkg files from local repo $LOCAL_REPO"
@@ -267,11 +328,13 @@ function printHelp() {
     log "  local_repo : path to local nuget test repo. Current $LOCAL_REPO"
     log "  nunit_version : Version of nunit to use for testing. Current $NUNIT_VERSION"
     log "  nuget_src : Nuget source to install nunit runner from. Current $NUGET_SRC"
-    log "To set script variables, pass in <name>=<value>, as in './build release version=1.2.3' (name is case insensitive)"
+    log "To set script variables pass in <name>=<value> as in './build release version=1.2.3' (name is case insensitive)"
 }
 
+# ----------------- start the actual build ---------------------------
+
 log "-------- TestFirst.Net Build -----"
-    
+
 #extract variable assignment. Expect VAR=VAL on command line
 for arg in "$@"; do  
     if [[ $arg == *"="* ]]; then
@@ -281,6 +344,8 @@ for arg in "$@"; do
         declare $name=$val
     fi    
 done
+
+findBuildTools
  
 has_target=0
 for target in "$@"; do  
@@ -327,13 +392,13 @@ for target in "$@"; do
         'help' )
             printHelp
             ;;             
-        * ) 
+        * )
             echo "No build target '$target'. For help run target '$0 help'";
             exit -1
     esac
     has_target=1
 done
 
-if [ $has_target == 0 ]; then
+if [ $has_target -eq 0 ]; then
     echo "no build target provided. For help run target '$0 help'"
 fi
