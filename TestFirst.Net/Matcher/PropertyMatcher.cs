@@ -196,7 +196,7 @@ namespace TestFirst.Net.Matcher
         {
             if (PropertyExists(propertyName))
             {
-                m_pocoPropertyMatchers.Add(TypeSafePropertyMatcher.NewHolderWithNameAndMatcher(typeof(T), propertyName, fieldMatcher));
+                m_pocoPropertyMatchers.Add(TypeSafePropertyMatcher.NewWithNameAndMatcher(typeof(T), propertyName, fieldMatcher));
             }
             else
             {
@@ -256,7 +256,7 @@ namespace TestFirst.Net.Matcher
                 m_isNullableType = IsNullableType(propertyType);
             }
 
-            internal static TypeSafePropertyMatcher NewHolderWithNameAndMatcher<TProperty>(Type containingType, string propertyName, IMatcher<TProperty> propertyValueMatcher)
+            internal static TypeSafePropertyMatcher NewWithNameAndMatcher<TProperty>(Type containingType, string propertyName, IMatcher<TProperty> propertyValueMatcher)
             {
                 return new TypeSafePropertyMatcher(containingType, propertyName, typeof(TProperty), propertyValueMatcher);
             }

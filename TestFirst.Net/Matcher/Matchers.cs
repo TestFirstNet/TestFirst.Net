@@ -80,33 +80,34 @@ namespace TestFirst.Net.Matcher
         private class FuncTypeName<T> : AbstractMatcher<T>, IProvidePrettyTypeName
         {
             private readonly Func<T, bool> m_matchFunc;
-            private readonly Func<string> m_mismatchMessageFactory;
-            private readonly Action<IDescription> m_mismatchMessageFactory2;
+            private readonly Func<string> m_mismatchMessageFactoryGivesString;
+            private readonly Action<IDescription> m_mismatchMessageFactoryTakesDesc;
 
-            public FuncTypeName(Func<T, bool> matchFunc, Func<string> mismatchMessageFactory)
+            public FuncTypeName(Func<T, bool> matchFunc, Func<string> mismatchMessageFactoryGivesString)
             {
                 if(matchFunc==null){
                     throw new NullReferenceException("Expect a match function");
                 }
-                if(mismatchMessageFactory==null){
-                    throw new NullReferenceException("Expect a message factory function");
+                if(mismatchMessageFactoryGivesString==null){
+                    throw new NullReferenceException("Expect a message factory function returning a string");
                 }
                 m_matchFunc = matchFunc;
-                m_mismatchMessageFactory = mismatchMessageFactory;
-                m_mismatchMessageFactory2 = null;
+                m_mismatchMessageFactoryGivesString = mismatchMessageFactoryGivesString;
+                m_mismatchMessageFactoryTakesDesc = null;
             }
 
-            public FuncTypeName(Func<T, bool> matchFunc, Action<IDescription> mismatchMessageFactory)
+            public FuncTypeName(Func<T, bool> matchFunc, Action<IDescription> mismatchMessageFactoryTakesDesc)
             {
                 if(matchFunc==null){
                     throw new NullReferenceException("Expect a match function");
                 }
-                if(mismatchMessageFactory==null){
-                    throw new NullReferenceException("Expect a message factory action");
+                if (mismatchMessageFactoryTakesDesc == null)
+                {
+                    throw new NullReferenceException("Expect a message factory action taking a description");
                 }
                 m_matchFunc = matchFunc;
-                m_mismatchMessageFactory = null;
-                m_mismatchMessageFactory2 = mismatchMessageFactory;
+                m_mismatchMessageFactoryGivesString = null;
+                m_mismatchMessageFactoryTakesDesc = mismatchMessageFactoryTakesDesc;
             }
 
             public override bool Matches(T instance, IMatchDiagnostics diag)
@@ -116,10 +117,10 @@ namespace TestFirst.Net.Matcher
 
             public override void DescribeTo(IDescription description)
             {
-                if (m_mismatchMessageFactory2 != null) {
-                    m_mismatchMessageFactory2.Invoke (description);
-                } else if (m_mismatchMessageFactory != null) {
-                    description.Text (m_mismatchMessageFactory.Invoke ());
+                if (m_mismatchMessageFactoryTakesDesc != null) {
+                    m_mismatchMessageFactoryTakesDesc.Invoke (description);
+                } else if (m_mismatchMessageFactoryGivesString != null) {
+                    description.Text (m_mismatchMessageFactoryGivesString.Invoke ());
                 } else {
                     description.Text ("No description for " + GetType().Name + "@" + GetHashCode());
                 }
@@ -135,34 +136,34 @@ namespace TestFirst.Net.Matcher
         {
             private readonly Func<TActual, IMatchDiagnostics, bool> m_matchFunc;
 
-            private readonly Func<string> m_mismatchMessageFactory;
-            private readonly Action<IDescription> m_mismatchMessageFactory2;
+            private readonly Func<string> m_mismatchMessageFactoryGivesString;
+            private readonly Action<IDescription> m_mismatchMessageFactoryTakesDesc;
 
-            public FuncWithDiagnosticsTypeName(Func<TActual, IMatchDiagnostics, bool> matchFunc, Func<string> mismatchMessageFactory)
+            public FuncWithDiagnosticsTypeName(Func<TActual, IMatchDiagnostics, bool> matchFunc, Func<string> mismatchMessageFactoryGivesString)
             {
                 if(matchFunc==null){
                     throw new NullReferenceException("Expect a match function");
                 }
-                if(mismatchMessageFactory==null){
-                    throw new NullReferenceException("Expect a message factory function");
+                if(mismatchMessageFactoryGivesString==null){
+                    throw new NullReferenceException("Expect a message factory function giving a string");
                 }
 
                 m_matchFunc = matchFunc;
-                m_mismatchMessageFactory = mismatchMessageFactory;
-                m_mismatchMessageFactory2 = null;
+                m_mismatchMessageFactoryGivesString = mismatchMessageFactoryGivesString;
+                m_mismatchMessageFactoryTakesDesc = null;
             }
 
-            public FuncWithDiagnosticsTypeName(Func<TActual, IMatchDiagnostics, bool> matchFunc, Action<IDescription> mismatchMessageFactory)
+            public FuncWithDiagnosticsTypeName(Func<TActual, IMatchDiagnostics, bool> matchFunc, Action<IDescription> mismatchMessageFactoryTakesDesc)
             {
                 if(matchFunc==null){
                     throw new NullReferenceException("Expect a match function");
                 }
-                if(mismatchMessageFactory==null){
-                    throw new NullReferenceException("Expect a message factory action");
+                if(mismatchMessageFactoryTakesDesc==null){
+                    throw new NullReferenceException("Expect a message factory action taking a description");
                 }
                 m_matchFunc = matchFunc;
-                m_mismatchMessageFactory = null;
-                m_mismatchMessageFactory2 = mismatchMessageFactory;
+                m_mismatchMessageFactoryGivesString = null;
+                m_mismatchMessageFactoryTakesDesc = mismatchMessageFactoryTakesDesc;
             }
 
             public override bool Matches(TActual instance, IMatchDiagnostics diag)
@@ -172,10 +173,10 @@ namespace TestFirst.Net.Matcher
 
             public override void DescribeTo(IDescription description)
             {
-                if (m_mismatchMessageFactory2 != null) {
-                    m_mismatchMessageFactory2.Invoke (description);
-                } else if (m_mismatchMessageFactory != null) {
-                    description.Text (m_mismatchMessageFactory.Invoke ());
+                if (m_mismatchMessageFactoryTakesDesc != null) {
+                    m_mismatchMessageFactoryTakesDesc.Invoke (description);
+                } else if (m_mismatchMessageFactoryGivesString != null) {
+                    description.Text (m_mismatchMessageFactoryGivesString.Invoke ());
                 } else {
                     description.Text ("No description for " + GetType().Name + "@" + GetHashCode());
                 }
