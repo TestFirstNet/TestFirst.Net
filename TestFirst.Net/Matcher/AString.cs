@@ -88,7 +88,7 @@ namespace TestFirst.Net.Matcher
         /// </summary>
         public static IMatcher<string> EmptyOrNull()
         {
-            return Matchers.Function((string actual) => actual == null || actual.Length == 0, "an empty or null string");
+            return Matchers.Function((string actual) => string.IsNullOrEmpty(actual), "an empty or null string");
         }
 
         public static IMatcher<string> EqualTo(string expect)
