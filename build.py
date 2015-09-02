@@ -18,6 +18,11 @@ SOLUTION='TestFirst.Net.sln'
 PROJECTS=['TestFirst.Net','TestFirst.Net.Extensions','TestFirst.Net.Performance']
 TEST_PROJECTS=['TestFirst.Net.Tests','TestFirst.Net.Extensions.Test','TestFirst.Net.Performance.Test']
 
+#optional, the project to clean/test etc
+PROJECT=None
+#optional the tests to run, comma separated
+TESTS=None
+
 VERBOSITY='minimal'
 #VERBOSITY=quiet,  minimal,  normal, detailed, diagnostic
 CONFIG='Release'
@@ -66,7 +71,9 @@ def task_help():
     log('VARIABLES:')
     log('  config : the solution config to use. Debug|Release. Current ' + CONFIG)
     log('  version : version to release at. Format MAJOR.MINOR.BUILD. Current ' + VERSION)
-    log('  verbosity : xbuild verbosity. quiet|minimal|normal|detailed|diagnostic. Current ' + VERBOSITY)
+    log('  project : project to run the task against. By default all projects are included')
+    log('  tests : comma separated tests to run. Passed to NUnit. By default all tests are included')
+    log('  verbosity : msbuild/xbuild verbosity. quiet|minimal|normal|detailed|diagnostic. Current ' + VERBOSITY)
     log('  local_repo : path to local nuget test repo. Current ' + LOCAL_REPO)
     log('  nunit_version : Version of nunit to use for testing. Current ' + NUNIT_VERSION)
     log('  nuget_src : Nuget source to install nunit runner from. Current ' + NUGET_SRC)
@@ -143,8 +150,9 @@ def task_clean():
     log('cleaning')
 
     for proj in (PROJECTS + TEST_PROJECTS):
-        shutil.rmtree(proj + '/bin/',ignore_errors=True)
-        shutil.rmtree(proj + '/obj/',ignore_errors=True)
+        if include_proj(proj):
+            shutil.rmtree(proj + '/bin/',ignore_errors=True)
+            shutil.rmtree(proj + '/obj/',ignore_errors=True)
         
     #remove old NuGet pkgs and generated nuspec files    
     def onfile(path,name):
@@ -192,11 +200,15 @@ def task_test():
 
     #e.g. ./TestFirst.Net.Performance.Test/obj/Release/TestFirst.Net.Performance.Test.dll
     for proj in TEST_PROJECTS:
-        log('executing tests in ' + proj)
-        with cd(proj + '/bin/' + CONFIG):
-            # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
-            dll_name=proj if not proj.endswith('s') else proj[:-1]
-            win_invoke(NUNIT_CONSOLE_EXE,['-nologo',dll_name + '.dll'])
+        if include_proj(proj):
+            log('executing tests in ' + proj)
+            with cd(proj + '/bin/' + CONFIG):
+                # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
+                dll_name=proj if not proj.endswith('s') else proj[:-1]
+                if TESTS:
+                    win_invoke(NUNIT_CONSOLE_EXE,['-nologo','-run:' + TESTS, dll_name + '.dll'])
+                else:
+                    win_invoke(NUNIT_CONSOLE_EXE,['-nologo',dll_name + '.dll'])
 
 
 def task_test_coverage():
@@ -205,27 +217,28 @@ def task_test_coverage():
     log('generating code test coverage')
     
     for proj in TEST_PROJECTS:
-        log('Executing tests in {} for coverage'.format(proj))
-        with cd(proj + '/bin/' + CONFIG):
-            # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
-            test_dll_name=proj if not proj.endswith('s') else proj[:-1]
-            proj_dll_name=(test_dll_name if not test_dll_name.endswith('.Test') else test_dll_name[:-5])
-            
-            win_invoke(OPENCOVER_EXE,[
-                '-log:All',
-                '-target:"{}"'.format(NUNIT_CONSOLE_EXE),
-                '-targetargs:"/nologo {}.dll /noshadow /trace=Error"'.format(test_dll_name),
-                '-filter:"+[' + proj_dll_name + ']*"',
-                '-excludebyattribute:"System.CodeDom.Compiler.GeneratedCodeAttribute"',
-                '-register:user',
-                '-output:_CodeCoverageResult.xml'])
+        if include_proj(proj):
+            log('Executing tests in {} for coverage'.format(proj))
+            with cd(proj + '/bin/' + CONFIG):
+                # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
+                test_dll_name=proj if not proj.endswith('s') else proj[:-1]
+                proj_dll_name=(test_dll_name if not test_dll_name.endswith('.Test') else test_dll_name[:-5])
+                
+                win_invoke(OPENCOVER_EXE,[
+                    '-log:All',
+                    '-target:"{}"'.format(NUNIT_CONSOLE_EXE),
+                    '-targetargs:"/nologo {}.dll /noshadow /trace=Error"'.format(test_dll_name),
+                    '-filter:"+[' + proj_dll_name + ']*"',
+                    '-excludebyattribute:"System.CodeDom.Compiler.GeneratedCodeAttribute"',
+                    '-register:user',
+                    '-output:_CodeCoverageResult.xml'])
 
-            win_invoke(REPORTGEN_EXE,[
-                '-reports:_CodeCoverageResult.xml',
-                '-targetdir:_CodeCoverageReport',
-                '-reporttypes:Badges' ])
-              
-        log('finished running code coverage ' + proj) 
+                win_invoke(REPORTGEN_EXE,[
+                    '-reports:_CodeCoverageResult.xml',
+                    '-targetdir:_CodeCoverageReport',
+                    '-reporttypes:Badges' ])
+                  
+            log('finished running code coverage ' + proj) 
 
 
 def task_release():
@@ -274,7 +287,8 @@ def task_nuget_pack():
 
     log('packing all')
     for proj in PROJECTS:
-        nuget_pack(proj)
+        if include_proj(proj):
+            nuget_pack(proj)
 
 
 def task_nuget_restore():
@@ -471,6 +485,8 @@ def ensure_dir_exists(dir):
         if exception.errno != errno.EEXIST:
             raise
 
+def include_proj(proj_name):
+    return not PROJECT or proj_name.lower() == PROJECT.lower()
 
 class BuildError(Exception):
 
