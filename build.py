@@ -130,10 +130,10 @@ def task_init():
 
 
 def task_version():
+   global VERSION
    if VERSION == "0.0.0":
-        output=invoke('git',['tag'])
-        
-        log('Tagged git versions:' + output)
+        log('Tagged git versions:')
+        invoke('git',['tag'])
         
         VERSION = input('[BUILD] Build as nuget version: ')
 
