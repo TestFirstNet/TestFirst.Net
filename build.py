@@ -10,9 +10,14 @@ import subprocess
 import shutil
 import inspect
 
+#---- build variables. User can override by passing in varname=varval on the commandline
+
 # reliably get the solution dir
 SOLUTION_DIR=os.path.dirname(os.path.realpath(__file__))
-USER_HOME=os.path.expanduser("~")
+SOLUTION='TestFirst.Net.sln'
+PROJECTS=['TestFirst.Net','TestFirst.Net.Extensions','TestFirst.Net.Performance']
+TEST_PROJECTS=['TestFirst.Net.Tests','TestFirst.Net.Extensions.Test','TestFirst.Net.Performance.Test']
+
 VERBOSITY='minimal'
 #VERBOSITY=quiet,  minimal,  normal, detailed, diagnostic
 CONFIG='Release'
@@ -23,33 +28,29 @@ NUNIT_VERSION='2.6.4'
 OPENCOVER_VERSION='4.6.166'
 REPORTGEN_VERSION='2.2.0.0'
 
-LOCAL_REPO=USER_HOME + '/workspace/local-nuget-repo'
-TMP_DIR='obj/tmp'
-PROJECTS=['TestFirst.Net','TestFirst.Net.Extensions','TestFirst.Net.Performance']
-TEST_PROJECTS=['TestFirst.Net.Tests','TestFirst.Net.Extensions.Test','TestFirst.Net.Performance.Test']
-
-NUGET_SRC='http://www.nuget.org/api/v2/'
-NUGET_PKG_DIR=SOLUTION_DIR + '/packages'
-NUGET_CONFIG=SOLUTION_DIR + '/.nuget/NuGet.Config'
-SOLUTION='TestFirst.Net.sln'
-
-# to find
+# expect installed, to find
 NUGET_EXE=None
 MSBUILD_EXE=None
 XBUILD_EXE=None
 MONO_EXE=None
-
 # install if not found
 OPENCOVER_EXE=None
 REPORTGEN_EXE=None
 NUNIT_CONSOLE_EXE=None
 
+NUGET_SRC='http://www.nuget.org/api/v2/'
+NUGET_PKG_DIR=SOLUTION_DIR + '/packages'
+NUGET_CONFIG=SOLUTION_DIR + '/.nuget/NuGet.Config'
+
+USER_HOME=os.path.expanduser("~")
+LOCAL_REPO=USER_HOME + '/workspace/local-nuget-repo'
+TMP_DIR='obj/tmp'
 
 def task_help():
     log('USAGE:')
-    log('   build.py target [target..] [varname1=value1..]')
+    log('   build.py task [task..] [varname1=value1..]')
     log('   eg build.py clean restore build test')
-    log('TARGETS:')
+    log('TASKS:')
     log('  clean : remove all built artifacts (*.dll)')
     log('  clean-repo : remove all *.nupkg files from local repo ' + LOCAL_REPO)
     log('  clean-all : clean,clean-repo')
@@ -61,6 +62,7 @@ def task_help():
     log('  release-build : clean, build, test, pack')
     log('  release-push : push all the nuget packages to the nuget repo')
     log('  release : release-build,git-tag')
+    log('  tasks : print all the available tasks')
     log('VARIABLES:')
     log('  config : the solution config to use. Debug|Release. Current ' + CONFIG)
     log('  version : version to release at. Format MAJOR.MINOR.BUILD. Current ' + VERSION)
@@ -279,6 +281,12 @@ def task_nuget_restore():
     nuget_invoke(['restore',SOLUTION,'-PackagesDirectory'])
 
 
+def task_tasks():
+    log('available tasks:')        
+    for task_name in sorted(all_tasks):
+        log('\t' + task_name)
+
+
 # ----------------- helper functions ---------------------------
 
 def nuget_install_if_not_exists(pkg,version,exe_name,fix_permission=True):
@@ -471,7 +479,13 @@ class BuildError(Exception):
 
         
 class cd:
-    """Context manager for changing the current working directory"""
+    """Context manager for changing the current working directory and setting back to original when complete
+
+    Usage:
+        cd('new/dir'):
+            ...do stuff in new dir
+        ..back to org dir here
+    """
     def __init__(self, newPath):
         self.newPath = os.path.expanduser(newPath)
 
@@ -493,9 +507,9 @@ def register_tasks(mod):
     for f in all_functions:
         name=f[0]
         if name.startswith('task_'):
-            target=name[5:].replace('_','-')   
-            all_tasks[target]=f[1]
-            #log('registered task:' + target)
+            short_name=name[5:].replace('_','-')   
+            all_tasks[short_name]=f[1]
+            #log('registered task:' + short_name)
 
 register_tasks(sys.modules[__name__])
 
@@ -508,7 +522,7 @@ def depends(*taskNames):
 def run_task(taskName,once_only=True):
     task = all_tasks.get(taskName, None)
     if not task:
-        raise BuildError("No build target '{}'. For help run target 'help'".format(taskName))
+        raise BuildError("No build task '{}'. For help run task 'help'".format(taskName))
     
     # Execute the task        
     if once_only and taskName in tasks_run:
@@ -519,8 +533,8 @@ def run_task(taskName,once_only=True):
     task()
     log('-------- /task:' + taskName + ' ---------')
 
-def run_all_targets():
-    has_target=False
+def run_user_tasks():
+    has_task=False
     #extract variable assignment. Expect VAR=VAL on command line
     for arg in sys.argv[1:]:  
         if arg.find('=') != -1:
@@ -530,17 +544,17 @@ def run_all_targets():
             log('set {} ==> {}'.format(name,val))
             globals()[name]=val
 
-    for target in sys.argv[1:]:
+    for arg in sys.argv[1:]:
         #skip variable assignment
-        if target.find('=') != -1:
+        if arg.find('=') != -1:
             continue
         
-        run_task(target.lower())
+        run_task(arg.lower())
 
-        has_target=True
+        has_task=True
     
-    if not has_target:
-        raise BuildError("no build target provided. For help run target 'help'")
+    if not has_task:
+        raise BuildError("no build task provided. For help run task 'help'")
     
 
 
@@ -550,4 +564,4 @@ log('-------- TestFirst.Net Build -----')
 
 #ensure we run from a known location
 with cd(SOLUTION_DIR):
-    run_all_targets()
+    run_user_tasks()
