@@ -50,6 +50,9 @@ for more info see project page
     <tags>testing tdd bdd fluent nunit moq</tags>
   </metadata>
   <files>
-    <file src="obj/Release/TestFirst.Net*.dll" target="/lib/net/40/"/>
+    <file src="obj\Release\TestFirst.Net*.dll" target="/lib/net/40/"/>
+    <file src="obj\Release\TestFirst.Net*.pdb" target="/lib/net/40/"/>
+    <file src="obj\Release\TestFirst.Net*.dll" target="/lib/net/45/"/>
+    <file src="obj\Release\TestFirst.Net*.pdb" target="/lib/net/45/"/>
   </files>
 </package>

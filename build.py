@@ -165,8 +165,7 @@ def task_clean():
             shutil.rmtree(proj + '/obj/',ignore_errors=True)
         
     #remove old NuGet pkgs and generated nuspec files    
-    def onfile(path,name):
-        
+    def onfile(path,name):       
         if not unix_path(path).startswith('./packages') and name.endswith('.nupkg') or name.endswith('.nuspec'):
             log('removed:' + path)            
             os.remove(path)
@@ -350,22 +349,20 @@ def nuget_pack(projName):
     log('packing ' + projName)
 
     with cd(projName):
-        #main package
-        log('building main nuget package')
+        
         filter_template(projName + '.nuspec.template', projName + '.nuspec')
-
-        nuget_invoke(['pack', projName + '.nuspec', '-Prop', 'Configuration=' + CONFIG,'-Version',VERSION])
-        #rm -f ${projName}.nuspec
-
+        log('building main nuget package')
+        nuget_invoke(['pack', projName + '.nuspec', '-Prop', 'Configuration=' + CONFIG,'-Version',VERSION],include_optons=False)
+  
         log('building symbols nuget package')
-        #symbols package
-        nuget_invoke(['pack', projName + '.nuspec', '-Symnbols', '-Prop', 'Configuration=' + CONFIG,'-Version',VERSION])    
-        #rm -f ${projName}.nuspec
+        nuget_invoke(['pack', projName + '.nuspec', '-Symbols', '-Prop', 'Configuration=' + CONFIG,'-Version',VERSION],include_optons=False)  
 
+        os.remove(projName + '.nuspec')
+ 
         #todo: gitlink
 
 
-def nuget_invoke(args=None):
+def nuget_invoke(args=None,include_optons=True):
     global NUGET_EXE
     if not NUGET_EXE:
         if os.path.isfile(SOLUTION_DIR + '/.nuget/NuGet.exe'):
@@ -383,9 +380,11 @@ def nuget_invoke(args=None):
     nu_args=[]
     if args:
         nu_args+=args
-    nu_args+=['-OutputDir',NUGET_PKG_DIR,'-NonInteractive']    
-    if os.path.isfile(NUGET_CONFIG):
-        nu_args+=['-ConfigFile', NUGET_CONFIG]
+    if include_optons:
+        nu_args+=['-OutputDir',os_path(NUGET_PKG_DIR),'-NonInteractive']    
+        if os.path.isfile(NUGET_CONFIG):
+            nu_args+=['-ConfigFile', os_path(NUGET_CONFIG)]
+
     log('running nuget:' + NUGET_EXE)
     win_invoke(NUGET_EXE, nu_args)
 
@@ -433,13 +432,13 @@ def filter_template(fromPath,toPath):
     log("filtering template {} to {}".format(fromPath,toPath))
 
     #convert html entities into something the nuspec parser can handle
-    def filterHtml(html):
+    def filter_html(html):
         return html.replace('<','&#8249;').replace('>','&#8250;')
 
-    readMeText=filterHtml(open("../README.md").read())
-    releaseNotesText=filterHtml(open("../RELEASENOTES.md").read())
+    readMeText=filter_html(open("../README.md").read())
+    releaseNotesText=filter_html(open("../RELEASENOTES.md").read())
 
-    text=filterHtml(open(fromPath).read()).replace('TOKEN_MAIN_DESCRIPTON',releaseNotesText).replace('TOKEN_MAIN_RELEASENOTES',readMeText)
+    text=open(fromPath).read().replace('TOKEN_MAIN_DESCRIPTON',releaseNotesText).replace('TOKEN_MAIN_RELEASENOTES',readMeText)
 
     ensure_dir_exists(toPath)
 
