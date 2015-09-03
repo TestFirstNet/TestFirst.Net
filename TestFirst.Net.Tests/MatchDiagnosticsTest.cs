@@ -91,12 +91,7 @@ namespace TestFirst.Net.Test
 
         private void AssertEquals(String expect, String actual)
         {
-            Console.WriteLine("ACTUAL:");
-            Console.WriteLine(actual);
-            Console.WriteLine("EXPECT:");
-            Console.WriteLine(expect);
-
-            Assert.AreEqual(expect.Trim(), actual);
+            Assert.AreEqual(expect.Trim(), actual, "Not equal, actual '{}', got '{}'", new object[]{actual,expect});
         }
 
         class MyMatcher : AbstractMatcher<String>

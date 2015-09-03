@@ -25,15 +25,11 @@ namespace TestFirst.Net.Template
             template.GenerateFor<TestDtoWithSubClass.SubTestDto>();
 
             var actualContent = template.Render();
-            Console.WriteLine("==============================ACTUAL=================================");
-            Console.WriteLine(actualContent); 
             
             var expectFile = new FileInfo(Path.Combine(GetProjectDir().Parent.FullName, "TestFirst.Net.Tests/Template/MatchersTemplateTest.ExpectGenerated.cs"));
             var expectContent = ReadFile(expectFile);
-            //Console.WriteLine("==============================EXPECT=================================");
-            //Console.WriteLine(expectContent);
 
-            Assert.AreEqual(Clean(expectContent), Clean(actualContent), "Generated output does not match expected");
+            Assert.AreEqual(Clean(expectContent), Clean(actualContent), "Generated output does not match expected. Actual:\n {} \n Expected: \n{}", new object[]{actualContent, expectContent});
         }
 
         private static String Clean(String s)

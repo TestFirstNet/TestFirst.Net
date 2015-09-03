@@ -25,7 +25,7 @@ namespace TestFirst.Net.Performance
                     .Listener(metricsWriter)
                     .Build())
                 .When(report = metricsWriter.BuildReport())
-                .When(report.PrintToConsole)
+                .When(report.ToString())
                 .Then(
                     Expect(report.GetMetricSummaryNamed("metric1").ValueMean),
                     Is(ADouble.EqualTo(4.75)))
