@@ -610,4 +610,4 @@ with cd(SOLUTION_DIR):
     try:
         run_user_tasks()
     except BuildError as e:
-        print("ERRROR! :" + e.msg)
+        error(e.msg)
