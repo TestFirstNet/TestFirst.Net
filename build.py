@@ -251,7 +251,7 @@ def task_test_coverage():
                 win_invoke(REPORTGEN_EXE,[
                     '-reports:_CodeCoverageResult.xml',
                     '-targetdir:_CodeCoverageReport',
-                    '-reporttypes:Badges' ])
+                    '-reporttypes:Html' ])
                   
             log('finished running code coverage ' + proj) 
 
