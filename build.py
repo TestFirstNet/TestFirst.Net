@@ -475,7 +475,6 @@ def invoke(prog, args=None):
     args=[prog] + args
     if os.name.endswith('nt'):    
         cmd=' '.join(args)
-        log('running:' + cmd)
         proc=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
     else:
         proc=subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
