@@ -22,6 +22,7 @@ TEST_PROJECTS=['TestFirst.Net.Tests','TestFirst.Net.Extensions.Test','TestFirst.
 PROJECT=None
 #optional the tests to run, comma separated
 TESTS=None
+TEST_SKIP=False
 
 VERBOSITY='minimal'
 #VERBOSITY=quiet,  minimal,  normal, detailed, diagnostic
@@ -73,11 +74,14 @@ def task_help():
     log('  version : version to release at. Format MAJOR.MINOR.BUILD. Current ' + VERSION)
     log('  project : project to run the task against. By default all projects are included')
     log('  tests : comma separated tests to run. Passed to NUnit. By default all tests are included')
+    log('  test_skip : Skip running of tests')
     log('  verbosity : msbuild/xbuild verbosity. quiet|minimal|normal|detailed|diagnostic. Current ' + VERBOSITY)
     log('  local_repo : path to local nuget test repo. Current ' + LOCAL_REPO)
     log('  nunit_version : Version of nunit to use for testing. Current ' + NUNIT_VERSION)
     log('  nuget_src : Nuget source to install nunit runner from. Current ' + NUGET_SRC)
+    log('')
     log('To set script variables pass in <name>=<value> as in "build.py release version=1.2.3" (name is case insensitive)')
+    log('Values with true/false will be converted to True/False (case insensitive)')
 
 
 def task_init():
@@ -88,6 +92,9 @@ def task_init():
     global OPENCOVER_EXE
     global XBUILD_EXE
     global NUNIT_CONSOLE_EXE
+    global LOCAL_REPO
+
+    LOCAL_REPO=os_path(LOCAL_REPO)
 
     if can_invoke('MsBuild'):
         log('Using MSBuild on the path')
@@ -136,7 +143,8 @@ def task_version():
         invoke('git',['tag'])
         
         VERSION = input('[BUILD] Build as nuget version: ')
-
+        if VERSION.startswith('v'):
+            VERSION=VERSION[1:]
 
 def task_clean_all():
     log('task-clean-all')
@@ -148,6 +156,8 @@ def task_clean_all():
 
 def task_clean():
     log('cleaning')
+    # reset all tasks
+        
 
     for proj in (PROJECTS + TEST_PROJECTS):
         if include_proj(proj):
@@ -156,7 +166,9 @@ def task_clean():
         
     #remove old NuGet pkgs and generated nuspec files    
     def onfile(path,name):
-        if name.endswith('.nupkg') or name.endswith('.nuspec'):
+        
+        if not unix_path(path).startswith('./packages') and name.endswith('.nupkg') or name.endswith('.nuspec'):
+            log('removed:' + path)            
             os.remove(path)
     find_files('.',onfile)
     
@@ -169,6 +181,7 @@ def task_clean():
     #    $XBUILD_EXE $SOLUTION /t:Clean  /p:Configuration=Release  /verbosity:quiet /nologo
     #    $XBUILD_EXE $SOLUTION /t:Clean  /p:Configuration=Debug  /verbosity:quiet /nologo
     #    $XBUILD_EXE $SOLUTION /t:Clean  /p:Configuration=$CONFIG  /verbosity:quiet /nologo
+
 
 
 def task_clean_repo():
@@ -201,14 +214,17 @@ def task_test():
     #e.g. ./TestFirst.Net.Performance.Test/obj/Release/TestFirst.Net.Performance.Test.dll
     for proj in TEST_PROJECTS:
         if include_proj(proj):
-            log('executing tests in ' + proj)
-            with cd(proj + '/bin/' + CONFIG):
-                # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
-                dll_name=proj if not proj.endswith('s') else proj[:-1]
-                if TESTS:
-                    win_invoke(NUNIT_CONSOLE_EXE,['-nologo','-run:' + TESTS, dll_name + '.dll'])
-                else:
-                    win_invoke(NUNIT_CONSOLE_EXE,['-nologo',dll_name + '.dll'])
+            if TEST_SKIP:
+                log('tests are set to skip')
+            else:
+                log('executing tests in ' + proj)
+                with cd(proj + '/bin/' + CONFIG):
+                    # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
+                    dll_name=proj if not proj.endswith('s') else proj[:-1]
+                    if TESTS:
+                        win_invoke(NUNIT_CONSOLE_EXE,['-nologo','-run:' + TESTS, dll_name + '.dll'])
+                    else:
+                        win_invoke(NUNIT_CONSOLE_EXE,['-nologo',dll_name + '.dll'])
 
 
 def task_test_coverage():
@@ -250,7 +266,7 @@ def task_release():
 
 
 def task_release_build():
-    depends('clean','build','test','nuget_pack')
+    depends('build','test','nuget-pack')
     copy_pkgs_to_local_repo()
 
 
@@ -259,11 +275,11 @@ def task_tag_git():
 
     log('tagging git')
 
-    while true:
+    while True:
         yn = input('tag git with version v{}? yn :'.format(VERSION)).lower()
         if yn == 'y':
-            invoke('git',['tag','-a','v' + VERSION, '-m', 'Release version ' + VERSION])
-            log('tagged with v' + VERSION)
+            invoke('git',['tag','-a','v' + VERSION, '-m', '"Release version ' + VERSION + '"'])
+            log('tagged git with v' + VERSION)
             break
         elif yn == 'n':
             log('not tagging')
@@ -285,7 +301,7 @@ def task_release_push():
 def task_nuget_pack(): 
     depends('build')
 
-    log('packing all')
+    log('packing all projects')
     for proj in PROJECTS:
         if include_proj(proj):
             nuget_pack(proj)
@@ -304,7 +320,7 @@ def task_tasks():
 # ----------------- helper functions ---------------------------
 
 def nuget_install_if_not_exists(pkg,version,exe_name,fix_permission=True):
-    exe=fix_slashes('{base}/packages/{pkg}.{ver}/tools/{name}'.format(base=SOLUTION_DIR,ver=version,pkg=pkg,name=exe_name))
+    exe=os_path('{base}/packages/{pkg}.{ver}/tools/{name}'.format(base=SOLUTION_DIR,ver=version,pkg=pkg,name=exe_name))
 
     if not os.path.isfile(exe):
         log("downloading " + pkg + "-" + version)
@@ -329,9 +345,9 @@ def nuget_install_if_not_exists(pkg,version,exe_name,fix_permission=True):
 
 
 def nuget_pack(projName):
-    log('packing' + projName)
-
     depends('build', 'version')
+
+    log('packing ' + projName)
 
     with cd(projName):
         #main package
@@ -386,15 +402,19 @@ def copy_pkgs_to_local_repo():
     log('packages in local repo are:')
     def print_name(path,name):
         if name.endswith('.nupkg'):
-            log(name)
+            log('\t' + name)
     find_files(LOCAL_REPO,print_name)
 
 
-def fix_slashes(path):
+def os_path(path):
     if is_windows():     
         return path.replace('/','\\')
     else:
         return path.replace('\\','/')
+
+
+def unix_path(path):
+    return path.replace('\\','/')
 
 
 def is_windows():
@@ -414,15 +434,14 @@ def filter_template(fromPath,toPath):
 
     #convert html entities into something the nuspec parser can handle
     def filterHtml(html):
-        return html.Replace('<','&#8249;').Replace('>','&#8250;')
+        return html.replace('<','&#8249;').replace('>','&#8250;')
 
     readMeText=filterHtml(open("../README.md").read())
     releaseNotesText=filterHtml(open("../RELEASENOTES.md").read())
 
-    text=filterHtml(open(fromPath).read())
-    text=Replace('TOKEN_MAIN_DESCRIPTON',releaseNotesText).Replace('TOKEN_MAIN_RELEASENOTES',readMeText)
+    text=filterHtml(open(fromPath).read()).replace('TOKEN_MAIN_DESCRIPTON',releaseNotesText).replace('TOKEN_MAIN_RELEASENOTES',readMeText)
 
-    ensure_dir_exists(os.path.dirname(to))
+    ensure_dir_exists(toPath)
 
     f=open(toPath, 'w')
     f.write(text)
@@ -478,11 +497,13 @@ def error(msg):
     print("[BUILD] [ERROR!] " + str(msg))
 
 
-def ensure_dir_exists(dir):
+def ensure_dir_exists(path):
     try:
-        os.makedirs(path)
+        dir_path=os.path.dirname(os.path.abspath(path))
+        os.makedirs(dir_path)
     except OSError as exception:
         if exception.errno != errno.EEXIST:
+            error("couldn't create dir '{}'".format(dirPath))
             raise
 
 def include_proj(proj_name):
@@ -538,7 +559,10 @@ def depends(*taskNames):
 def run_task(taskName,once_only=True):
     task = all_tasks.get(taskName, None)
     if not task:
-        raise BuildError("No build task '{}'. For help run task 'help'".format(taskName))
+        s=''
+        for task_name in sorted(all_tasks):
+            s+='\n\t' + task_name
+        raise BuildError("No build task '{}'. For help run task 'help'. Available tasks:{}".format(taskName,s))
     
     # Execute the task        
     if once_only and taskName in tasks_run:
@@ -557,6 +581,10 @@ def run_user_tasks():
             pair=str.split(arg,'=',1)
             name=pair[0].upper()
             val=pair[1]
+            if val.lower() == 'true':
+                val=True
+            elif val.lower() == 'false':
+                val=False
             log('set {} ==> {}'.format(name,val))
             globals()[name]=val
 
@@ -580,4 +608,7 @@ log('-------- TestFirst.Net Build -----')
 
 #ensure we run from a known location
 with cd(SOLUTION_DIR):
-    run_user_tasks()
+    try:
+        run_user_tasks()
+    except BuildError as e:
+        print("ERRROR! :" + e.msg)
