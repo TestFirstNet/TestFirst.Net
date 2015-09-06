@@ -32,7 +32,7 @@ CONFIG='Release'
 VERSION='0.0.0'
 NUNIT_VERSION='2.6.4'
 OPENCOVER_VERSION='4.6.166'
-REPORTGEN_VERSION='2.3.1-beta1'
+REPORTGEN_VERSION='2.3.0.0'
 
 # expect installed, to find
 NUGET_EXE=None
@@ -226,6 +226,7 @@ def task_test():
                         win_invoke(NUNIT_CONSOLE_EXE,['-nologo',dll_name + '.dll'])
 
 
+
 def task_test_coverage():
     depends('init','build','test')
 
@@ -291,13 +292,14 @@ def task_release_push():
     depends('version')
 
     for proj in PROJECTS:
-        pkg=proj + VERSION + '.nupkg'
+        pkg=proj + '.' + VERSION + '.nupkg'
         log('pushing nuget pkg ' + proj + '/' + pkg)
         with cd(proj):    
-            nuget_invoke(['Push', pkg])
+            nuget_invoke(['Push', pkg],include_optons=False)
 
 
-def task_nuget_pack(): 
+def task_nuget_pack():
+    only_under_windows('building nuspec packages doesnt work under *nix as path slashes in the nuspec need to be different')
     depends('build')
 
     log('packing all projects')
@@ -344,12 +346,13 @@ def nuget_install_if_not_exists(pkg,version,exe_name,fix_permission=True):
 
 
 def nuget_pack(projName):
+    only_under_windows('nuget pack')
+    
     depends('build', 'version')
 
     log('packing ' + projName)
 
     with cd(projName):
-        
         filter_template(projName + '.nuspec.template', projName + '.nuspec')
         log('building main nuget package')
         nuget_invoke(['pack', projName + '.nuspec', '-Prop', 'Configuration=' + CONFIG,'-Version',VERSION],include_optons=False)
@@ -404,6 +407,10 @@ def copy_pkgs_to_local_repo():
             log('\t' + name)
     find_files(LOCAL_REPO,print_name)
 
+
+def only_under_windows(msg):
+    if not is_windows():
+        raise BuildError(msg + ' only works correctly under windows')
 
 def os_path(path):
     if is_windows():     
@@ -471,13 +478,17 @@ def invoke(prog, args=None):
     if not args:
         args=[]
     
+
     args=[prog] + args
-    if os.name.endswith('nt'):    
-        cmd=' '.join(args)
-        proc=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
-    else:
-        proc=subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
-    
+    try:
+        if os.name.endswith('nt'):    
+            cmd=' '.join(args)
+            proc=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+        else:
+            proc=subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+    except Exception as e:
+        raise Exception('Error running "' + ' '.join(args) + '"') from e
+
     #log("invoked: {}".format(proc.args))
 
     for line in proc.stdout: 
