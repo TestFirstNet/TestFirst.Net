@@ -32,7 +32,7 @@ CONFIG='Release'
 VERSION='0.0.0'
 NUNIT_VERSION='2.6.4'
 OPENCOVER_VERSION='4.6.166'
-REPORTGEN_VERSION='2.2.0.0'
+REPORTGEN_VERSION='2.3.1-beta1'
 
 # expect installed, to find
 NUGET_EXE=None
@@ -241,7 +241,7 @@ def task_test_coverage():
                 
                 win_invoke(OPENCOVER_EXE,[
                     '-log:All',
-                    '-target:"{}"'.format(NUNIT_CONSOLE_EXE),
+                    '-target:{}'.format(NUNIT_CONSOLE_EXE),
                     '-targetargs:"/nologo {}.dll /noshadow /trace=Error"'.format(test_dll_name),
                     '-filter:"+[' + proj_dll_name + ']*"',
                     '-excludebyattribute:"System.CodeDom.Compiler.GeneratedCodeAttribute"',

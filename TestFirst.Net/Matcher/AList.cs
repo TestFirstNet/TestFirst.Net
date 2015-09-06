@@ -71,7 +71,7 @@ namespace TestFirst.Net.Matcher
         /// 
         /// </summary>
         /// <returns></returns>
-        public static List<IMatcher<T>> From<T>(Func<T,IMatcher<T>> factory, IEnumerable<T> instances)
+        public static IEnumerable<IMatcher<T>> From<T>(Func<T,IMatcher<T>> factory, IEnumerable<T> instances)
         {
             return instances.Select(factory.Invoke).ToList();
         }
