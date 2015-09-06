@@ -1,38 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Inject;
 
 namespace TestFirst.Net
 {
-    /// <summary>
-    /// Collect all disposables and dispose at end of scenario
-    /// </summary>
-    public class DisposingStepArgInjector : IStepArgDependencyInjector, IDisposable
+    [Obsolete("Use DisposingInjector")]
+    public class DisposingStepArgInjector :Inject.DisposingInjector
     {
-        private readonly IList<IDisposable> m_disposables = new List<IDisposable>();
-             
-        public void Dispose()
-        {
-            foreach (var disposable in m_disposables)
-            {
-                try
-                {
-                    disposable.Dispose();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error disposing " + disposable.GetType().FullName);
-                    Console.WriteLine(e);
-                }
-            }
-            m_disposables.Clear();
-        }
-
-        virtual public void InjectDependencies<T>(T instance)
-        {
-            if( instance is IDisposable)
-            {
-                m_disposables.Add(instance as IDisposable);
-            }
-        }
+        
     }
 }

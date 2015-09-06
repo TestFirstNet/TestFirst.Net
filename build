@@ -24,22 +24,33 @@ SOLUTION=TestFirst.Net.sln
 #ensure we run from a known location
 cd $SOLUTION_DIR
 
-function log(){
+
+pushd(){
+    builtin pushd "$1" > /dev/null
+}
+
+popd(){
+    builtin popd
+}
+
+
+
+log(){
     echo "[BUILD] $1"
 }
 
-function error(){
+error(){
     echo "[BUILD] [ERROR!] $1"
 }
 
 #convert html entities into something the nuspec parser can handle
-function filterHtml(){
+filterHtml(){
     in="$1"
     cat $in | sed -e 's/</\&#8249;/g' -e 's/>/\&#8250;/g'
 }
 
 #filter a template (replace tokens)
-function filterTemplate(){
+filterTemplate(){
     from=$1
     to=$2 
     log "filtering template $from to $to"
@@ -65,14 +76,14 @@ function filterTemplate(){
     rm -fR $TMP_DIR
 }
 
-function nupack(){
+nupack(){
     projName="$1"
 
     log "packing $projName"
 
     requireVersion
 
-    pushd "$projName" > /dev/null
+    pushd "$projName"
 
         #main package
         log "building main nuget package"
@@ -87,10 +98,10 @@ function nupack(){
         rm -f ${projName}.nuspec
 
         #todo: gitlink
-    popd > /dev/null
+    popd
 }
 
-function invokeNuget(){
+invokeNuget(){
     if [ -f "$NUGET_CONFIG" ]; then
         nuget "$@" -OutputDir $NUGET_PKG_DIR -NonInteractive -ConfigFile "$NUGET_CONFIG"
     else
@@ -98,34 +109,34 @@ function invokeNuget(){
     fi
 }
 
-function cleanLocalRepo(){
+cleanLocalRepo(){
     rm -f $LOCAL_REPO/*.nupkg
 }
 
-function packAll(){ 
+packAll(){ 
     log "packing all"
     for proj in $PROJECTS; do
         nupack $proj
     done
 }
 
-function nuPush(){
+nuPush(){
     proj=$1
 
     requireVersion
 
     pkg="$proj.$VERSION.nupkg"
     log "pushing nuget pkg $proj/$pkg"
-    pushd $proj > /dev/null
+    pushd $proj
         nuget Push $pkg    
-    popd > /dev/null
+    popd
 }
 
-function removeOldNuPkgs(){
+removeOldNuPkgs(){
     find . -name \*.nupkg | xargs -i rm {}
 }
 
-function copyNuPkgsToLocalRepo(){
+copyNuPkgsToLocalRepo(){
     log "copying packages to local test repo $LOCAL_REPO"
     mkdir -p $LOCAL_REPO
     find . -name \*.nupkg | xargs -i cp {} --target $LOCAL_REPO
@@ -134,7 +145,7 @@ function copyNuPkgsToLocalRepo(){
     ls -l $LOCAL_REPO
 }
 
-function requireVersion(){
+requireVersion(){
    if [ "$VERSION" == "0.0.0" ]; then
         log "Tagged git versions:"
         git tag | grep 'v' | sed 's/^v//'
@@ -144,11 +155,11 @@ function requireVersion(){
 
 # ------------- build targets ---------------
 
-function nugetRestore(){
+nugetRestore(){
     invokeNuget restore $SOLUTION
 }
 
-function tagGit(){
+tagGit(){
     log "tagging git"
     requireVersion
 
@@ -167,7 +178,7 @@ function tagGit(){
     done
 }
 
-function cleanAll(){
+cleanAll(){
     log "clean all"
 
     for proj in $PROJECTS; do
@@ -188,7 +199,7 @@ function cleanAll(){
     find . -name *.nuspec | xargs -i rm {}
 }
 
-function buildAll(){
+buildAll(){
     log "building all"
     # TODO:detect mono and use xbuild (if in cygwin env)
     #msbuild.exe TestFirst.Net.sln -t:Clean,Build -p:Configuration=Release
@@ -196,7 +207,7 @@ function buildAll(){
 }
 
 
-function testAll(){
+testAll(){
     log "Running tests"
 
     runner="$SOLUTION_DIR/packages/NUnit.Runners.$NUNIT_VERSION/tools/nunit-console.exe"
@@ -211,16 +222,16 @@ function testAll(){
     #e.g. ./TestFirst.Net.Performance.Test/obj/Release/TestFirst.Net.Performance.Test.dll
     for proj in $TEST_PROJECTS; do
         log "Executing tests in $proj"
-        pushd $proj/bin/$CONFIG/ > /dev/null
+        pushd $proj/bin/$CONFIG/
             # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
             dll_name=`echo $proj | sed 's/\(.*\)s$/\1/'`
             mono $runner -nologo $dll_name.dll
-        popd > /dev/null
+        popd
         log "finished running test $proj"
     done
 }
 
-function releaseBuild(){
+releaseBuild(){
     requireVersion
 
     removeOldNuPkgs
@@ -232,13 +243,13 @@ function releaseBuild(){
 }
 
 
-function releasePush(){
+releasePush(){
     for proj in $PROJECTS; do
         nuPush $proj
     done
 }
 
-function release(){
+release(){
     log "This will build and package TestFirst.Net and then tag git"
     log "This will place a copy of the built packages into $LOCAL_REPO for testing"
 
@@ -246,7 +257,7 @@ function release(){
     tagGit
 }
 
-function printHelp() {
+printHelp() {
     log "USAGE:"
     log "   ./build target [target..] [varname1=value1..]"
     log "TARGETS:"

@@ -1,4 +1,7 @@
 ﻿using System;
+using TestFirst.Net.Inject;
+
+
 namespace TestFirst.Net
 {
     /// <summary>
@@ -11,7 +14,7 @@ namespace TestFirst.Net
     public abstract class AbstractScenarioTest : ScenarioFluency
     {
         private readonly Rand.Random m_random = new Rand.Random();
-        private static readonly IStepArgDependencyInjector DefaultInjector = new NullStepArgDependencyInjector();
+        private static readonly ITestInjector DefaultInjector = new NullStepArgDependencyInjector();
 
         protected AbstractScenarioTest()
         {
@@ -23,17 +26,25 @@ namespace TestFirst.Net
             return m_random;
         }
 
+        [Obsolete("Use UseDefaultInjector")]
         protected void UseSimpleStepArgInjector()
         {
-            UseScenarioInjector(new SimpleStepArgInjector());
-        }
-           
-        protected void UseDisposingScenarioInjector()
-        {
-            UseScenarioInjector(new DisposingStepArgInjector());
+            UseDefaultInjector();
         }
 
-        public void UseScenarioInjector(IStepArgDependencyInjector dependencyInjector)
+
+        protected void UseDefaultInjector()
+        {
+            UseScenarioInjector(new TestInjector());
+        }
+
+
+        protected void UseDisposingScenarioInjector()
+        {
+            UseScenarioInjector(new DisposingInjector());
+        }
+
+        public void UseScenarioInjector(ITestInjector dependencyInjector)
         {
             Injector = dependencyInjector??DefaultInjector;
         }

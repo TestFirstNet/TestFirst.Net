@@ -91,6 +91,7 @@ namespace TestFirst.Net.Test.Matcher
             var diagnostics = new MatchDiagnostics();
             if (diagnostics.TryMatch(actual, matcher))
             {
+                Console.WriteLine ("AssertFail:" + diagnostics.ToString ());
                 Assert.Fail("Matcher was expected to fail but didn't for:\n" + actual.ToPrettyString() + "\nexpected:\n" + diagnostics);
             }
         }

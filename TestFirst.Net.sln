@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F4BAE0
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFirst.Net.Web", "..\..\cloud\bert\nas-only\workspace\TestFirst.Net\TestFirst.Net.Web\TestFirst.Net.Web.csproj", "{4C0DB397-614C-4F2A-984D-EAE6361BB064}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{074926A9-0CF4-422F-886E-8CFBF4839284}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{074926A9-0CF4-422F-886E-8CFBF4839284}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{074926A9-0CF4-422F-886E-8CFBF4839284}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C0DB397-614C-4F2A-984D-EAE6361BB064}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C0DB397-614C-4F2A-984D-EAE6361BB064}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C0DB397-614C-4F2A-984D-EAE6361BB064}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C0DB397-614C-4F2A-984D-EAE6361BB064}.Release|Any CPU.Build.0 = Release|Any CPU
 		{626EA6EB-4C7B-4271-9F3D-7A053C7F7EAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{626EA6EB-4C7B-4271-9F3D-7A053C7F7EAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{626EA6EB-4C7B-4271-9F3D-7A053C7F7EAC}.Release|Any CPU.ActiveCfg = Release|Any CPU

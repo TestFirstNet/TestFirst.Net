@@ -147,6 +147,18 @@
     <Compile Include="Matcher\AChar.cs" />
     <Compile Include="Matcher\All.cs" />
     <Compile Include="Matcher\Any.cs" />
+    <Compile Include="IEventBus.cs" />
+    <Compile Include="TestEvent.cs" />
+    <Compile Include="Inject\IRequireEventBus.cs" />
+    <Compile Include="Inject\ITestInjector.cs" />
+    <Compile Include="Inject\IInjectGuard.cs" />
+    <Compile Include="Inject\AbstractTestInjector.cs" />
+    <Compile Include="Inject\TestInjector.cs" />
+    <Compile Include="Inject\IRequireTestInjector.cs" />
+    <Compile Include="Inject\DisposingInjector.cs" />
+    <Compile Include="Inject\InjectOnlyOnceGuard.cs" />
+    <Compile Include="EventBus.cs" />
+    <Compile Include="Inject\IRequirePostInjectNotification.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />

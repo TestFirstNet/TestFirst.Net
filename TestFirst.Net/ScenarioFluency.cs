@@ -2,6 +2,7 @@
 using System.Threading;
 using TestFirst.Net.Matcher;
 using TestFirst.Net.Util;
+using TestFirst.Net.Inject;
 
 namespace TestFirst.Net
 {
@@ -50,7 +51,7 @@ namespace TestFirst.Net
     /// </summary>
     public class ScenarioFluency
     {
-        public IStepArgDependencyInjector Injector { get; set; }
+        public ITestInjector Injector { get; set; }
 
         private volatile Scenario m_scenario;
 

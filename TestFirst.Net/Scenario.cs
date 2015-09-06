@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using TestFirst.Net.Util;
+using TestFirst.Net.Inject;
 
 namespace TestFirst.Net
 {
@@ -11,7 +12,7 @@ namespace TestFirst.Net
     /// </summary>
     public class Scenario:IDisposable
     {
-        private static readonly IStepArgDependencyInjector NullInjector = new NullStepArgDependencyInjector();
+        private static readonly ITestInjector NullInjector = new NullStepArgDependencyInjector();
 
         private State m_state = State.NotRun;
         private Exception m_failingException = null;
@@ -31,7 +32,7 @@ namespace TestFirst.Net
         /// <summary>
         /// Injector used to inject test dependencies
         /// </summary>
-        private readonly IStepArgDependencyInjector m_stepArgDependencyInjector;
+        private readonly ITestInjector m_stepArgDependencyInjector;
 
         public Scenario()
             : this(null)
@@ -42,7 +43,7 @@ namespace TestFirst.Net
         {
         }
 
-        public Scenario(string title, IStepArgDependencyInjector stepDependencyInjector)
+        public Scenario(string title, ITestInjector stepDependencyInjector)
         {
             Title = title ?? "<No Name>";
             m_stepArgDependencyInjector = stepDependencyInjector??NullInjector;
@@ -159,7 +160,10 @@ namespace TestFirst.Net
         /// </summary>
         public void Dispose()
         {
-            m_stepArgDependencyInjector.Dispose();
+            var disposable = m_stepArgDependencyInjector as IDisposable;
+            if (disposable != null) {
+                disposable.Dispose ();
+            }
         }
 
         /// <summary>

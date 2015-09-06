@@ -1,9 +1,10 @@
 ﻿using System;
+using TestFirst.Net.Inject;
 
 namespace TestFirst.Net
 {
-    public interface IStepArgDependencyInjector:IDisposable
+    [Obsolete("Use ITestInjector")]
+    public interface IStepArgDependencyInjector:ITestInjector,IDisposable
     {
-        void InjectDependencies<T>(T instance);
     }
 }
