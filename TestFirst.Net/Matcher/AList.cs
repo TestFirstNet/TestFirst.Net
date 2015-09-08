@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TestFirst.Net.Lang;
 using TestFirst.Net.Matcher.Internal;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace TestFirst.Net.Matcher
 {
@@ -74,7 +71,7 @@ namespace TestFirst.Net.Matcher
         /// 
         /// </summary>
         /// <returns></returns>
-        public static List<IMatcher<T>> From<T>(Func<T,IMatcher<T>> factory, IEnumerable<T> instances)
+        public static IEnumerable<IMatcher<T>> From<T>(Func<T,IMatcher<T>> factory, IEnumerable<T> instances)
         {
             return instances.Select(factory.Invoke).ToList();
         }

@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using TestFirst.Net.Matcher;
-using System;
 
 namespace TestFirst.Net.Test.Matcher
 {
@@ -10,7 +9,7 @@ namespace TestFirst.Net.Test.Matcher
         [Test]
         public void EqualTo()
         {
-            AssertPasses((byte[])null, AnArray.EqualTo((byte[])null));
+            AssertPasses(null, AnArray.EqualTo((byte[])null));
             AssertPasses(new byte[]{}, AnArray.EqualTo(new byte[]{}));
 
             AssertFails(new byte[] { }, AnArray.EqualTo((byte[])null));
@@ -19,7 +18,7 @@ namespace TestFirst.Net.Test.Matcher
             AssertFails(new byte[] { }, AnArray.EqualTo(new byte[] { 1 }));
 
             AssertPasses(new byte[] { 1, 2, 3 }, AnArray.EqualTo(new byte[] { 1, 2, 3 }));
-            AssertPasses(new String[] { "Alice","Bob","Tim" }, AnArray.EqualTo(new String[] { "Alice", "Bob", "Tim" }));
+            AssertPasses(new[] { "Alice","Bob","Tim" }, AnArray.EqualTo(new[] { "Alice", "Bob", "Tim" }));
 
             var b = RandomBytes();
             AssertPasses(b, AnArray.EqualTo(b));
@@ -48,7 +47,7 @@ namespace TestFirst.Net.Test.Matcher
         [Test]
         public void NotEmpty()
         {
-            AssertPasses(new string[] { "1" }, AnArray.NotEmpty<string>());
+            AssertPasses(new[] { "1" }, AnArray.NotEmpty<string>());
             AssertPasses(new int?[] { 1 }, AnArray.NotEmpty<int?>());
 
             AssertFails(null, AnArray.NotEmpty<string>());
@@ -64,7 +63,7 @@ namespace TestFirst.Net.Test.Matcher
             AssertPasses(new string[] {}, AnArray.Empty<string>());
             AssertPasses(new int?[] {}, AnArray.Empty<int?>());
 
-            AssertFails(new string[] { "1" }, AnArray.Empty<string>());
+            AssertFails(new[] { "1" }, AnArray.Empty<string>());
             AssertFails(new int?[] { 1 }, AnArray.Empty<int?>());
 
             AssertFails(null, AnArray.Empty<string>());
@@ -80,13 +79,13 @@ namespace TestFirst.Net.Test.Matcher
             AssertPasses(null, AnArray.EmptyOrNull<string>());
             AssertPasses(null, AnArray.EmptyOrNull<int?>());
 
-            AssertFails(new string[] { "1" }, AnArray.EmptyOrNull<string>());
+            AssertFails(new[] { "1" }, AnArray.EmptyOrNull<string>());
             AssertFails(new int?[] { 1 }, AnArray.EmptyOrNull<int?>());
         }
 
         private static byte[] RandomBytes()
         {
-            return new TestFirst.Net.Rand.Random().Bytes();
+            return new Net.Rand.Random().Bytes();
         }
     }
 }

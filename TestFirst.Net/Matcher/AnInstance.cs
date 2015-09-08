@@ -1,7 +1,5 @@
 ﻿using System;
 using TestFirst.Net.Util;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace TestFirst.Net.Matcher
 {
@@ -62,16 +60,13 @@ namespace TestFirst.Net.Matcher
             }
 
             return EqualTo(expect, () =>
-                {
-                    if (expect != null)
+            {
+                if (expect != null)
                     {
                        return "The instance " + expect.GetHashCode() + "@" + typeof (T).FullName + " => " + expect.ToPrettyString();
                     }
-                    else
-                    {
-                        return "Null instance of type " +  typeof (T).FullName;
-                    }
-                });
+                return "Null instance of type " +  typeof (T).FullName;
+            });
         }
 
         public static IMatcher<T> EqualTo<T>(T expect,Func<String> mismatchMessageFactory)
@@ -143,7 +138,7 @@ namespace TestFirst.Net.Matcher
                     {
                         return false;
                     }
-                    return Object.ReferenceEquals(expect,actual);
+                    return ReferenceEquals(expect,actual);
                 },
                 ()=>expect.ToPrettyString());
         }

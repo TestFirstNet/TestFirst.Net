@@ -15,9 +15,6 @@ namespace TestFirst.Net
         /// </summary>
         public static readonly NullDescription Instance = new NullDescription();
 
-        public NullDescription()
-        {}
-
         public static NullDescription With()
         {
             return new NullDescription();

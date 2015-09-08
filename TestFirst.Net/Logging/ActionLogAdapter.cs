@@ -13,13 +13,13 @@ namespace TestFirst.Net.Logging
         public ActionLogAdapter(LogLevel level, string logName, Action<LogLevel,String> onLogLine) : base(level, logName)
         {
             PreConditions.AssertNotNull(onLogLine, "logLineAction");
-            this.m_onLogLine = onLogLine;
+            m_onLogLine = onLogLine;
         }
 
         public ActionLogAdapter(LogLevel level, Type type, Action<LogLevel,String> onLogLine) : base(level, type)
         {
             PreConditions.AssertNotNull(onLogLine, "logLineAction");
-            this.m_onLogLine = onLogLine;
+            m_onLogLine = onLogLine;
         }
 
         protected override void LogLine(LogLevel level, string msg)

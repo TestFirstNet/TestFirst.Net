@@ -21,6 +21,9 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="obj/Release/TestFirst.Net.Extensions*.dll" target="/lib/net/40/"/>
+    <file src="obj\Release\TestFirst.Net.Extensions*.dll" target="/lib/net/40/"/>
+    <file src="obj\Release\TestFirst.Net.Extensions*.pdb" target="/lib/net/40/"/>
+    <file src="obj\Release\TestFirst.Net.Extensions*.dll" target="/lib/net/45/"/>
+    <file src="obj\Release\TestFirst.Net.Extensions*.pdb" target="/lib/net/45/"/>
   </files>
 </package>

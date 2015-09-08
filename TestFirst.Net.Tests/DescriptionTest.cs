@@ -166,7 +166,7 @@ namespace TestFirst.Net.Test
         [Test]
         public void ChildrenTest()
         {
-            var children = new List<ISelfDescribing>()
+            var children = new List<ISelfDescribing>
             {
                 new MySelfDescriber((IDescription desc) =>
                 {
@@ -183,7 +183,7 @@ namespace TestFirst.Net.Test
                 {
                     desc.Text("ChildValueC.1");
                     desc.Text("ChildValueC.2");
-                }),
+                })
 
             };
             var actual = new Description()
@@ -207,7 +207,7 @@ namespace TestFirst.Net.Test
         [Test]
         public void ChildrenChildrenTest()
         {
-            var children = new List<ISelfDescribing>()
+            var children = new List<ISelfDescribing>
             {
                 new MySelfDescriber((IDescription desc) =>
                 {
@@ -219,8 +219,8 @@ namespace TestFirst.Net.Test
                     desc.Text("Child2.A");
                     desc.Text("Child2.B");
 
-                    var children2 = new List<ISelfDescribing>()
-                        {
+                    var children2 = new List<ISelfDescribing>
+                    {
                             new MySelfDescriber((IDescription desc2) =>
                                 {
                                     desc2.Text("Child2.1.A");
@@ -234,7 +234,7 @@ namespace TestFirst.Net.Test
                         };
                     //no label
                     desc.Children(children2);
-                }),
+                })
             };
             var actual = new Description()
                 .Text("Line 1")
@@ -260,7 +260,7 @@ namespace TestFirst.Net.Test
         [Test]
         public void ChildrenChildTest()
         {
-            var children = new List<ISelfDescribing>()
+            var children = new List<ISelfDescribing>
             {
                 new MySelfDescriber((IDescription desc) =>
                 {
@@ -287,7 +287,7 @@ namespace TestFirst.Net.Test
                         desc2.Text("Child5.A");
                         desc2.Text("Child5.B");
                     }));
-                }),
+                })
             };
             var actual = new Description()
                 .Text("Line 1")

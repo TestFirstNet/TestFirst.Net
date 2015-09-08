@@ -33,10 +33,7 @@ namespace TestFirst.Net.Matcher
                 {
                     return intMatcher.Matches(intActual, diagnostics);
                 }
-                else
-                {
-                    diagnostics.MisMatched("Couldn't parse the string '{0}' as an int", actual);
-                }
+                diagnostics.MisMatched("Couldn't parse the string '{0}' as an int", actual);
                 return false;
             }, 
             "string of int matching " + intMatcher);
@@ -54,7 +51,7 @@ namespace TestFirst.Net.Matcher
    
         public static IMatcher<string> Null()
         {
-            return EqualTo((string)null);
+            return EqualTo(null);
         }
 
         public static IMatcher<string> NotNull()
@@ -91,7 +88,7 @@ namespace TestFirst.Net.Matcher
         /// </summary>
         public static IMatcher<string> EmptyOrNull()
         {
-            return Matchers.Function((string actual) => actual == null || actual.Length == 0, "an empty or null string");
+            return Matchers.Function((string actual) => string.IsNullOrEmpty(actual), "an empty or null string");
         }
 
         public static IMatcher<string> EqualTo(string expect)
@@ -177,7 +174,7 @@ namespace TestFirst.Net.Matcher
 
         public static IMatcher<string> MatchingRegex(Regex expect)
         {
-            return Matchers.Function((string actual) => actual != null && expect.IsMatch(actual), "a string matching regex '" + expect.ToString() + "'");
+            return Matchers.Function((string actual) => actual != null && expect.IsMatch(actual), "a string matching regex '" + expect + "'");
         } 
 
         public static IMatcher<string> TrimmedLength(IMatcher<int?> intMatcher)

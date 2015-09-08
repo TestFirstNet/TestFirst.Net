@@ -1,7 +1,6 @@
 ﻿using System;
 using TestFirst.Net.Inject;
 
-
 namespace TestFirst.Net
 {
     /// <summary>

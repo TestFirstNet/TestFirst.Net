@@ -91,7 +91,7 @@ namespace TestFirst.Net.Matcher
 
             public TimeSpanBuilder<DateTimeOffsetEqualsMatcher> Within(double val)
             {
-                return new TimeSpanBuilder<DateTimeOffsetEqualsMatcher>(val,(span)=>this.Within(span));
+                return new TimeSpanBuilder<DateTimeOffsetEqualsMatcher>(val,span=>Within(span));
             }
 
             /// <summary>
@@ -114,7 +114,7 @@ namespace TestFirst.Net.Matcher
             /// <returns></returns>
             public TimeSpanBuilder<DateTimeOffsetEqualsMatcher> PlusMax(double val)
             {
-                return new TimeSpanBuilder<DateTimeOffsetEqualsMatcher>(val,(span)=>this.PlusMax(span));
+                return new TimeSpanBuilder<DateTimeOffsetEqualsMatcher>(val,span=>PlusMax(span));
             }
 
             public DateTimeOffsetEqualsMatcher PlusMax(TimeSpan span)
@@ -131,7 +131,7 @@ namespace TestFirst.Net.Matcher
             /// <returns></returns>
             public TimeSpanBuilder<DateTimeOffsetEqualsMatcher> MinusMax(double val)
             {
-                return new TimeSpanBuilder<DateTimeOffsetEqualsMatcher>(val,(span)=>this.MinusMax(span));
+                return new TimeSpanBuilder<DateTimeOffsetEqualsMatcher>(val,span=>MinusMax(span));
             }
 
             /// <summary>
@@ -255,7 +255,7 @@ namespace TestFirst.Net.Matcher
             private DateTimeOffset? m_expectBefore;
             private TimeSpan? m_offset;
 
-            private bool m_inclusive = false;
+            private bool m_inclusive;
 
             internal DateTimeOffsetIntervalMatcher()
             {}
@@ -286,7 +286,7 @@ namespace TestFirst.Net.Matcher
 
             public TimeSpanBuilder<DateTimeOffsetIntervalMatcher> Within(double val)
             {
-                return new TimeSpanBuilder<DateTimeOffsetIntervalMatcher>(val,(span)=>this.Within(span));
+                return new TimeSpanBuilder<DateTimeOffsetIntervalMatcher>(val,span=>Within(span));
             }
 
             public DateTimeOffsetIntervalMatcher Within(TimeSpan span)

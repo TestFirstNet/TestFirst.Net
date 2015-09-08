@@ -37,14 +37,11 @@ namespace TestFirst.Net.Matcher
                         .Value("exists", true));
                     return true;
                 }
-                else
-                {
-                    diag.MisMatched(Description.With()
-                        .Value("expected", "file or directory to exist")
-                        .Value("path", actualPath)
-                        .Value("exists", false));
-                    return false;
-                }
+                diag.MisMatched(Description.With()
+                    .Value("expected", "file or directory to exist")
+                    .Value("path", actualPath)
+                    .Value("exists", false));
+                return false;
             },
             "FileOrDirectoryExists exists"
           );
@@ -62,14 +59,11 @@ namespace TestFirst.Net.Matcher
                         .Value("exists", true));
                     return true;
                 }
-                else
-                {
-                    diag.MisMatched(Description.With()
-                        .Value("expect", "file to exist")
-                        .Value("path", actualPath)
-                        .Value("exists", false));
-                    return false;
-                }
+                diag.MisMatched(Description.With()
+                    .Value("expect", "file to exist")
+                    .Value("path", actualPath)
+                    .Value("exists", false));
+                return false;
             },
             "FileExists exists"
           );
@@ -92,11 +86,8 @@ namespace TestFirst.Net.Matcher
                                 diag.Matched(Description.With().Value("CanReadFile", true).Value("path", actualPath).Value("exists", true));
                                 return true;
                             }
-                            else
-                            {
-                                diag.MisMatched(Description.With().Value("CanReadFile", false).Value("path", actualPath).Value("exists", true));
-                                return false;
-                            }
+                            diag.MisMatched(Description.With().Value("CanReadFile", false).Value("path", actualPath).Value("exists", true));
+                            return false;
                         }
                     }
                     catch (Exception e)

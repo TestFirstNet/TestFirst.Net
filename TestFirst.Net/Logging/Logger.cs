@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace TestFirst.Net.Logging
 {
     /// <summary>

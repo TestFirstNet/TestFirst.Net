@@ -1,5 +1,4 @@
-﻿using System;
-using TestFirst.Net.Extensions.Moq;
+﻿using TestFirst.Net.Extensions.Moq;
 using TestFirst.Net.Matcher;
 
 namespace TestFirst.Net.Extensions.Matcher

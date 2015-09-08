@@ -65,7 +65,7 @@ namespace TestFirst.Net.Examples.Service
         {            
             public override MyQuery.Response Handle(MyQuery query)
             {
-                return new MyQuery.Response(){Result = query.ReturnMe};
+                return new MyQuery.Response {Result = query.ReturnMe};
             }
         }
 

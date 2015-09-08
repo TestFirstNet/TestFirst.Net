@@ -1,6 +1,6 @@
+using System;
 using NUnit.Framework;
 using TestFirst.Net.Matcher;
-using System;
 
 namespace TestFirst.Net.Test.Matcher
 {

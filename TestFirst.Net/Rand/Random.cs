@@ -15,7 +15,7 @@ namespace TestFirst.Net.Rand
         private const int DefaultMinStringLen = 1;
         private const int DefaultMaxStringLen = 20;
 
-        private int m_count = 0;
+        private int m_count;
         private int m_charCount = 32;
 
         private static long MinDateTimeTicks = new DateTime(1, 1, 1, 0, 0, 0, 0).Ticks;
@@ -312,7 +312,7 @@ namespace TestFirst.Net.Rand
         {
             //want duration to keep working, hence we stay just below the min/max range
             var ticks = Long(System.TimeSpan.MinValue.Ticks + 1, System.TimeSpan.MaxValue.Ticks - 1);
-            return new System.TimeSpan(ticks);
+            return new TimeSpan(ticks);
         }
 
         public TimeSpan TimeSpanWithinDay()
@@ -404,10 +404,7 @@ namespace TestFirst.Net.Rand
                 {
                     return NextBasicChar();
                 }
-                else
-                {
-                    return NextSupplementarChar();
-                }
+                return NextSupplementarChar();
             }
 
             public char NextBasicChar()

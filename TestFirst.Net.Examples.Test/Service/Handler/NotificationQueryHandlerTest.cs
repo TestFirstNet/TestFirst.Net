@@ -45,13 +45,13 @@ namespace TestFirst.Net.Examples.Service.Handler
         {            
             public TheNotificationHandler WithNotifications(params Notification[] notifications)
             {
-                base.Notifications = new List<Notification>(notifications);
+                Notifications = new List<Notification>(notifications);
                 return this;
             }
 
             public TheNotificationHandler WithNoNotifications()
             {
-                base.Notifications = null;
+                Notifications = null;
                 return this;
             }
         }

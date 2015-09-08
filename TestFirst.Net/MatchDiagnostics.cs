@@ -1,5 +1,4 @@
 using System;
-using TestFirst.Net.Matcher.Internal;
 
 namespace TestFirst.Net
 {
@@ -18,12 +17,12 @@ namespace TestFirst.Net
 
         public bool TryMatch(Object actual, int index, IMatcher childMatcher)
         {
-            return InternalTryMatch(actual,childMatcher, Description.With().Value("at position", index));
+            return InternalTryMatch(actual,childMatcher, With().Value("at position", index));
         }
 
         public bool TryMatch<T>(T actual, int index, IMatcher<T> childMatcher)
         {
-            return InternalTryMatch(actual, childMatcher, Description.With().Value("at position", index));
+            return InternalTryMatch(actual, childMatcher, With().Value("at position", index));
         }
 
         public bool TryMatch(Object actual, IMatcher childMatcher)
@@ -33,7 +32,7 @@ namespace TestFirst.Net
 
         public bool TryMatch(Object actual, String actualName, IMatcher childMatcher)
         {
-            return InternalTryMatch(actual,childMatcher, Description.With().Value("named", actualName));
+            return InternalTryMatch(actual,childMatcher, With().Value("named", actualName));
         }
 
         public bool TryMatch<T>(T actual, IMatcher<T> childMatcher)
@@ -43,7 +42,7 @@ namespace TestFirst.Net
 
         public bool TryMatch<T>(T actual, String actualName, IMatcher<T> childMatcher)
         {
-            return InternalTryMatch(actual, childMatcher, Description.With().Value("named", actualName));
+            return InternalTryMatch(actual, childMatcher, With().Value("named", actualName));
         }
 
         public bool TryMatch<T>(T actual, IMatcher<T> childMatcher, ISelfDescribing selfDescribing)
@@ -64,7 +63,7 @@ namespace TestFirst.Net
             
             Text(matched ? "Match":"Mismatch!");
 
-            var desc = Description.With();
+            var desc = With();
             if (selfDescribing != null)
             {
                 desc.Value(selfDescribing);
@@ -84,13 +83,13 @@ namespace TestFirst.Net
 
         public IMatchDiagnostics Matched(string text, params object[] args)
         {
-            Matched(Description.With().Text(text,args));
+            Matched(With().Text(text,args));
             return this;
         }
 
         public IMatchDiagnostics MisMatched(string text, params object[] args)
         {
-            MisMatched(Description.With().Text(text,args));
+            MisMatched(With().Text(text,args));
             return this;
         }
 

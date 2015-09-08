@@ -55,7 +55,7 @@ namespace TestFirst.Net.Matcher
         public AnException TypeMatching<T>(IMatcher<T> matcher) where T:class
         {
             Type<T>();
-            WithMatcher("Exception", (e) => e as T, matcher);
+            WithMatcher("Exception", e => e as T, matcher);
             return this;
         }
 

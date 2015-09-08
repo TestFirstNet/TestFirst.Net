@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Reflection;
-using TestFirst.Net.Lang;
-using Microsoft.CSharp;
 using System.CodeDom;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.CSharp;
 
 namespace TestFirst.Net.Template 
 {
@@ -96,14 +95,14 @@ namespace TestFirst.Net.Template
         }
 
         public void GenerateForClassesMarkedWithAttributeIn<TAttribute>(Assembly assembly)
-            where TAttribute : System.Attribute
+            where TAttribute : Attribute
         {
             var types = FindTypesWithAttributeIn<TAttribute>(assembly);
             GenerateFor(types);
         }
 
         private IEnumerable<Type> FindTypesWithAttributeIn<TAttribute>(Assembly assembly)
-            where TAttribute : System.Attribute
+            where TAttribute : Attribute
         {
             return from type in assembly.GetTypes()
                    where type.IsDefined(typeof(TAttribute), false)
@@ -263,7 +262,7 @@ namespace TestFirst.Net.Template
             Console.WriteLine("Writing generated file to:" + file.FullName);
 
             using (var stream = file.Open(FileMode.Create, FileAccess.Write)) {
-                var bytes = System.Text.Encoding.UTF8.GetBytes(content);
+                var bytes = Encoding.UTF8.GetBytes(content);
                 stream.Write(bytes, 0, bytes.Length);
             }
         }
@@ -503,7 +502,7 @@ namespace TestFirst.Net.Template
         {
             overrides = overrides ?? Empty;
 
-            var merged = new TemplateOptions()
+            var merged = new TemplateOptions
             {
                 _MatcherForType = overrides._MatcherForType?? _MatcherForType,
                 _MatcherName = overrides._MatcherName ?? _MatcherName,
@@ -730,7 +729,7 @@ namespace TestFirst.Net.Template
         private StringWriter m_w;
         private const String Indent = "    ";
         public String CurrentIndent { get; private set; }
-        private int m_indentDepth = 0;
+        private int m_indentDepth;
 
         public String Render()
         {

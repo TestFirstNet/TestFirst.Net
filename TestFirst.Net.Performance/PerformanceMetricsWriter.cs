@@ -23,7 +23,7 @@ namespace TestFirst.Net.Performance
         volatile bool m_collectingMetrics;
 
         private string m_workingDir = "perf-metrics/";
-        private string m_testName = null;
+        private string m_testName;
 
         private DateTime m_startTime;
 
@@ -296,7 +296,7 @@ namespace TestFirst.Net.Performance
             }
             private const String DateFormat = "yyyyMMdd-HHmm:ss.fff";
 
-            private static readonly char[] SplitChars = new char[]{','};
+            private static readonly char[] SplitChars = {','};
 
             internal static String Header()
             {
@@ -331,7 +331,8 @@ namespace TestFirst.Net.Performance
                         //    agentId:parts[1],
                         //    threadId:parts[2]
                         //);
-                        metric = new PerformanceMetric(){
+                        metric = new PerformanceMetric
+                        {
                             CallId = NullIfEmpty(parts[(int)Col.MetricCallId]),
                             Name = parts[(int)Col.MetricName],
                             Timestamp = DateTime.ParseExact(parts[(int)Col.MetricTImeStamp], DateFormat, null),

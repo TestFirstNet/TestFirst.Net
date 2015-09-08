@@ -1,6 +1,6 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using TestFirst.Net.Util;
 using TestFirst.Net.Inject;
 
@@ -15,7 +15,7 @@ namespace TestFirst.Net
         private static readonly ITestInjector NullInjector = new NullStepArgDependencyInjector();
 
         private State m_state = State.NotRun;
-        private Exception m_failingException = null;
+        private Exception m_failingException;
         private readonly IDictionary<String,bool?> m_stepLog = new Dictionary<string, bool?>();
         private readonly IList<IRunOnScenarioEnd> m_onScenarioEndListeners = new List<IRunOnScenarioEnd>(); 
                 
@@ -234,7 +234,7 @@ namespace TestFirst.Net
             }
             var msg = "Step " + stepNum + " = " + stepName;
             //Console.WriteLine(msg);
-            m_stepLog.Add(msg,(bool?)null);
+            m_stepLog.Add(msg,null);
         }
 
         private void NewWhenStep()
@@ -338,7 +338,7 @@ namespace TestFirst.Net
                 desc.Text("==== Diagnostics ====");
                 desc.Child(diagnostics);
 
-                TestFirstAssert.Fail(Environment.NewLine + desc.ToString());
+                TestFirstAssert.Fail(Environment.NewLine + desc);
             }
         }
 
@@ -496,7 +496,7 @@ namespace TestFirst.Net
             /// <returns>the next step</returns>
             public GivenStep CheckingAssumption<T>(T actual, IMatcher<T> matcher)
             {
-                return Givens.Checking<T>(Scenario, actual, matcher);
+                return Givens.Checking(Scenario, actual, matcher);
             }
 
             /// <summary>
@@ -642,7 +642,7 @@ namespace TestFirst.Net
             internal static GivenStep Given(Scenario scenario, IInserter inserter)
             {
                 var rootInserter = InserterUtil.GetRootInserter(inserter);
-                if (!Object.ReferenceEquals(rootInserter, inserter))
+                if (!ReferenceEquals(rootInserter, inserter))
                 {
                     scenario.Step("Given(IInserter({0})) rootInserter -to-> IInserter({1})", inserter.GetType().Name, rootInserter.GetType().Name);
                 }

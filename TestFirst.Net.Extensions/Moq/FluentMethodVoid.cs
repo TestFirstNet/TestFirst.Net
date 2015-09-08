@@ -1,10 +1,7 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Moq.Language.Flow;
 using TestFirst.Net.Util;
-using System.Threading;
-using System.Linq.Expressions;
-using Moq;
-using System.Collections.Generic;
 
 namespace TestFirst.Net.Extensions.Moq
 {
@@ -40,7 +37,7 @@ namespace TestFirst.Net.Extensions.Moq
 
         public TimesBuilder<int,FluentMock<T>> IsCalled(int num)
         {
-            return new TimesBuilder<int,FluentMock<T>>(num,(val)=>{
+            return new TimesBuilder<int,FluentMock<T>>(num,val=>{
                 var counter = new InvocationCounter(val, m_expression);
                 m_setup.Callback(counter.Increment);
                 RunOnVerify(counter);

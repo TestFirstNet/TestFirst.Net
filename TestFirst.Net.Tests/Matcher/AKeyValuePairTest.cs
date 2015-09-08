@@ -1,9 +1,6 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using TestFirst.Net.Matcher;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Runtime.InteropServices;
 
 namespace TestFirst.Net.Test.Matcher
 {

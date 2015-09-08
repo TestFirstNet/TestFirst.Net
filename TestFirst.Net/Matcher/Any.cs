@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TestFirst.Net.Matcher
+﻿namespace TestFirst.Net.Matcher
 {
     public static class Any
     {
@@ -12,7 +10,7 @@ namespace TestFirst.Net.Matcher
         /// <typeparam name="T">The type of the object to match</typeparam>
         public static IMatcher<T> Of<T>(params IMatcher<T>[] matchers)
         {
-            return Matchers.Any<T>(matchers);
+            return Matchers.Any(matchers);
         }
     }
 }

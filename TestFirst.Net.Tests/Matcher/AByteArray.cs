@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using TestFirst.Net.Matcher;
-using System;
 
 namespace TestFirst.Net.Test.Matcher
 {
@@ -72,7 +71,7 @@ namespace TestFirst.Net.Test.Matcher
 
         private static byte[] RandomBytes()
         {
-            return new TestFirst.Net.Rand.Random().Bytes();
+            return new Net.Rand.Random().Bytes();
         }
     }
 }

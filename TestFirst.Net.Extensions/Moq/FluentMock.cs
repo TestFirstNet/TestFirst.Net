@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using Moq;
-using System.Collections.Generic;
 
 namespace TestFirst.Net.Extensions.Moq
 {
@@ -33,18 +33,18 @@ namespace TestFirst.Net.Extensions.Moq
 
         public FluentMock()
         {
-            this.m_mock = new Mock<T>(MockBehavior.Strict);
+            m_mock = new Mock<T>(MockBehavior.Strict);
         }
 
         private FluentMock(Mock<T> mock)
         {
-            this.m_mock = mock;
+            m_mock = mock;
         }
 
         //for internal use only to allow chaining
         internal FluentMock(FluentMock<T>fluentMock)
         {
-            this.m_mock = fluentMock.m_mock;
+            m_mock = fluentMock.m_mock;
         }
         
         /// <summary>

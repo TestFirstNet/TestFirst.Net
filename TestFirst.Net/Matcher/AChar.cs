@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TestFirst.Net.Matcher
+﻿namespace TestFirst.Net.Matcher
 {
     public static class AChar
     {
