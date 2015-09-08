@@ -291,15 +291,25 @@ def task_tag_git():
 def task_release_push():
     depends('version')
 
-    for proj in PROJECTS:
-        pkg=proj + '.' + VERSION + '.nupkg'
-        log('pushing nuget pkg ' + proj + '/' + pkg)
-        with cd(proj):    
-            nuget_invoke(['Push', pkg],include_optons=False)
+    log('publishing nuget packages to the nuget gallery')
+
+    while True:
+        yn = input('publish version {}? yn :'.format(VERSION)).lower()
+        if yn == 'y':
+            for proj in PROJECTS:
+                pkg=proj + '.' + VERSION + '.nupkg'
+                log('pushing nuget pkg ' + proj + '/' + pkg)
+                with cd(proj):    
+                    nuget_invoke(['Push', pkg],include_optons=False)
+            break
+        elif yn == 'n':
+            log('aborted, not publishing')
+            break
+        else:
+            print('Please answer y or n.')
 
 
 def task_nuget_pack():
-    only_under_windows('building nuspec packages doesnt work under *nix as path slashes in the nuspec need to be different')
     depends('build')
 
     log('packing all projects')
@@ -346,8 +356,6 @@ def nuget_install_if_not_exists(pkg,version,exe_name,fix_permission=True):
 
 
 def nuget_pack(projName):
-    only_under_windows('nuget pack')
-    
     depends('build', 'version')
 
     log('packing ' + projName)
@@ -445,7 +453,11 @@ def filter_template(fromPath,toPath):
     readMeText=filter_html(open("../README.md").read())
     releaseNotesText=filter_html(open("../RELEASENOTES.md").read())
 
-    text=open(fromPath).read().replace('TOKEN_MAIN_DESCRIPTON',releaseNotesText).replace('TOKEN_MAIN_RELEASENOTES',readMeText)
+    text=open(fromPath) \
+        .read() \
+        .replace('[MAIN_DESCRIPTON]',readMeText) \
+        .replace('[MAIN_RELEASENOTES]',releaseNotesText) \
+        .replace('[/]',os.sep);
 
     ensure_dir_exists(toPath)
 

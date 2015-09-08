@@ -21,9 +21,12 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="obj\Release\TestFirst.Net.Performance*.dll" target="/lib/net/40/"/>
-    <file src="obj\Release\TestFirst.Net.Performance*.pdb" target="/lib/net/40/"/>
-    <file src="obj\Release\TestFirst.Net.Performance*.dll" target="/lib/net/45/"/>
-    <file src="obj\Release\TestFirst.Net.Performance*.pdb" target="/lib/net/45/"/> 
+    <file src="obj[/]Release[/]TestFirst.Net.Performance*.dll" target="/lib/net/40/"/>
+    <file src="obj[/]Release[/]TestFirst.Net.Performance*.pdb" target="/lib/net/40/"/>
+    <file src="obj[/]Release[/]TestFirst.Net.Performance*.dll" target="/lib/net/45/"/>
+    <file src="obj[/]Release[/]TestFirst.Net.Performance*.pdb" target="/lib/net/45/"/> 
+    <file src="obj[/]Release[/]TestFirst.Net.Performance*.dll" target="/lib/net/dnx451/"/>
+    <file src="obj[/]Release[/]TestFirst.Net.Performance*.pdb" target="/lib/net/dnx451/"/> 
+
  </files>
 </package>

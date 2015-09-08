@@ -44,15 +44,18 @@ for more info see project page
 
     </description>
     <releaseNotes>
-        TOKEN_MAIN_RELEASENOTES
+        [MAIN_RELEASENOTES]
     </releaseNotes>
     <copyright>Copyright © TestFirst.Net 2014 - 2015</copyright>
     <tags>testing tdd bdd fluent nunit moq</tags>
   </metadata>
   <files>
-    <file src="obj\Release\TestFirst.Net*.dll" target="/lib/net/40/"/>
-    <file src="obj\Release\TestFirst.Net*.pdb" target="/lib/net/40/"/>
-    <file src="obj\Release\TestFirst.Net*.dll" target="/lib/net/45/"/>
-    <file src="obj\Release\TestFirst.Net*.pdb" target="/lib/net/45/"/>
+    <file src="obj[/]Release[/]TestFirst.Net*.dll" target="/lib/net/40/"/>
+    <file src="obj[/]Release[/]TestFirst.Net*.pdb" target="/lib/net/40/"/>
+    <file src="obj[/]Release[/]TestFirst.Net*.dll" target="/lib/net/45/"/>
+    <file src="obj[/]Release[/]TestFirst.Net*.pdb" target="/lib/net/45/"/>
+    <file src="obj[/]Release[/]TestFirst.Net*.dll" target="/lib/net/dnx451/"/>
+    <file src="obj[/]Release[/]TestFirst.Net*.pdb" target="/lib/net/dnx451/"/>
+
   </files>
 </package>

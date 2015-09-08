@@ -1,3 +1,13 @@
+V0.3.5
+===
+
+* Add dot net dnx451 nuget output
+
+V0.3.4
+===
+
+* Add dot net 450 nuget output
+
 V0.3.3
 ===
 
