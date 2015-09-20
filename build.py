@@ -32,7 +32,7 @@ CONFIG='Release'
 VERSION='0.0.0'
 NUNIT_VERSION='2.6.4'
 OPENCOVER_VERSION='4.6.166'
-REPORTGEN_VERSION='2.3.0.0'
+REPORTGEN_VERSION='2.3.1-beta2'
 
 # expect installed, to find
 NUGET_EXE=None
@@ -228,6 +228,7 @@ def task_test():
 
 
 def task_test_coverage():
+    only_under_windows('opencover code coverage only runs under windows')
     depends('init','build','test')
 
     log('generating code test coverage')
@@ -240,6 +241,7 @@ def task_test_coverage():
                 test_dll_name=proj if not proj.endswith('s') else proj[:-1]
                 proj_dll_name=(test_dll_name if not test_dll_name.endswith('.Test') else test_dll_name[:-5])
                 
+                log('Generating code coverage for {}'.format(proj))
                 win_invoke(OPENCOVER_EXE,[
                     '-log:All',
                     '-target:{}'.format(NUNIT_CONSOLE_EXE),
@@ -249,6 +251,7 @@ def task_test_coverage():
                     '-register:user',
                     '-output:_CodeCoverageResult.xml'])
 
+                log('Generating report from code coverage for {}'.format(proj))
                 win_invoke(REPORTGEN_EXE,[
                     '-reports:_CodeCoverageResult.xml',
                     '-targetdir:_CodeCoverageReport',
@@ -335,7 +338,7 @@ def nuget_install_if_not_exists(pkg,version,exe_name,fix_permission=True):
 
     if not os.path.isfile(exe):
         log("downloading " + pkg + "-" + version)
-        nuget_invoke(['install',pkg,'-Source',NUGET_SRC,'-Version',version])
+        nuget_invoke(['install',pkg,'-Source',NUGET_SRC,'-Version',version, '-Prerelease'])
     
     if not os.path.isfile(exe):
         raise BuildError("couldn't install nuget pkg " + pkg + ", version " + version + ". Looking for " + exe + ". Tried to install from " + NUGET_SRC)   
