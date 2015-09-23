@@ -48,6 +48,12 @@
     <None Include="TestFirst.Net.Performance.nuspec.template" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+	<Compile Include="..\BuildVersionAssemblyInfo.cs">
+      <Link>Properties\BuildVersionAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="ActionCompleteThread.cs" />
     <Compile Include="BasePerformanceTest.cs" />
     <Compile Include="ConsolePerformanceTestRunnerListener.cs" />

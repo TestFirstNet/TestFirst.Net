@@ -55,6 +55,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+	<Compile Include="..\BuildVersionAssemblyInfo.cs">
+      <Link>Properties\BuildVersionAssemblyInfo.cs</Link>
+    </Compile>
+	
     <Compile Include="Matcher\Arg.cs" />
     <Compile Include="Moq\AbstractNUnitMoqScenarioTest.cs" />
     <Compile Include="Moq\FluentMethodVoid.cs" />
