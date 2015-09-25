@@ -223,24 +223,22 @@ def task_build():
 
 
 def task_test():
+    if TEST_SKIP:
+       log('tests are set to skip')
+       return
     depends('init','build')
-
-    #e.g. ./TestFirst.Net.Performance.Test/obj/Release/TestFirst.Net.Performance.Test.dll
+    
+	#e.g. ./TestFirst.Net.Performance.Test/obj/Release/TestFirst.Net.Performance.Test.dll
     for proj in TEST_PROJECTS:
         if include_proj(proj):
-            if TEST_SKIP:
-                log('tests are set to skip')
-            else:
-                log('executing tests in ' + proj)
-                with cd(proj + '/bin/' + CONFIG):
-                    # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
-                    dll_name=proj if not proj.endswith('s') else proj[:-1]
-                    if TESTS:
-                        win_invoke(NUNIT_CONSOLE_EXE,['-nologo','-run:' + TESTS, dll_name + '.dll'])
-                    else:
-                        win_invoke(NUNIT_CONSOLE_EXE,['-nologo',dll_name + '.dll'])
-
-
+            log('executing tests in ' + proj)
+            with cd(proj + '/bin/' + CONFIG):
+                # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
+                dll_name=proj if not proj.endswith('s') else proj[:-1]
+                if TESTS:
+                    win_invoke(NUNIT_CONSOLE_EXE,['-nologo','-run:' + TESTS, dll_name + '.dll'])
+                else:
+                    win_invoke(NUNIT_CONSOLE_EXE,['-nologo',dll_name + '.dll'])
 
 def task_test_coverage():
     only_under_windows('opencover code coverage only runs under windows')
