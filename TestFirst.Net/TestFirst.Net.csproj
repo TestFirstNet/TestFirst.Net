@@ -48,10 +48,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-	<Compile Include="..\BuildVersionAssemblyInfo.cs">
+    <Compile Include="..\BuildVersionAssemblyInfo.cs">
       <Link>Properties\BuildVersionAssemblyInfo.cs</Link>
     </Compile>
-	
     <Compile Include="AbstractMatcher.cs" />
     <Compile Include="AbstractScenarioTest.cs" />
     <Compile Include="Expect.cs" />
@@ -59,6 +58,7 @@
     <Compile Include="Inject\IRequireClock.cs" />
     <Compile Include="Matcher\ADateTimeOffset.cs" />
     <Compile Include="Matcher\AFileInfo.cs" />
+    <Compile Include="Matcher\ObjectMatcher.cs" />
     <Compile Include="Template\MatchersTemplate.cs" />
     <Compile Include="IntegerExtensions.cs" />
     <Compile Include="IReturnParentInserter.cs" />
