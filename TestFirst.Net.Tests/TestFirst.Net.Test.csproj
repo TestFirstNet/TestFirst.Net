@@ -6,7 +6,7 @@
     <ProjectGuid>{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestFirst.Net.Test</RootNamespace>
+    <RootNamespace>TestFirst.Net</RootNamespace>
     <AssemblyName>TestFirst.Net.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -61,7 +61,7 @@
   <ItemGroup>
     <Compile Include="AbstractScenarioTest.cs" />
     <Compile Include="AbstractScenarioTestTest.cs" />
-    <Compile Include="DisposingtepArgsInjectorTest.cs" />
+    <Compile Include="DisposingStepArgsInjectorTest.cs" />
     <Compile Include="Matcher\AbstractMatcherTest.cs" />
     <Compile Include="Matcher\AnArrayTest.cs" />
     <Compile Include="Matcher\ADateTimeOffsetTest.cs" />
@@ -99,6 +99,7 @@
     <Compile Include="Matcher\ACharTest.cs" />
     <Compile Include="ExpectTest.cs" />
     <Compile Include="Matcher\AByteArray.cs" />
+    <Compile Include="Util\TimesBuilderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Lang\" />
