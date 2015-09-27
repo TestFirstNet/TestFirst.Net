@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TestFirst.Net
 {
@@ -12,7 +13,8 @@ namespace TestFirst.Net
              
         public void Dispose()
         {
-            foreach (var disposable in m_disposables)
+            var reversed = m_disposables.Reverse();
+            foreach (var disposable in reversed)
             {
                 try
                 {
@@ -29,9 +31,10 @@ namespace TestFirst.Net
 
         virtual public void InjectDependencies<T>(T instance)
         {
-            if( instance is IDisposable)
+            var disposable = instance as IDisposable;
+            if (disposable!=null && !m_disposables.Contains(disposable))
             {
-                m_disposables.Add(instance as IDisposable);
+                m_disposables.Add(disposable);
             }
         }
     }
