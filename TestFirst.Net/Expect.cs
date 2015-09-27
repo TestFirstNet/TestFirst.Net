@@ -142,36 +142,48 @@ namespace TestFirst.Net {
             m_label = label;
         }
 
-        public void IsNull() {
+        public Expect<T> IsNull()
+        {
             AssertMatches(AnInstance.Null());
+            return this;
         }
 
-        public void IsNotNull() {
+        public Expect<T> IsNotNull()
+        {
             Is(AnInstance.NotNull<T>());
+            return this;
         }
 
-        public void IsEqualTo(T expect) {
+        public Expect<T> IsEqualTo(T expect)
+        {
             Is(AnInstance.EqualTo(expect));
+            return this;
         }
 
-        public void Is(IMatcher<T> matcher) {
+        public Expect<T> Is(IMatcher<T> matcher)
+        {
             AssertMatches(matcher);
+            return this;
         }
 
-        public void Is<TNull>(IMatcher<TNull?> matcher) 
+        public Expect<T> Is<TNull>(IMatcher<TNull?> matcher) 
         where TNull : struct, T
         {
             AssertMatches(matcher);
+            return this;
         }
 
-        public void And(IMatcher<T> matcher) {
+        public Expect<T> And(IMatcher<T> matcher)
+        {
             AssertMatches(matcher);
+            return this;
         }
 
-        public void And<TNull>(IMatcher<TNull?> matcher)
+        public Expect<T> And<TNull>(IMatcher<TNull?> matcher)
         where TNull : struct, T
         {
             AssertMatches(matcher);
+            return this;
         }
 
         private void AssertMatches(IMatcher matcher) {

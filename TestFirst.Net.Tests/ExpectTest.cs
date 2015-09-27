@@ -36,7 +36,19 @@ namespace TestFirst.Net
             AssertFails(()=>Expect.For("myMsg").That("x").IsEqualTo("y"));
         }
 
+        [Test]
+        public void That_IsX_And()
+        {
+            AssertPasses(() => Expect.That("x").IsEqualTo("x").And(AString.EqualTo("x")));
+            AssertFails(() => Expect.That("x").IsEqualTo("x").And(AString.EqualTo("y")));
+        }
 
+        [Test]
+        public void That_IsX_And_With_Nullable_Matcher()
+        {
+            AssertPasses(() => Expect.That(1).IsEqualTo(1).And(AnInt.EqualTo(1)));
+            AssertFails(() => Expect.That(1).IsEqualTo(1).And(AnInt.EqualTo(2)));
+        }
         [Test]
         public void That_IsNull()
         {
