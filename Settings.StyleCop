@@ -28,6 +28,8 @@
 	  <Value>params</Value>
 	  <Value>dir</Value>
 	  <Value>warmup</Value>
+	  <Value>scala</Value>
+	  <Value>db</Value>
 	</CollectionProperty>
   </GlobalSettings>
   <Parsers>

@@ -242,7 +242,7 @@ namespace TestFirst.Net
         
         /// <summary>
         /// Override this if you wish to perform custom reordering of inserters. May be useful if you add inserters on the fly
-        /// and these ae required to be run before previously added inserters
+        /// and these are required to be run before previously added inserters
         /// </summary>
         /// <returns>The list of inserters in insertion order</returns>
         protected virtual IEnumerable<IInserter> GetInsertersInInsertionOrder()

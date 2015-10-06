@@ -38,7 +38,7 @@ namespace TestFirst.Net.Template
     /// </para>
     /// <para>
     /// t.ForPropertyType&lt;MyPropertyType1&gt;
-    ///    .AddMatchMethodTaking&lt;String%gt;("MyPropertyType1.Parse($argName)")  ==> will generate  public MyMatcher MyPropertyName(string expect){ MyPropertyName(MyPropertyType1.Parse(expect)); return this;}
+    ///    .AddMatchMethodTaking&lt;String&gt;("MyPropertyType1.Parse($argName)")  ==> will generate  public MyMatcher MyPropertyName(string expect){ MyPropertyName(MyPropertyType1.Parse(expect)); return this;}
     ///    .AddMatchMethodTaking&lt;MyPropertyType1&gt;("AnInstance.Equal($argName)");
     /// </para>
     /// <para>
