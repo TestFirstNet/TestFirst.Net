@@ -3,11 +3,11 @@ using TestFirst.Net.Matcher;
 
 namespace TestFirst.Net.Examples.Api
 {
-    public class AQueryResponse<TSelf,T> : PropertyMatcher<QueryResponse<T>> 
-    where T : class 
-    where TSelf:AQueryResponse<TSelf,T>
+    public class AQueryResponse<TSelf, T> : PropertyMatcher<QueryResponse<T>> 
+        where T : class 
+        where TSelf : AQueryResponse<TSelf, T>
     {
-        //allow us to access refactor safe proeprty names without resorting to magic strings
+        // allow us to access refactor safe proeprty names without resorting to magic strings
         private static readonly QueryResponse<T> PropertyNames = null;
 
         public TSelf NoResults()
@@ -42,7 +42,7 @@ namespace TestFirst.Net.Examples.Api
 
         private TSelf Self()
         {
-            return (TSelf) this;
+            return (TSelf)this;
         }
     }
 }

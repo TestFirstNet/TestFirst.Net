@@ -4,7 +4,7 @@ using TestFirst.Net.Extensions.NUnit;
 namespace TestFirst.Net.Extensions.Test.NUnit
 {
     [TestFixture]
-    public class AbstractNUnitScenarioTestTest:AbstractNUnitScenarioTest
+    public class AbstractNUnitScenarioTestTest : AbstractNUnitScenarioTest
     {
         [Test]
         public void ScenarioTitleIsSetFromTestMethodNameTest()
@@ -13,8 +13,7 @@ namespace TestFirst.Net.Extensions.Test.NUnit
             
             scenario.GivenNothing().WhenNothing().Then(() => { /* just to pass scenario */ });
 
-            Assert.AreEqual("ScenarioTitleIsSetFromTestMethodNameTest",scenario.Title);
+            Assert.AreEqual("ScenarioTitleIsSetFromTestMethodNameTest", scenario.Title);
         }
-
     }
 }

@@ -8,15 +8,15 @@ namespace TestFirst.Net.Logging
     /// </summary>
     public class ActionLogAdapter : BaseLogger
     {
-        private readonly Action<LogLevel,String> m_onLogLine;
+        private readonly Action<LogLevel, string> m_onLogLine;
 
-        public ActionLogAdapter(LogLevel level, string logName, Action<LogLevel,String> onLogLine) : base(level, logName)
+        public ActionLogAdapter(LogLevel level, string logName, Action<LogLevel, string> onLogLine) : base(level, logName)
         {
             PreConditions.AssertNotNull(onLogLine, "logLineAction");
             m_onLogLine = onLogLine;
         }
 
-        public ActionLogAdapter(LogLevel level, Type type, Action<LogLevel,String> onLogLine) : base(level, type)
+        public ActionLogAdapter(LogLevel level, Type type, Action<LogLevel, string> onLogLine) : base(level, type)
         {
             PreConditions.AssertNotNull(onLogLine, "logLineAction");
             m_onLogLine = onLogLine;

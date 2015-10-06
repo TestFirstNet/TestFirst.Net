@@ -1,4 +1,5 @@
 ﻿using System;
+using TestFirst.Net.Examples.Net;
 
 namespace TestFirst.Net.Examples.Api.Query
 {
@@ -9,7 +10,6 @@ namespace TestFirst.Net.Examples.Api.Query
 
         public class Response : QueryResponse<Notification>
         {
-            
         }
     }
 }

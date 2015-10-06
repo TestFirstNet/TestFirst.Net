@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net;
 
-namespace TestFirst.Net.Examples.Service.Http
+namespace TestFirst.Net.Examples.Net.Http
 {
-    static class ResponseExtensions
+    internal static class ResponseExtensions
     {
         public static bool Completed(this HttpListenerResponse response)
         {
@@ -11,7 +11,7 @@ namespace TestFirst.Net.Examples.Service.Http
             {
                 return !response.OutputStream.CanWrite;
             }
-            catch(ObjectDisposedException)
+            catch (ObjectDisposedException)
             {
                 return true;
             }

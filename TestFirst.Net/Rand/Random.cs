@@ -5,43 +5,41 @@ using System.Runtime.Serialization;
 
 namespace TestFirst.Net.Rand
 {
-    //[NotThreadSafe]
     public class Random
     {
-        private readonly System.Random m_random = new System.Random(Environment.TickCount);
-
-        private readonly Utf8CharProvider m_utf8CharProvider = new Utf8CharProvider();
+        public static readonly Random Instance = new Random();
 
         private const int DefaultMinStringLen = 1;
         private const int DefaultMaxStringLen = 20;
+        private const string AlphaNumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
+
+        private static readonly long MinDateTimeTicks = new DateTime(1, 1, 1, 0, 0, 0, 0).Ticks;
+        private static readonly long MaxDateTimeTicks = new DateTime(2200, 1, 1, 0, 0, 0, 0).Ticks;
+
+        private readonly System.Random m_random = new System.Random(Environment.TickCount);
+        private readonly Utf8CharProvider m_utf8CharProvider = new Utf8CharProvider();
 
         private int m_count;
         private int m_charCount = 32;
 
-        private static long MinDateTimeTicks = new DateTime(1, 1, 1, 0, 0, 0, 0).Ticks;
-        private static long MaxDateTimeTicks = new DateTime(2200, 1, 1, 0, 0, 0, 0).Ticks;
-
-        private const String AlphaNumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
-
-        public static readonly Random Instance = new Random();
-
-        public T EnumOf<T>() where T:struct,IConvertible
+        public T EnumOf<T>() 
+            where T : struct, IConvertible
         {
             return (T)EnumOf(typeof(T));
         }
 
-        public Object EnumOf(Type enumType)
+        public object EnumOf(Type enumType)
         {
             if (!enumType.IsEnum)
             {
-                throw new ArgumentException(String.Format("Expect an enumerated type but got {0}", enumType.FullName));
+                throw new ArgumentException(string.Format("Expect an enumerated type but got {0}", enumType.FullName));
             }
-            Array values = Enum.GetValues(enumType);
+            var values = Enum.GetValues(enumType);
             var randomIdx = Int(0, values.Length);
             return values.GetValue(randomIdx);
         }
 
-        public TValue ValueFrom<TKey,TValue>(IDictionary<TKey,TValue> items)
+        public TValue ValueFrom<TKey, TValue>(IDictionary<TKey, TValue> items)
         {
             var key = ItemFrom(items.Keys);
             return items[key];
@@ -53,96 +51,96 @@ namespace TestFirst.Net.Rand
             return items.ElementAt(index);
         }
 
-        public String AlphaNumericString()
+        public string AlphaNumericString()
         {
             var len = Int(DefaultMinStringLen, DefaultMaxStringLen + 1);
             return AlphaNumericString(len);
         }
 
-        public String AlphaNumericString(int len)
+        public string AlphaNumericString(int len)
         {
             var chars = new char[len];
             for (int i = 0; i < len; i++)
             {
                 chars[i] = AlphaNumericChar();
             }
-            return new String(chars);
+            return new string(chars);
         }
 
-        public String AsciiString()
+        public string AsciiString()
         {
             var len = Int(DefaultMinStringLen, DefaultMaxStringLen + 1);
             return AsciiString(len);
         }
 
-        public String AsciiString(int len)
+        public string AsciiString(int len)
         {
             var chars = new char[len];
             for (int i = 0; i < len; i++)
             {
                 chars[i] = Convert.ToChar(m_random.Next(32, 126 + 1));
             }
-            return new String(chars);
+            return new string(chars);
         }
 
-        public String GuidString()
+        public string GuidString()
         {
             return Guid().ToString();
         }
 
-        public String IncrementingString()
+        public string IncrementingString()
         {
             return "RandomString" + m_count++;
         }
 
         /// <summary>
-        /// Return a utf8 string which uses the full utf8 code plane, including supplementary planes
+        /// Returns a utf8 string which uses the full utf8 code plane, including supplementary planes
         /// </summary>
-        /// <returns></returns>
-        public String Utf8String()
+        /// <returns>a random utf8 string</returns>
+        public string Utf8String()
         {
             var len = Int(DefaultMinStringLen, DefaultMaxStringLen + 1);
             return Utf8String(len);
         }
 
-        public String Utf8String(int len)
+        public string Utf8String(int len)
         {                                    
             var chars = new char[len];
             for (int i = 0; i < len; i++)
             {
                 chars[i] = m_utf8CharProvider.NextFullChar();
             }
-            return new String(chars);
+            return new string(chars);
         }
 
         /// <summary>
         /// Return a utf8 string which uses only the basic utf8 code plane, meaning no supplementary planes used
         /// </summary>
-        /// <returns></returns>
-        public String BasicUtf8String()
+        /// <returns>a random string using only the basic utf8 code plane</returns>
+        public string BasicUtf8String()
         {
             var len = Int(DefaultMinStringLen, DefaultMaxStringLen + 1);
             return BasicUtf8String(len);
         }
 
-        public String BasicUtf8String(int len)
+        public string BasicUtf8String(int len)
         {                                    
             var chars = new char[len];
             for (int i = 0; i < len; i++)
             {
                 chars[i] = m_utf8CharProvider.NextBasicChar();
             }
-            return new String(chars);
+            return new string(chars);
         }
 
         public bool Bool()
         {
-            return m_random.Next(0,2)==0;
+            return m_random.Next(0, 2) == 0;
         }
 
         public byte Byte()
         {
-            return (byte)m_random.Next(System.Byte.MinValue,System.Byte.MaxValue + 1 );
+            return (byte)m_random.Next(byte.MinValue, byte.MaxValue + 1);
         }
 
         public byte[] Bytes()
@@ -165,14 +163,14 @@ namespace TestFirst.Net.Rand
             return bytes;
         }
 
-        public SByte SByte()
+        public sbyte SByte()
         {
-            return (SByte)m_random.Next(System.SByte.MinValue,System.SByte.MaxValue + 1);
+            return (sbyte)m_random.Next(sbyte.MinValue, sbyte.MaxValue + 1);
         }
 
         public char Char()
         {
-            return (char)m_random.Next(System.Char.MinValue,System.Char.MaxValue + 1);
+            return (char)m_random.Next(char.MinValue, char.MaxValue + 1);
         }
 
         public char Utf8Char()
@@ -182,7 +180,7 @@ namespace TestFirst.Net.Rand
         
         public char AlphaNumericChar()
         {
-            return AlphaNumeric[m_random.Next(0,AlphaNumeric.Length)];
+            return AlphaNumeric[m_random.Next(0, AlphaNumeric.Length)];
         }
 
         public char BasicUtf8Char()
@@ -202,7 +200,7 @@ namespace TestFirst.Net.Rand
 
         public short Short()
         {
-            return (short)m_random.Next(short.MinValue,short.MaxValue + 1);
+            return (short)m_random.Next(short.MinValue, short.MaxValue + 1);
         }
 
         public int Int()
@@ -210,7 +208,7 @@ namespace TestFirst.Net.Rand
             return m_random.Next();
         }
 
-        [Obsolete("Use Int(min,maxInclusive) instead")]
+        [Obsolete("Use Int(min, maxInclusive) instead")]
         public int IntBetween(int minInclusive, int maxExclusive)
         {
             return Int(minInclusive, maxExclusive);
@@ -221,38 +219,38 @@ namespace TestFirst.Net.Rand
             return m_random.Next(minInclusive, maxExclusive);
         }
 
-        public UInt16 UInt16()
+        public ushort UInt16()
         {
-            return (UInt16)m_random.Next(System.UInt16.MinValue,System.UInt16.MaxValue + 1);
+            return (ushort)m_random.Next(ushort.MinValue, ushort.MaxValue + 1);
         }
 
-        public Int16 Int16()
+        public short Int16()
         {
-            return (Int16)m_random.Next(System.Int16.MinValue,System.Int16.MaxValue + 1);
+            return (short)m_random.Next(short.MinValue, short.MaxValue + 1);
         }
 
-        public UInt32 UInt32()
+        public uint UInt32()
         {
             var bytes = new byte[4];
             m_random.NextBytes(bytes);
             return BitConverter.ToUInt32(bytes, 0);
         }
 
-        public Int32 Int32()
+        public int Int32()
         {
             var bytes = new byte[4];
             m_random.NextBytes(bytes);
             return BitConverter.ToInt32(bytes, 0);
         }
 
-        public UInt64 UInt64()
+        public ulong UInt64()
         {
             var bytes = new byte[8];
             m_random.NextBytes(bytes);
             return BitConverter.ToUInt64(bytes, 0);
         }
 
-        public Int64 Int64()
+        public long Int64()
         {
             var bytes = new byte[8];
             m_random.NextBytes(bytes);
@@ -266,7 +264,7 @@ namespace TestFirst.Net.Rand
 
         public long Long()
         {
-            return Long(System.Int64.MinValue,System.Int64.MaxValue);
+            return Long(long.MinValue, long.MaxValue);
         }
 
         public long Long(long min, long maxInclusive)
@@ -275,7 +273,7 @@ namespace TestFirst.Net.Rand
             m_random.NextBytes(bytes);
             long longRand = BitConverter.ToInt64(bytes, 0);
 
-            return (Math.Abs(longRand % (maxInclusive - min)) + min);
+            return Math.Abs(longRand % (maxInclusive - min)) + min;
         }
 
         public float Float()
@@ -285,12 +283,12 @@ namespace TestFirst.Net.Rand
             return (float)(mantissa * exponent);
         }
 
-        //taken from http://stackoverflow.com/questions/609501/generating-a-random-decimal-in-c-sharp
-        public Decimal Decimal()
+        // taken from http://stackoverflow.com/questions/609501/generating-a-random-decimal-in-c-sharp
+        public decimal Decimal()
         {
             byte scale = (byte)m_random.Next(29);
             bool sign = Bool();
-            return new Decimal(Int32()/*low*/, Int32()/*mid*/, Int32()/*high*/, sign, scale);
+            return new decimal(Int32() /*low*/, Int32() /*mid*/, Int32() /*high*/, sign, scale);
         }
 
         public Guid Guid()
@@ -305,12 +303,12 @@ namespace TestFirst.Net.Rand
 
         public DateTimeOffset DateTimeOffset()
         {
-            return new DateTimeOffset(Long(MinDateTimeTicks, MaxDateTimeTicks), System.TimeSpan.FromHours(Int(0,13)));
+            return new DateTimeOffset(Long(MinDateTimeTicks, MaxDateTimeTicks), System.TimeSpan.FromHours(Int(0, 13)));
         }
 
         public TimeSpan TimeSpan()
         {
-            //want duration to keep working, hence we stay just below the min/max range
+            // want duration to keep working, hence we stay just below the min/max range
             var ticks = Long(System.TimeSpan.MinValue.Ticks + 1, System.TimeSpan.MaxValue.Ticks - 1);
             return new TimeSpan(ticks);
         }
@@ -326,7 +324,7 @@ namespace TestFirst.Net.Rand
             return new TimeSpan(ticks);
         }
 
-        public Object Object()
+        public object Object()
         {
             return new RandomObj(GuidString());
         }
@@ -335,72 +333,49 @@ namespace TestFirst.Net.Rand
         private class RandomObj
         {
             [DataMember]
-            private readonly Object m_value;
+            private readonly object m_value;
 
-            internal RandomObj(Object value)
+            internal RandomObj(object value)
             {
                 m_value = value;
             }
 
-            public override String ToString()
+            public override string ToString()
             {
-                return String.Format("{0}[{1}]", GetType().Name, m_value);
+                return string.Format("{0}[{1}]", GetType().Name, m_value);
             }
         }
 
         /// <summary>
-        /// based on https://github.com/erikrozendaal/scalacheck-blog/blob/master/src/main/scala/Solution2.scala
+        /// based on <a href="https://github.com/erikrozendaal/scalacheck-blog/blob/master/src/main/scala/Solution2.scala">Solution2.scala</a>
         /// </summary>
-        class Utf8CharProvider
-        {            
+        private class Utf8CharProvider
+        {
+            private static readonly Range All = new Range(0x0000, 0xFFFF);
+
+            // surrogates
+            private static readonly Range Leading = new Range(0xD800, 0xDBFF);
+            private static readonly Range Trailing = new Range(0xDC00, 0xDFFF);
+
             private readonly System.Random m_random = new System.Random(Environment.TickCount);
 
             private readonly char[] m_unicodeBasicMultilingualPlane;
-     
-            private static readonly Range All = new Range(0x0000,0xFFFF);
-            //surrogates
-            private static readonly Range Leading = new Range(0xD800,0xDBFF);
-            private static readonly Range Trailing = new Range(0xDC00,0xDFFF);
             
-            class Range
-            {
-                public readonly int Min;
-                public readonly int Max;
-                public readonly int Num;
-                
-                internal Range(int min, int max)
-                {
-                    Min = min;
-                    Max = max;
-                    Num = Max - Min + 1;
-                }
-            }
-
             internal Utf8CharProvider()
             {
-                //TODO:don't generate all, calc on the fly instead to save memory
-                //currently about 65K entries
+                // TODO:don't generate all, calc on the fly instead to save memory
+                // currently about 65K entries
                 m_unicodeBasicMultilingualPlane = CharRange(All)
                     .Except(CharRange(Leading))
                     .Except(CharRange(Trailing))
                     .ToArray();
             }
 
-            private static char[] CharRange(Range range)
-            {
-                var chars = new char[range.Num];
-                for (int i = 0; i < chars.Length; i++)
-                {
-                    chars[i]=(char)(range.Min + i);
-                }
-                return chars;
-            }
-
             public char NextFullChar()
             {
-                //90% of the time use the basic plane unicode
+                // 90% of the time use the basic plane unicode
                 var distribution = m_random.Next(0, 10);
-                if( distribution < 9 )
+                if (distribution < 9)
                 {
                     return NextBasicChar();
                 }
@@ -409,7 +384,7 @@ namespace TestFirst.Net.Rand
 
             public char NextBasicChar()
             {
-                //next random char between limits which is not in the surrogate ranges
+                // next random char between limits which is not in the surrogate ranges
                 return m_unicodeBasicMultilingualPlane[m_random.Next(0, m_unicodeBasicMultilingualPlane.Length)];
             }
 
@@ -418,15 +393,37 @@ namespace TestFirst.Net.Rand
                 var highChar = NextCharInRange(Leading);
                 var lowChar = NextCharInRange(Trailing);
 
-                return (char) char.ConvertToUtf32(highChar, lowChar);
+                return (char)char.ConvertToUtf32(highChar, lowChar);
+            }
+
+            private static char[] CharRange(Range range)
+            {
+                var chars = new char[range.Num];
+                for (int i = 0; i < chars.Length; i++)
+                {
+                    chars[i] = (char)(range.Min + i);
+                }
+                return chars;
             }
 
             private char NextCharInRange(Range range)
             {
-                return (char)m_random.Next(range.Min,range.Max + 1);
+                return (char)m_random.Next(range.Min, range.Max + 1);
             }
-                        
- 
+
+            private class Range
+            {
+                public readonly int Min;
+                public readonly int Max;
+                public readonly int Num;
+
+                internal Range(int min, int max)
+                {
+                    Min = min;
+                    Max = max;
+                    Num = Max - Min + 1;
+                }
+            }
         }
     }
 }

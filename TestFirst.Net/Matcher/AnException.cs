@@ -4,7 +4,7 @@ namespace TestFirst.Net.Matcher
 {
     public class AnException : PropertyMatcher<Exception>
     {
-        //for refactor friendly support
+        // for refactor friendly support
         private static readonly Exception PropertyNames = null;
 
         public static IMatcher<Exception> Any()
@@ -22,13 +22,13 @@ namespace TestFirst.Net.Matcher
             return new AnException();
         }
 
-        public AnException Message(String val)
+        public AnException Message(string val)
         {
             Message(AString.EqualTo(val));
             return this;
         }
 
-        public AnException Message(IMatcher<String> matcher)
+        public AnException Message(IMatcher<string> matcher)
         {
             WithProperty(() => PropertyNames.Message, matcher);
             return this;
@@ -37,11 +37,11 @@ namespace TestFirst.Net.Matcher
         /// <summary>
         /// Ensure exception is not a Moq exception or any other mocking exception used in TestFirst
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The exception matcher</returns>
         public AnException NotMockException()
         {
             var text1 = AString.Not(AString.ContainingOfAnyCase("mock behavior Strict"));
-            var text2 = AString.Not(AString.ContainingOfAnyCase( "mock must have a corresponding setup"));
+            var text2 = AString.Not(AString.ContainingOfAnyCase("mock must have a corresponding setup"));
 
             Message(text1);
             Message(text2);
@@ -52,7 +52,8 @@ namespace TestFirst.Net.Matcher
             return this;
         }
         
-        public AnException TypeMatching<T>(IMatcher<T> matcher) where T:class
+        public AnException TypeMatching<T>(IMatcher<T> matcher) 
+            where T : class
         {
             Type<T>();
             WithMatcher("Exception", e => e as T, matcher);
@@ -68,31 +69,32 @@ namespace TestFirst.Net.Matcher
         /// <summary>
         /// In cases where the underlying exception class is not visible (like in third party libs)
         /// </summary>
-        /// <param name="fullTypeName">the expected fully qualifed type name of the exception</param>
-        /// <returns></returns>
-        public AnException Type(String fullTypeName)
+        /// <param name="fullTypeName">the expected fully qualified type name of the exception</param>
+        /// <returns>The exception matcher</returns>
+        public AnException Type(string fullTypeName)
         {
             Type(AString.EqualTo(fullTypeName));
             return this;
         }
+
         /// <summary>
         /// In cases where the underlying exception class is not visible (like in third party libs)
         /// </summary>
         /// <param name="typeMatcher">the matcher to use to match the type against</param>
-        /// <returns></returns>
-        public AnException Type(IMatcher<String> typeMatcher)
+        /// <returns>The exception matcher</returns>
+        public AnException Type(IMatcher<string> typeMatcher)
         {
             WithMatcher("GetType().FullName", (Exception e) => e.GetType().FullName, typeMatcher);
             return this;
         }
 
-        public AnException StackTrace(IMatcher<String> matcher)
+        public AnException StackTrace(IMatcher<string> matcher)
         {
             WithProperty(() => PropertyNames.StackTrace, matcher);
             return this;
         }
 
-        public AnException Source(IMatcher<String> matcher)
+        public AnException Source(IMatcher<string> matcher)
         {
             WithProperty(() => PropertyNames.Source, matcher);
             return this;

@@ -4,20 +4,23 @@ namespace TestFirst.Net
 {
     public class MatchDiagnostics : Description, IMatchDiagnostics
     {
+        public MatchDiagnostics()
+        {
+        }
+
+        public MatchDiagnostics(IAppendListener listener)
+            : base(listener)
+        {
+        }
+
         public IMatchDiagnostics NewChild()
         {
             return new MatchDiagnostics();
         }
 
-        public MatchDiagnostics()
-        {}
-
-        public MatchDiagnostics(IAppendListener listener):base(listener)
-        {}
-
-        public bool TryMatch(Object actual, int index, IMatcher childMatcher)
+        public bool TryMatch(object actual, int index, IMatcher childMatcher)
         {
-            return InternalTryMatch(actual,childMatcher, With().Value("at position", index));
+            return InternalTryMatch(actual, childMatcher, With().Value("at position", index));
         }
 
         public bool TryMatch<T>(T actual, int index, IMatcher<T> childMatcher)
@@ -25,14 +28,14 @@ namespace TestFirst.Net
             return InternalTryMatch(actual, childMatcher, With().Value("at position", index));
         }
 
-        public bool TryMatch(Object actual, IMatcher childMatcher)
+        public bool TryMatch(object actual, IMatcher childMatcher)
         {
             return InternalTryMatch(actual, childMatcher, null);
         }
 
-        public bool TryMatch(Object actual, String actualName, IMatcher childMatcher)
+        public bool TryMatch(object actual, string actualName, IMatcher childMatcher)
         {
-            return InternalTryMatch(actual,childMatcher, With().Value("named", actualName));
+            return InternalTryMatch(actual, childMatcher, With().Value("named", actualName));
         }
 
         public bool TryMatch<T>(T actual, IMatcher<T> childMatcher)
@@ -40,7 +43,7 @@ namespace TestFirst.Net
             return InternalTryMatch(actual, childMatcher, null);
         }
 
-        public bool TryMatch<T>(T actual, String actualName, IMatcher<T> childMatcher)
+        public bool TryMatch<T>(T actual, string actualName, IMatcher<T> childMatcher)
         {
             return InternalTryMatch(actual, childMatcher, With().Value("named", actualName));
         }
@@ -50,18 +53,44 @@ namespace TestFirst.Net
             return InternalTryMatch(actual, childMatcher, selfDescribing);
         }
 
-        public bool TryMatch(Object actual, IMatcher childMatcher, ISelfDescribing selfDescribing)
+        public bool TryMatch(object actual, IMatcher childMatcher, ISelfDescribing selfDescribing)
         {
             return InternalTryMatch(actual, childMatcher, selfDescribing);
         }
 
-        private bool InternalTryMatch(Object actual, IMatcher childMatcher, ISelfDescribing selfDescribing)
+        public IMatchDiagnostics Matched(string text, params object[] args)
         {
-            //so we can print child diagnostics after
+            Matched(With().Text(text, args));
+            return this;
+        }
+
+        public IMatchDiagnostics MisMatched(string text, params object[] args)
+        {
+            MisMatched(With().Text(text, args));
+            return this;
+        }
+
+        public IMatchDiagnostics Matched(ISelfDescribing selfDescribing)
+        {
+            Text("Match");
+            Child(selfDescribing);
+            return this;
+        }
+
+        public IMatchDiagnostics MisMatched(ISelfDescribing selfDescribing)
+        {
+            Text("Mismatch!");
+            Child(selfDescribing);
+            return this;
+        }
+
+        private bool InternalTryMatch(object actual, IMatcher childMatcher, ISelfDescribing selfDescribing)
+        {
+            // so we can print child diagnostics after
             var childDiag = new MatchDiagnostics();
             var matched = childMatcher.Matches(actual, childDiag);
             
-            Text(matched ? "Match":"Mismatch!");
+            Text(matched ? "Match" : "Mismatch!");
 
             var desc = With();
             if (selfDescribing != null)
@@ -79,32 +108,6 @@ namespace TestFirst.Net
             }   
             Child(desc);
             return matched;
-        }
-
-        public IMatchDiagnostics Matched(string text, params object[] args)
-        {
-            Matched(With().Text(text,args));
-            return this;
-        }
-
-        public IMatchDiagnostics MisMatched(string text, params object[] args)
-        {
-            MisMatched(With().Text(text,args));
-            return this;
-        }
-
-        public IMatchDiagnostics Matched(ISelfDescribing selfDescribing)
-        {
-            Text("Match");
-            Child(selfDescribing);
-            return this;
-        }
-
-        public IMatchDiagnostics MisMatched(ISelfDescribing selfDescribing)
-        {
-            Text("Mismatch!");
-            Child(selfDescribing);
-            return this;
         }
     }
 }

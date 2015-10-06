@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,18 +6,12 @@ namespace TestFirst.Net.Performance
     /// <summary>
     /// Run the tests in an endless loop
     /// </summary>
-    public class RoundRobbin: PerformanceSuite.ITestProvider
+    public class RoundRobbin : PerformanceSuite.ITestProvider
     {
         private readonly IPerformanceTest[] m_tests;
         private readonly int m_len;
+        private readonly object m_lock = new object();
         private int m_current = -1;
-
-        private readonly Object m_lock = new Object();
-
-        public static Builder With()
-        {
-            return new Builder();
-        }
 
         private RoundRobbin(IList<IPerformanceTest> tests)
         {
@@ -28,6 +21,11 @@ namespace TestFirst.Net.Performance
             {
                 m_tests[i] = tests[i];
             }
+        }
+
+        public static Builder With()
+        {
+            return new Builder();
         }
 
         public IPerformanceTest Next()
@@ -67,7 +65,7 @@ namespace TestFirst.Net.Performance
 
             public Builder Tests(params IBuilder<IPerformanceTest>[] tests)
             {
-                m_tests.AddRange(tests.Select(builder=>builder.Build()));
+                m_tests.AddRange(tests.Select(builder => builder.Build()));
                 return this;
             }
 

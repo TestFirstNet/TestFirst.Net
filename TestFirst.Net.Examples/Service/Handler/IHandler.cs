@@ -2,12 +2,12 @@
 
 namespace TestFirst.Net.Examples.Service.Handler
 {
-    interface IHandler
+    internal interface IHandler
     {
-        Object Handle(Object query);
+        object Handle(object query);
     }
 
-    interface IHandler<TQuery, out TResponse> : IHandler
+    internal interface IHandler<in TQuery, out TResponse> : IHandler
     {
         TResponse Handle(TQuery query);
     }

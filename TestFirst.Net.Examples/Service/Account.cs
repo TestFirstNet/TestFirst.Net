@@ -1,6 +1,6 @@
-﻿namespace TestFirst.Net.Examples.Service.Model
+﻿namespace TestFirst.Net.Examples.Service
 {
-    class Account
+    internal class Account
     {
     }
 }

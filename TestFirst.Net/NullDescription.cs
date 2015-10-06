@@ -1,27 +1,27 @@
-using System;
 using System.Collections;
 
 namespace TestFirst.Net
 {
     /// <summary>
-    /// A description which does not collect anything. Useful when speed is required and the disgnostic results of
+    /// A description which does not collect anything. Useful when speed is required and the diagnostic results of
     /// matching is not required
     /// </summary>
     public class NullDescription : IDescription
     {
         /// <summary>
         /// Keep a single instance around to remove the need to create it over and over when a single shared
-        /// instance exihibits the exact same behaviour (provided nothing locks on this)
+        /// instance exhibits the exact same behaviour (provided nothing locks on this)
         /// </summary>
         public static readonly NullDescription Instance = new NullDescription();
+
+        public bool IsNull
+        {
+            get { return true; }
+        }
 
         public static NullDescription With()
         {
             return new NullDescription();
-        }
-
-        public bool IsNull{
-            get {return true;}
         }
 
         public IDescription Text(string line, params object[] args)
@@ -29,12 +29,12 @@ namespace TestFirst.Net
             return this;
         }
 
-        public IDescription Child(string label, Object child)
+        public IDescription Child(string label, object child)
         {
             return this;
         }
 
-        public IDescription Child(Object child)
+        public IDescription Child(object child)
         {
             return this;
         }
@@ -49,7 +49,7 @@ namespace TestFirst.Net
             return this;
         }
 
-        public IDescription Value(String label, object value)
+        public IDescription Value(string label, object value)
         {
             return this;
         }
@@ -61,8 +61,9 @@ namespace TestFirst.Net
 
         public void DescribeTo(IDescription desc)
         {
-            if (desc != this)//prevent accidental self recursion
+            if (desc != this)
             {
+                // prevent accidental self recursion
                 desc.Value(ToString());
             }            
         }
@@ -72,5 +73,4 @@ namespace TestFirst.Net
             return GetType().Name;
         }
     }
-
 }

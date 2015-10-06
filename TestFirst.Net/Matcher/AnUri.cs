@@ -4,29 +4,29 @@ namespace TestFirst.Net.Matcher
 {
     public static class AnUri
     {
-        public static IMatcher<Uri> EqualTo(String fullPath)
+        public static IMatcher<Uri> EqualTo(string fullPath)
         {
             return EqualTo(AString.EqualTo(fullPath));
         }
 
-        public static IMatcher<Uri> EqualTo(IMatcher<String> fullPathMatcher)
+        public static IMatcher<Uri> EqualTo(IMatcher<string> fullPathMatcher)
         {
-            return Matchers.Function((Uri actual,IMatchDiagnostics diag) => diag.TryMatch(actual.AbsoluteUri,fullPathMatcher), ()=>"a uri equal to " + fullPathMatcher);
+            return Matchers.Function((Uri actual, IMatchDiagnostics diag) => diag.TryMatch(actual.AbsoluteUri, fullPathMatcher), () => "a uri equal to " + fullPathMatcher);
         } 
         
         public static IMatcher<Uri> EqualTo(Uri expect)
         {
-            return Matchers.Function((Uri actual,IMatchDiagnostics diag) => diag.TryMatch(actual,AnInstance.EqualTo(expect)), ()=>"a uri equal to " + expect);
+            return Matchers.Function((Uri actual, IMatchDiagnostics diag) => diag.TryMatch(actual, AnInstance.EqualTo(expect)), () => "a uri equal to " + expect);
         } 
 
         public static IMatcher<Uri> Null()
         {
-            return Matchers.Function((Uri actual) =>actual == null,"a null uri");
+            return Matchers.Function((Uri actual) => actual == null, "a null uri");
         }
 
         public static IMatcher<Uri> NotNull()
         {
-            return Matchers.Function((Uri actual) =>actual != null,"a non null uri");
+            return Matchers.Function((Uri actual) => actual != null, "a non null uri");
         }
     }
 }

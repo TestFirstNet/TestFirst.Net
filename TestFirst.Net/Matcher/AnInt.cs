@@ -2,7 +2,6 @@ namespace TestFirst.Net.Matcher
 {
     public static class AnInt
     {
-
         public static IMatcher<int?> EqualTo(int? expect)
         {
             if (expect == null)

@@ -35,10 +35,9 @@ namespace TestFirst.Net.Performance
             if (m_testId == null)
             {
                 m_testId = new TestId(
-                    machineId:m_machineId,
+                    machineId: m_machineId,
                     agentId: m_agentId,
-                    threadId: Thread.CurrentThread.ManagedThreadId.ToString()
-                    );
+                    threadId: Thread.CurrentThread.ManagedThreadId.ToString());
             }
             return m_testId;
         }

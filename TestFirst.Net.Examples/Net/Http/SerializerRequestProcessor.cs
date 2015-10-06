@@ -4,22 +4,23 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
+using TestFirst.Net.Examples.Net.Http.Serializer;
 
-namespace TestFirst.Net.Examples.Service.Http
+namespace TestFirst.Net.Examples.Net.Http
 {
-    class SerializerRequestProcessor : IRequestProcessor
+    internal class SerializerRequestProcessor : IRequestProcessor
     {
-        private readonly IDictionary<string,ISerializer> m_contentTypeToSerializer;
-        private const String DefaultContentType = "*";
+        private const string DefaultContentType = "*";
+        private readonly IDictionary<string, ISerializer> m_contentTypeToSerializer;
+
+        private SerializerRequestProcessor(IDictionary<string, ISerializer> serializersByContentType)
+        {
+            m_contentTypeToSerializer = new Dictionary<string, ISerializer>(serializersByContentType);
+        }
 
         public static Builder With()
         {
             return new Builder();
-        }
-
-        private SerializerRequestProcessor(IDictionary<String,ISerializer> serializersByContentType)
-        {
-            m_contentTypeToSerializer = new Dictionary<string, ISerializer>(serializersByContentType);
         }
 
         public void Process(IRequestProvider provider)
@@ -30,33 +31,23 @@ namespace TestFirst.Net.Examples.Service.Http
             var httpResponse = request.HttpResponse;
 
             Console.WriteLine("Request:" + httpRequest.RawUrl);
-            //todo:pre filters?
-            if (!httpResponse.Completed())//maybe filter has finished or client has disconnected
+            
+            // todo:pre filters?
+            if (!httpResponse.Completed()) 
             {
+                // maybe filter has finished or client has disconnected
                 var serializer = LookupSerializer(httpRequest);
                 var requestDto = ReadRequestDto(httpRequest, serializer);
                 var responseDto = GenerateResponseDto(httpRequest, httpResponse, requestDto);
 
-                //maybe response has already been written to and closed, in which case we don't need to do anything
+                // maybe response has already been written to and closed, in which case we don't need to do anything
                 if (!httpResponse.Completed())
                 {
                     WriteResponseDto(httpResponse, serializer, responseDto);
                 }
 
-                //todo:post filters?
+                // todo:post filters?
             }
-        }
-
-        private MyDummyResponse GenerateResponseDto(HttpListenerRequest httpRequest, HttpListenerResponse httpResponse, Object requestDto)
-        {
-            var path = ExtractPath(httpRequest);
-            var method = httpRequest.HttpMethod;
-            var responseDto = new MyDummyResponse
-                {
-                    Message = "Hello World",
-                    Debug = "path:" + path + ", method:" + method + ",thread" + Thread.CurrentThread.ManagedThreadId
-                };
-            return responseDto;
         }
 
         private static void WriteResponseDto(HttpListenerResponse response, ISerializer serializer, MyDummyResponse responseDto)
@@ -67,11 +58,23 @@ namespace TestFirst.Net.Examples.Service.Http
             }
         }
 
-        private Object ReadRequestDto(HttpListenerRequest request, ISerializer serializer)
+        private MyDummyResponse GenerateResponseDto(HttpListenerRequest httpRequest, HttpListenerResponse httpResponse, object requestDto)
+        {
+            var path = ExtractPath(httpRequest);
+            var method = httpRequest.HttpMethod;
+            var responseDto = new MyDummyResponse
+                {
+                    Message = "Hello World",
+                    Debug = "path:" + path + ", method:" + method + ", thread" + Thread.CurrentThread.ManagedThreadId
+                };
+            return responseDto;
+        }
+
+        private object ReadRequestDto(HttpListenerRequest request, ISerializer serializer)
         {
             var convertTo = LookupTargetType(request);
 
-            Object requestDto;
+            object requestDto;
             using (var stream = request.InputStream)
             using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
@@ -96,46 +99,34 @@ namespace TestFirst.Net.Examples.Service.Http
 
         private Type LookupTargetType(HttpListenerRequest request)
         {
-            return typeof (MyDummyRequest);
+            return typeof(MyDummyRequest);
         }
 
-        private String ExtractPath(HttpListenerRequest request)
+        private string ExtractPath(HttpListenerRequest request)
         {
             var uri = request.Url;
             var pathQuery = uri.PathAndQuery;
             var question = pathQuery.IndexOf('?');
             if (question != -1)
             {
-                return pathQuery.Substring(0,question);
+                return pathQuery.Substring(0, question);
             }
             return pathQuery;
         }
 
-        class MyDummyRequest
-        {
-
-        }
-
-        class MyDummyResponse
-        {
-            public String Message { get; set; }
-            public String Debug { get; set; }
-
-        }
-
         public class Builder
         {
-            private IDictionary<String,ISerializer> m_contentTypeToSerializer = new Dictionary<string, ISerializer>();
+            private readonly IDictionary<string, ISerializer> m_contentTypeToSerializer = new Dictionary<string, ISerializer>();
 
             public Builder DefaultSerializer(ISerializer serializer)
             {
-                AddSerializer(DefaultContentType,serializer);
+                AddSerializer(DefaultContentType, serializer);
                 return this;
             }
 
-            public Builder AddSerializer(String contentType, ISerializer serializer)
+            public Builder AddSerializer(string contentType, ISerializer serializer)
             {
-                m_contentTypeToSerializer.Add(contentType,serializer);
+                m_contentTypeToSerializer.Add(contentType, serializer);
                 return this;
             }
 
@@ -143,9 +134,16 @@ namespace TestFirst.Net.Examples.Service.Http
             {
                 return new SerializerRequestProcessor(m_contentTypeToSerializer);
             }
-
         }
 
-     
+        private class MyDummyRequest
+        {
+        }
+
+        private class MyDummyResponse
+        {
+            public string Message { get; set; }
+            public string Debug { get; set; }
+        }
     }
 }

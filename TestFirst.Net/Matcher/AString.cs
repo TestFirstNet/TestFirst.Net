@@ -12,7 +12,7 @@ namespace TestFirst.Net.Matcher
     {
         public static IMatcher<string> Any()
         {
-            return AnInstance.Any<String>();
+            return AnInstance.Any<string>();
         }
         
         public static IMatcher<string> Not(IMatcher<string> matcher)
@@ -20,23 +20,27 @@ namespace TestFirst.Net.Matcher
             return Matchers.Not(matcher);
         }
 
-        //TODO:convert to use a generic type converter? Put into CoreMatchers?
+        // TODO:convert to use a generic type converter? Put into CoreMatchers?
+
         /// <summary>
         /// Attempt to parse the string to an int and apply the given int matcher
         /// </summary>
+        /// <param name="intMatcher">The int matcher to match against</param>
+        /// <returns>A matcher on string</returns>
         public static IMatcher<string> As(IMatcher<int?> intMatcher)
         {
-            return Matchers.Function((string actual, IMatchDiagnostics diagnostics) =>
-            {
-                int intActual;
-                if (int.TryParse(actual, out intActual))
+            return Matchers.Function(
+                (string actual, IMatchDiagnostics diagnostics) =>
                 {
-                    return intMatcher.Matches(intActual, diagnostics);
-                }
-                diagnostics.MisMatched("Couldn't parse the string '{0}' as an int", actual);
-                return false;
-            }, 
-            "string of int matching " + intMatcher);
+                    int intActual;
+                    if (int.TryParse(actual, out intActual))
+                    {
+                        return intMatcher.Matches(intActual, diagnostics);
+                    }
+                    diagnostics.MisMatched("Couldn't parse the string '{0}' as an int", actual);
+                    return false;
+                }, 
+                "string of int matching " + intMatcher);
         }
         
         public static IList<IMatcher<string>> EqualToValues(params string[] expects)
@@ -56,12 +60,13 @@ namespace TestFirst.Net.Matcher
 
         public static IMatcher<string> NotNull()
         {
-            return Matchers.Function((string actual) =>actual != null,"a non null string");
+            return Matchers.Function((string actual) => actual != null, "a non null string");
         }
         
         /// <summary>
         /// A string which is either null, empty, or only contains whitespace
         /// </summary>
+        /// <returns>A matcher on string</returns>
         public static IMatcher<string> Blank()
         {
             return Matchers.Function((string actual) => string.IsNullOrEmpty(actual) || actual.Trim().Length == 0, "a blank string");
@@ -70,6 +75,7 @@ namespace TestFirst.Net.Matcher
         /// <summary>
         /// A string which is NOT null, empty, or only contains whitespace
         /// </summary>
+        /// <returns>A matcher on string</returns>
         public static IMatcher<string> NotBlank()
         {
             return Matchers.Function((string actual) => !string.IsNullOrEmpty(actual) && actual.Trim().Length > 0, "a non blank string");
@@ -78,6 +84,7 @@ namespace TestFirst.Net.Matcher
         /// <summary>
         /// A string which is not null but empty
         /// </summary>
+        /// <returns>A matcher on string</returns>
         public static IMatcher<string> Empty()
         {
             return Matchers.Function((string actual) => actual != null && actual.Length == 0, "an empty non null string");
@@ -86,6 +93,7 @@ namespace TestFirst.Net.Matcher
         /// <summary>
         /// A string which is not null but empty
         /// </summary>
+        /// <returns>A matcher on string</returns>
         public static IMatcher<string> EmptyOrNull()
         {
             return Matchers.Function((string actual) => string.IsNullOrEmpty(actual), "an empty or null string");
@@ -93,20 +101,20 @@ namespace TestFirst.Net.Matcher
 
         public static IMatcher<string> EqualTo(string expect)
         {
-            return Matchers.Function((string actual) =>
+            return Matchers.Function(
+                (string actual) =>
                 {
-                    if(expect==null && actual == null)
+                    if (expect == null && actual == null)
                     {
                         return true;
                     } 
-                    if( expect != null )
+                    if (expect != null)
                     {
                         return expect.Equals(actual);
                     }
                     return false;
                 }, 
-                "the string '" + expect + "'"
-             );
+                "the string '" + expect + "'");
         }
 
         public static IMatcher<string> EqualToIgnoringCase(string expect)
@@ -120,56 +128,20 @@ namespace TestFirst.Net.Matcher
             return Matchers.Function((string actual) => actual != null && actual.Contains(expect), "a string containing '" + expect + "'");
         } 
 
-
-        public static IMatcher<string> MatchingAntPattern(String antPattern)
+        public static IMatcher<string> MatchingAntPattern(string antPattern)
         {
-            String regex = AntExpToPatternExp (antPattern, false);
+            string regex = AntExpToPatternExp(antPattern, false);
             return MatchingRegex(regex);
         }
 
-        ///
-        // Convert an ant regular expression to a standard java pattern expression
-        // 
-        // '*' --&lt; '[^\\]*'
-        // '?' --&lt; '.{1}'
-        // '**' --&lt; '.*'
-        // 
-        //
-        private static String AntExpToPatternExp(String antPattern, bool requireDoubleStarForSlashes) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < antPattern.Length; i++) {
-                char c = antPattern[i];
-                if (c == '.') {
-                    sb.Append("\\.");
-                } else if (c == '*') {
-                    //to match path separators an ANT expression requires a double asterix as in '**'
-                    if (i <= antPattern.Length - 2 && antPattern[i + 1] == '*') {
-                        sb.Append(".*");
-                        i++;
-                    } else {
-                        if(requireDoubleStarForSlashes){
-                            sb.Append("[^/\\\\]*");// a single asterix '*' doesn't match path separators
-                        } else {
-                            sb.Append(".*");    
-                        }
-                    }
-                } else if (c == '?') {
-                    sb.Append(".{1}");
-                } else {
-                    sb.Append(c);
-                }
-            }
-            return sb.ToString();
-        }
-
-        public static IMatcher<string> MatchingRegex(String expectRegex)
+        public static IMatcher<string> MatchingRegex(string expectRegex)
         {
             return MatchingRegex(expectRegex, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         }
 
-        public static IMatcher<string> MatchingRegex(String expectRegex,RegexOptions options)
+        public static IMatcher<string> MatchingRegex(string expectRegex, RegexOptions options)
         {
-            return MatchingRegex (new Regex (expectRegex, RegexOptions.Compiled | options));
+            return MatchingRegex(new Regex(expectRegex, RegexOptions.Compiled | options));
         }
 
         public static IMatcher<string> MatchingRegex(Regex expect)
@@ -179,32 +151,19 @@ namespace TestFirst.Net.Matcher
 
         public static IMatcher<string> TrimmedLength(IMatcher<int?> intMatcher)
         {
-            return Matchers.Function((string actual, IMatchDiagnostics diagnostics) =>
-            {
-                actual = actual==null?"":actual.Trim();
-                return intMatcher.Matches(actual.Length, diagnostics);
-            }, 
-            "string length " + intMatcher);
+            return Matchers.Function(
+                (string actual, IMatchDiagnostics diagnostics) =>
+                {
+                    actual = actual == null ? string.Empty : actual.Trim();
+                    return intMatcher.Matches(actual.Length, diagnostics);
+                }, 
+                "string length " + intMatcher);
         }
 
         public static IMatcher<string> ContainingIgnorePunctuationAndCase(string expect)
         {
             expect = RemovePunctuation(expect).ToLower();
             return Matchers.Function((string actual) => actual != null && RemovePunctuation(actual).ToLower().Contains(expect), "a string containing, ignoring case and punctuation, equal to '" + expect + "'");
-     
-        }
-
-        private static String RemovePunctuation(String s)
-        {
-            var sb = new StringBuilder();
-            foreach (var c in s)
-            {
-                if (Char.IsLetterOrDigit(c))
-                {
-                    sb.Append(c);
-                }
-            }
-            return sb.ToString();
         }
 
         public static IMatcher<string> ContainingOfAnyCase(string expect)
@@ -222,5 +181,65 @@ namespace TestFirst.Net.Matcher
         {
             return Matchers.Function((string actual) => actual != null && actual.StartsWith(expect), "a string starting with '" + expect + "'");
         } 
+
+        // Convert an ant regular expression to a standard java pattern expression
+        // 
+        // '*' --&lt; '[^\\]*'
+        // '?' --&lt; '.{1}'
+        // '**' --&lt; '.*'
+        private static string AntExpToPatternExp(string antPattern, bool requireDoubleStarForSlashes)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < antPattern.Length; i++)
+            {
+                char c = antPattern[i];
+                if (c == '.')
+                {
+                    sb.Append("\\.");
+                }
+                else if (c == '*')
+                {
+                    // to match path separators an ANT expression requires a double asterix as in '**'
+                    if (i <= antPattern.Length - 2 && antPattern[i + 1] == '*')
+                    {
+                        sb.Append(".*");
+                        i++;
+                    }
+                    else
+                    {
+                        if (requireDoubleStarForSlashes)
+                        {
+                            sb.Append("[^/\\\\]*"); // a single asterix '*' doesn't match path separators
+                        }
+                        else
+                        {
+                            sb.Append(".*");
+                        }
+                    }
+                }
+                else if (c == '?')
+                {
+                    sb.Append(".{1}");
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
+
+        private static string RemovePunctuation(string s)
+        {
+            var sb = new StringBuilder();
+            foreach (var c in s)
+            {
+                if (char.IsLetterOrDigit(c))
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
     }
 }

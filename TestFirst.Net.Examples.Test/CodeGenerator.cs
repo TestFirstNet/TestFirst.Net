@@ -22,26 +22,25 @@ namespace TestFirst.Net.Examples
         {
             var template = new Template.MatchersTemplate();
 
-            template.Defaults().Namespace("TestFirst.Net.Examples");
+            template.Defaults().WithNamespace("TestFirst.Net.Examples");
             
-            //template.ForPropertyType<Classifiers>()
-            //    .AddMatchMethodTaking<String>("$propertyName(AClassifier.EqualTo($argName));")
-            //    .AddMatchMethodTaking<Classifiers>("$propertyName(AClassifier.EqualTo($argName));");
+            //// template.ForPropertyType<Classifiers>()
+            ////    .AddMatchMethodTaking<string>("$propertyName(AClassifier.EqualTo($argName));")
+            ////    .AddMatchMethodTaking<Classifiers>("$propertyName(AClassifier.EqualTo($argName));");
 
-            //template.ForPropertyType<NRequire.Model.Version>()
-            //    .AddMatchMethodTaking<String>("$propertyName(NRequire.Model.Version.Parse($argName));")
-            //    .AddMatchMethodTaking<NRequire.Model.Version>("$propertyName(AnInstance.EqualTo($argName));");
+            //// template.ForPropertyType<NRequire.Model.Version>()
+            ////    .AddMatchMethodTaking<string>("$propertyName(NRequire.Model.Version.Parse($argName));")
+            ////    .AddMatchMethodTaking<NRequire.Model.Version>("$propertyName(AnInstance.EqualTo($argName));");
 
-            //template.ForPropertyType<VersionMatcher>()
-            //    .AddMatchMethodTaking<String>("$propertyName(Matchers.Function<VersionMatcher>(actual => actual.ToString().Equals($argName), () => $argName));")
-            //    .AddMatchMethodTaking<NRequire.Model.Version>("$propertyName($argName.ToString());");
+            //// template.ForPropertyType<VersionMatcher>()
+            ////    .AddMatchMethodTaking<string>("$propertyName(Matchers.Function<VersionMatcher>(actual => actual.ToString().Equals($argName), () => $argName));")
+            ////    .AddMatchMethodTaking<NRequire.Model.Version>("$propertyName($argName.ToString());");
 
             Console.WriteLine("Starting generation");
             
             template.GenerateForAssembly(typeof(Notification).Assembly, "TestFirst.Net.Examples.Api.*");
 
             template.RenderToFile("Generated.cs");
-
         }
     }
 }

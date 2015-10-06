@@ -6,7 +6,7 @@ using TestFirst.Net.Matcher;
 namespace TestFirst.Net.Performance
 {
     [TestFixture]
-    public class PerformanceTestRunnerTest:AbstractNUnitScenarioTest
+    public class PerformanceTestRunnerTest : AbstractNUnitScenarioTest
     {
         [Test]        
         public void ReportIsCorrectlyGeneratedTest()
@@ -21,7 +21,7 @@ namespace TestFirst.Net.Performance
                     .PerRunTimeout(20).Seconds()
                     .LoadRunner(ContentionLoadRunner.With()
                         .Tests(new MyPerfTest())
-                        .RunTimeout(15).Seconds()                        )           
+                        .RunTimeout(15).Seconds())           
                     .Listener(metricsWriter)
                     .Build())
                 .When(report = metricsWriter.BuildReport())
@@ -45,11 +45,6 @@ namespace TestFirst.Net.Performance
 
         private class MyPerfTest : BasePerformanceTest
         {
-            internal static MyPerfTest With()
-            {
-                return new MyPerfTest();
-            }
-        
             public override void InvokeTest(IPerformanceTestListener testListener)
             {
                 testListener.OnMetric(PerformanceMetric.NameValue("metric1", 0));   
@@ -60,11 +55,14 @@ namespace TestFirst.Net.Performance
                 Thread.Sleep(3);
                 testListener.OnMetric(PerformanceMetric.NameValue("metric1", 10));
                 testListener.OnMetric(PerformanceMetric.NameValue("metricIgnored", 10));                
-                testListener.OnMetric(new PerformanceMetric {Name = "metric1", IsError = true});//should be ignored
+                testListener.OnMetric(new PerformanceMetric { Name = "metric1", IsError = true }); // should be ignored
 
-                testListener.OnMetric(new PerformanceMetric {Name = "metricIgnored2", IsError = true});//single metric with error,average calcs shouldn't bail 
+                testListener.OnMetric(new PerformanceMetric { Name = "metricIgnored2", IsError = true }); // single metric with error, average calcs shouldn't bail 
+            }
 
-
+            internal static MyPerfTest With()
+            {
+                return new MyPerfTest();
             }
         }
     }

@@ -6,11 +6,12 @@ namespace TestFirst.Net
     {
         bool Matches(T actual);
     }
+
     /// <summary>
-    /// A matcher which does not provide any diganostics on why a match passed or failed
+    /// A matcher which does not provide any diagnostics on why a match passed or failed
     /// </summary>
     public interface ISimpleMatcher
     {
-        bool Matches(Object actual);
+        bool Matches(object actual);
     }
 }

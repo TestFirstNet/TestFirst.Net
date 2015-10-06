@@ -9,18 +9,18 @@ namespace TestFirst.Net
     {
         /// <summary>
         /// Keep a single instance around to remove the need to create it over and over when a single shared
-        /// instance exihibits the exact same behaviour (provided nothing locks on this)
+        /// instance exhibits the exact same behaviour (provided nothing locks on this)
         /// </summary>
-        public new static readonly NullMatchDiagnostics Instance = new NullMatchDiagnostics();
+        public static new readonly NullMatchDiagnostics Instance = new NullMatchDiagnostics();
 
         public IMatchDiagnostics NewChild()
         {
             return this;
         }
 
-        public bool TryMatch(Object actual, int index, IMatcher childMatcher)
+        public bool TryMatch(object actual, int index, IMatcher childMatcher)
         {
-            return InternalTryMatch(actual,childMatcher);
+            return InternalTryMatch(actual, childMatcher);
         }
 
         public bool TryMatch<T>(T actual, int index, IMatcher<T> childMatcher)
@@ -28,14 +28,14 @@ namespace TestFirst.Net
             return InternalTryMatch(actual, childMatcher);
         }
 
-        public bool TryMatch(Object actual, IMatcher childMatcher)
+        public bool TryMatch(object actual, IMatcher childMatcher)
         {
             return InternalTryMatch(actual, childMatcher);
         }
 
-        public bool TryMatch(Object actual, String actualName, IMatcher childMatcher)
+        public bool TryMatch(object actual, string actualName, IMatcher childMatcher)
         {
-            return InternalTryMatch(actual,childMatcher);
+            return InternalTryMatch(actual, childMatcher);
         }
 
         public bool TryMatch<T>(T actual, IMatcher<T> childMatcher)
@@ -43,7 +43,7 @@ namespace TestFirst.Net
             return InternalTryMatch(actual, childMatcher);
         }
 
-        public bool TryMatch<T>(T actual, String actualName, IMatcher<T> childMatcher)
+        public bool TryMatch<T>(T actual, string actualName, IMatcher<T> childMatcher)
         {
             return InternalTryMatch(actual, childMatcher);
         }
@@ -53,14 +53,9 @@ namespace TestFirst.Net
             return InternalTryMatch(actual, childMatcher);
         }
 
-        public bool TryMatch(Object actual, IMatcher childMatcher, ISelfDescribing selfDescribing)
+        public bool TryMatch(object actual, IMatcher childMatcher, ISelfDescribing selfDescribing)
         {
             return InternalTryMatch(actual, childMatcher);
-        }
-
-        private bool InternalTryMatch(Object actual, IMatcher childMatcher)
-        {
-            return childMatcher.Matches(actual, this);
         }
 
         public IMatchDiagnostics Matched(string text, params object[] args)
@@ -81,6 +76,11 @@ namespace TestFirst.Net
         public IMatchDiagnostics MisMatched(ISelfDescribing selfDescribing)
         {
             return this;
+        }
+
+        private bool InternalTryMatch(object actual, IMatcher childMatcher)
+        {
+            return childMatcher.Matches(actual, this);
         }
     }
 }

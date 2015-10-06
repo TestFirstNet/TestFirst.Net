@@ -7,12 +7,13 @@ namespace TestFirst.Net.Matcher.Internal
     /// Each matcher must match only once and must have a match. Depending on the config either all items must be matched or 
     /// additional unmatched items may exist. Order is not important
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Type of element contained within list</typeparam>
     internal class AListNotContains<T> : AList.AbstractListMatcher<T>, AList.IAcceptMoreMatchers<T>, IProvidePrettyTypeName
     {
         private readonly List<IMatcher<T>> m_matchers = new List<IMatcher<T>>();
 
-        internal AListNotContains():base("AListNotContains")
+        internal AListNotContains()
+            : base("AListNotContains")
         {
         }
 
@@ -36,8 +37,8 @@ namespace TestFirst.Net.Matcher.Internal
                 var item = list[pos];
                 foreach (var matcher in m_matchers)
                 {
-                    //prevent useless diagnostics messages appearing in output as we call the matchers
-                    //repeatably as we try to find a match
+                    // prevent useless diagnostics messages appearing in output as we call the matchers
+                    // repeatably as we try to find a match
                     var childDiag = diagnostics.NewChild();
                     if (childDiag.TryMatch(item, matcher))
                     {

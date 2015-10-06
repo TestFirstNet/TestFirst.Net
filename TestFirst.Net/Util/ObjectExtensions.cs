@@ -27,7 +27,7 @@ namespace TestFirst.Net.Util
             {
                 return null;
             }
-           /* if (val is String)
+           /* if (val is string)
             {
                 return "'" + val + "'";
             }*/
@@ -45,13 +45,13 @@ namespace TestFirst.Net.Util
             }
             if (val is DateTime)
             {
-                return ((DateTime) val).ToString("yyyy/MM/dd HH:mm:ss.fff");
+                return ((DateTime)val).ToString("yyyy/MM/dd HH:mm:ss.fff");
             }
-            if (!val.GetType().IsPrimitive && !(val is String))
+            if (!val.GetType().IsPrimitive && !(val is string))
             {
                 if (alreadyConverted.Contains(val))
                 {
-                    return String.Format("<!Circular-Reference:{0}@{1}!>", val.GetType().FullName, val.GetHashCode());
+                    return string.Format("<!Circular-Reference:{0}@{1}!>", val.GetType().FullName, val.GetHashCode());
                 }
                 alreadyConverted.Add(val);
             }
@@ -62,18 +62,18 @@ namespace TestFirst.Net.Util
                 return PrettyPrint(items, "List", items.Count, alreadyConverted);
             }
 
-            if( val is IEnumerable)
+            if (val is IEnumerable)
             {
                 var type = val.GetType();
-                if (type.Namespace == (typeof(HashSet<>)).Namespace && type.Name.StartsWith("HashSet"))
+                if (type.Namespace == typeof(HashSet<>).Namespace && type.Name.StartsWith("HashSet"))
                 {
                     var items = val as dynamic;
                     return PrettyPrint(items, "HashSet", items.Count, alreadyConverted);
                 }
 
-                if (type.Namespace == (typeof(SortedSet<>)).Namespace && type.Name.StartsWith("SortedSet"))
+                if (type.Namespace == typeof(SortedSet<>).Namespace && type.Name.StartsWith("SortedSet"))
                 {
-                    var items = val as dynamic ;
+                    var items = val as dynamic;
                     return PrettyPrint(items, "SortedSet", items.Count, alreadyConverted);
                 }
             }
@@ -86,8 +86,35 @@ namespace TestFirst.Net.Util
             return val.ToString();
         }
 
+        internal static bool IsEnumerationTypeWithPrimitiveElements(Type listType)
+        {
+            bool isPrimitiveItems = false;
+            if (listType.IsArray)
+            {
+                isPrimitiveItems = listType.GetElementType().IsPrimitive;
+            }
+            else if (typeof(ICollection).IsAssignableFrom(listType) && listType.IsGenericType)
+            {
+                isPrimitiveItems = listType.GetGenericArguments()[0].IsPrimitive;
+            }
+            return isPrimitiveItems;
+        }
 
-        private static string PrettyPrint(IEnumerable items, String prefix, int count, IList<object> alreadyConverted)
+        internal static bool IsEnumerationTypeWithStringElements(Type listType)
+        {
+            bool isStringItems = false;
+            if (listType.IsArray)
+            {
+                isStringItems = typeof(string).IsAssignableFrom(listType.GetElementType());
+            }
+            else if (typeof(ICollection).IsAssignableFrom(listType) && listType.IsGenericType)
+            {
+                isStringItems = typeof(string).IsAssignableFrom(listType.GetGenericArguments()[0]);
+            }
+            return isStringItems;
+        }
+
+        private static string PrettyPrint(IEnumerable items, string prefix, int count, IList<object> alreadyConverted)
         {
             var sb = new StringBuilder();
 
@@ -97,12 +124,12 @@ namespace TestFirst.Net.Util
 
             if (count >= 0)
             {
-                sb.Append("count:").Append(count);               
+                sb.Append("count:").Append(count);
             }
             sb.Append(">");
             if (count == 0)
             {
-                //nothing
+                // nothing
             }
             else if (primitiveItems)
             {
@@ -153,34 +180,6 @@ namespace TestFirst.Net.Util
             }
 
             return sb.ToString();
-        }
-
-        internal static bool IsEnumerationTypeWithPrimitiveElements(Type listType)
-        {
-            bool isPrimitiveItems = false;
-            if(listType.IsArray)
-            {
-                isPrimitiveItems = listType.GetElementType().IsPrimitive;
-            }
-            else if (typeof(ICollection).IsAssignableFrom((listType)) && listType.IsGenericType)
-            {
-                isPrimitiveItems = listType.GetGenericArguments()[0].IsPrimitive;
-            }
-            return isPrimitiveItems;
-        }
-
-        internal static bool IsEnumerationTypeWithStringElements(Type listType)
-        {
-            bool isStringItems = false;
-            if(listType.IsArray)
-            {
-                isStringItems = typeof(string).IsAssignableFrom(listType.GetElementType());
-            }
-            else if (typeof(ICollection).IsAssignableFrom((listType)) && listType.IsGenericType)
-            {
-                isStringItems = typeof(string).IsAssignableFrom(listType.GetGenericArguments()[0]);
-            }
-            return isStringItems;
         }
     }
 }

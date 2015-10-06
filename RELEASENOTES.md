@@ -34,7 +34,7 @@ Noteable changes
 * Updated : Addition of new match methods on various matchers 
 * Updated : Various bug fixes
 * Updated : Improve documentation
-* New : Add new matchers AnException,AChar
+* New : Add new matchers AnException, AChar
 * New : Add Expect.That(..).Throws(..) for exception testing
 
 V0.2.1

@@ -637,7 +637,7 @@ def run_cmdline_tasks():
                 val=True
             elif val.lower() == 'false':
                 val=False
-            log('set {} ==> {}'.format(name,val))
+            log('set {} ==> {}'.format(name, val))
             globals()[name]=val
 
     for arg in sys.argv[1:]:

@@ -5,14 +5,16 @@ using System.Linq;
 
 namespace TestFirst.Net.Examples.Api
 {
-    public abstract class QueryResponse<T>: IEnumerable<T>
+    public abstract class QueryResponse<T> : IEnumerable<T>
     {        
         /// <summary>
-        /// Return a single results from the list of results, failing if there are no results or more than 1
+        /// Gets a single results from the list of results, failing if there are no results or more than 1
         /// </summary>
-        public T Result {
-            get {
-                if ((Results == null || Results.Count == 0))
+        public T Result 
+        {
+            get 
+            {
+                if (Results == null || Results.Count == 0)
                 {
                     throw new InvalidOperationException("No Results");
                 }
@@ -25,7 +27,7 @@ namespace TestFirst.Net.Examples.Api
         }
 
         /// <summary>
-        /// The list of returned results
+        /// Gets or sets the list of returned results
         /// </summary>
         public List<T> Results { get; set; }
 

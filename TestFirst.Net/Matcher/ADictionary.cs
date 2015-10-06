@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace TestFirst.Net.Matcher
 {
-    //TODO:convert into a generic dictionary! and take in key/value matchers and save them as a list rather than a direct map
+    // TODO:convert into a generic dictionary! and take in key/value matchers and save them as a list rather than a direct map
     public class ADictionary : AbstractMatcher<IDictionary<string, string>>
     {
         private readonly Dictionary<string, IMatcher<string>> m_expectedKeyValues = new Dictionary<string, IMatcher<string>>();

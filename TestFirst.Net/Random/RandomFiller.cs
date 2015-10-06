@@ -12,7 +12,6 @@ namespace TestFirst.Net.Random
 
         public class Builder : Rand.RandomFiller.Builder
         {
-
         }
     }
 }

@@ -1,11 +1,17 @@
 ﻿using System;
 using NUnit.Framework;
+using TestFirst.Net.Extensions.Moq;
 
-namespace TestFirst.Net.Extensions.Moq
+namespace TestFirst.Net.Extensions.Test.Moq
 {
     [TestFixture]
     public class MockPropertyGetTest
     {
+        public interface IMyTestInterface
+        {
+            string Foo { get; }
+        }
+        
         [Test]
         public void InvokeCountOkPasses()
         {
@@ -44,7 +50,6 @@ namespace TestFirst.Net.Extensions.Moq
             Assert.NotNull(error, "expected failure on too few invokes");
             Assert.IsTrue(error.Message.Contains("unexpectedly performed 2 times"));
             Assert.IsTrue(error.Message.Contains("expected 3 times"));
-
         }
 
         [Test]
@@ -71,11 +76,6 @@ namespace TestFirst.Net.Extensions.Moq
             Assert.NotNull(error, "expected failure on too many invokes");
             Assert.IsTrue(error.Message.Contains("unexpectedly performed 4 times"));
             Assert.IsTrue(error.Message.Contains("expected 3 times"));
-        }
-
-        public interface IMyTestInterface
-        {
-            string Foo { get; }
         }
     }
 }

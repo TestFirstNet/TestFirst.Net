@@ -9,9 +9,10 @@ namespace TestFirst.Net.Matcher
         /// </summary>
         /// <param name="matcher">the matcher to invoke</param>
         /// <param name="actual">the instance to pass to the matcher</param>        
+        /// <typeparam name="T">The type of object being matched</typeparam>
         public static void AssertMatch<T>(this IMatcher<T> matcher, T actual)
         {
-            AssertMatch(matcher, (Object) actual);
+            AssertMatch(matcher, (object)actual);
         }
         
         /// <summary>
@@ -19,7 +20,7 @@ namespace TestFirst.Net.Matcher
         /// </summary>
         /// <param name="matcher">the matcher to invoke</param>
         /// <param name="actual">the instance to pass to the matcher</param>    
-        public static void AssertMatch(this IMatcher matcher, Object actual)
+        public static void AssertMatch(this IMatcher matcher, object actual)
         {
             var diag = new MatchDiagnostics();
             if (!diag.TryMatch(actual, matcher))
@@ -34,9 +35,9 @@ namespace TestFirst.Net.Matcher
         /// <param name="matcher">the matcher to invoke</param>
         /// <param name="actual">the instance to pass to the matcher</param>    
         /// <returns>true if matched</returns>
-        public static bool Matches(this IMatcher matcher, Object actual)
+        public static bool Matches(this IMatcher matcher, object actual)
         {
-            return matcher.Matches(actual,NullMatchDiagnostics.Instance);            
+            return matcher.Matches(actual, NullMatchDiagnostics.Instance);            
         }
     }
 }

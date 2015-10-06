@@ -1,6 +1,4 @@
-﻿using TestFirst.Net.Examples.Api.Query;
-
-namespace TestFirst.Net.Examples.Api
+﻿namespace TestFirst.Net.Examples.Net
 {
     public interface IApiClient
     {

@@ -1,10 +1,9 @@
-using System;
-
 namespace TestFirst.Net
 {
     /// <summary>
     /// A typed matcher which can provide diagnostics information about what it matches and does not
     /// </summary>
+    /// <typeparam name="T">The type to match against</typeparam>
     public interface IMatcher<in T> : IMatcher
     {
         bool Matches(T actual, IMatchDiagnostics diagnostics);
@@ -15,6 +14,6 @@ namespace TestFirst.Net
     /// </summary>
     public interface IMatcher : ISelfDescribing, ISimpleMatcher
     {
-        bool Matches(Object actual, IMatchDiagnostics diagnostics);
+        bool Matches(object actual, IMatchDiagnostics diagnostics);
     }
 }

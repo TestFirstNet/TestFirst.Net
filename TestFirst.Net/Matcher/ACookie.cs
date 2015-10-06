@@ -12,58 +12,57 @@ namespace TestFirst.Net.Matcher
             return new ACookie();
         }
 
-        public ACookie Name(String name)
+        public ACookie Name(string name)
         {
             Name(AString.EqualTo(name));
             return this;
         }
 
-        public ACookie Name(IMatcher<String> matcher)
+        public ACookie Name(IMatcher<string> matcher)
         {
-            WithProperty(()=>PropertyNames.Name, matcher);
+            WithProperty(() => PropertyNames.Name, matcher);
             return this;
         }
 
-        public ACookie Value(String name)
+        public ACookie Value(string name)
         {
             Value(AString.EqualTo(name));
             return this;
         }
 
-        public ACookie Value(IMatcher<String> matcher)
+        public ACookie Value(IMatcher<string> matcher)
         {
-            WithProperty(()=>PropertyNames.Value, matcher);
+            WithProperty(() => PropertyNames.Value, matcher);
             return this;
         }
 
-        public ACookie Path(String name)
+        public ACookie Path(string name)
         {
             Path(AString.EqualTo(name));
             return this;
         }
 
-        public ACookie Path(IMatcher<String> matcher)
+        public ACookie Path(IMatcher<string> matcher)
         {
-            WithProperty(()=>PropertyNames.Path, matcher);
+            WithProperty(() => PropertyNames.Path, matcher);
             return this;
         }
 
-
         public ACookie Expires(IMatcher<DateTime?> matcher)
         {
-            WithProperty(()=>PropertyNames.Expires, matcher);
+            WithProperty(() => PropertyNames.Expires, matcher);
             return this;
         }
 
         public ACookie TimeStamp(IMatcher<DateTime?> matcher)
         {
-            WithProperty(()=>PropertyNames.TimeStamp, matcher);
+            WithProperty(() => PropertyNames.TimeStamp, matcher);
             return this;
         }
         
         public ACookie Secure(bool val)
         {
-            WithProperty(()=>PropertyNames.Secure, ABool.EqualTo(val));
+            WithProperty(() => PropertyNames.Secure, ABool.EqualTo(val));
             return this;
         }
     }

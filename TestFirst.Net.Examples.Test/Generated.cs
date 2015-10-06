@@ -35,7 +35,7 @@ namespace TestFirst.Net.Examples {
         }
 
         public ANotification Id(IMatcher<System.Guid?> matcher) {
-            WithProperty(()=>PropertyNames.Id,matcher);
+            WithProperty(() => PropertyNames.Id, matcher);
             return this;
         }
     }
@@ -76,7 +76,7 @@ namespace TestFirst.Net.Examples {
         }
 
         public ANotificationQuery AccountId(IMatcher<System.Guid?> matcher) {
-            WithProperty(()=>PropertyNames.AccountId,matcher);
+            WithProperty(() => PropertyNames.AccountId, matcher);
             return this;
         }
 
@@ -91,7 +91,7 @@ namespace TestFirst.Net.Examples {
         }
 
         public ANotificationQuery Id(IMatcher<System.Guid?> matcher) {
-            WithProperty(()=>PropertyNames.Id,matcher);
+            WithProperty(() => PropertyNames.Id, matcher);
             return this;
         }
     }
@@ -127,7 +127,7 @@ namespace TestFirst.Net.Examples {
         }
 
         public AResponse Result(IMatcher<TestFirst.Net.Examples.Api.Notification> matcher) {
-            WithProperty(()=>PropertyNames.Result,matcher);
+            WithProperty(() => PropertyNames.Result, matcher);
             return this;
         }
 
@@ -137,7 +137,7 @@ namespace TestFirst.Net.Examples {
         }
 
         public AResponse Results(IMatcher<System.Collections.Generic.IEnumerable<TestFirst.Net.Examples.Api.Notification>> matcher) {
-            WithProperty(()=>PropertyNames.Results,matcher);
+            WithProperty(() => PropertyNames.Results, matcher);
             return this;
         }
     }
