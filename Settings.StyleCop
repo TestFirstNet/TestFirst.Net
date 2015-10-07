@@ -1,4 +1,25 @@
 <StyleCopSettings Version="4.3">
+<SourceFileList>
+  <SourceFile>Generated.cs</SourceFile>
+  <Settings>
+    <Analyzers>
+      <Analyzer AnalyzerId="Microsoft.StyleCop.CSharp.MaintainabilityRules">
+        <Rules>
+          <Rule Name="FileMayOnlyContainASingleClass">
+            <RuleSettings>
+              <BooleanProperty Name="Enabled">False</BooleanProperty>
+            </RuleSettings>
+          </Rule>
+          <Rule Name="FileMayOnlyContainASingleNamespace">
+            <RuleSettings>
+              <BooleanProperty Name="Enabled">False</BooleanProperty>
+            </RuleSettings>
+          </Rule>
+        </Rules>
+      </Analyzer>
+    </Analyzers>
+  </Settings>
+</SourceFileList>
   <GlobalSettings>
     <CollectionProperty Name="DeprecatedWords">
       <Value>preprocessor,pre-processor</Value>

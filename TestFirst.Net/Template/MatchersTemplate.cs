@@ -318,43 +318,43 @@ namespace TestFirst.Net.Template
             {
                 // namespace
                 WriteLine();
-                WriteLine("namespace " + m_namespace + " {");
+                WriteLine("namespace " + m_namespace + "[[nl]]{");
 
                 // class
                 var cleanObjectFullName = m_objectType.ToPrettyTypeName();
-                WriteLine();
                 IncrementIndent();
-                WriteLine("public partial class " + m_matcherName + " : PropertyMatcher<" + cleanObjectFullName  + ">{");
+                WriteLine("/// <summary>");
+                WriteLine("/// Matcher for a <see cref=\"" + cleanObjectFullName + "\"/>");
+                WriteLine("/// </summary>");
+                WriteLine("public partial class " + m_matcherName + " : PropertyMatcher<" + cleanObjectFullName + ">[[nl]]{");
 
                 // static property access
                 IncrementIndent();
-                WriteLine();
                 WriteLine("// provide IDE rename and find reference support");
                 WriteLine("private static readonly " + cleanObjectFullName + " PropertyNames = null;");
-                WriteLine();
                 
                 // With() method
                 WriteLine();
-                WriteLine("public static " + m_matcherName + " With(){");
-                WriteLine(CurrentIndent + "return new " + m_matcherName + "();");
+                WriteLine("public static " + m_matcherName + " With()[[nl]]{");
+                WriteLine(Indent + "return new " + m_matcherName + "();");
                 WriteLine("}");
 
                 // Null() method
                 WriteLine();
-                WriteLine("public static IMatcher<" + cleanObjectFullName + "> Null(){");
-                WriteLine(CurrentIndent + "return AnInstance.Null<" + cleanObjectFullName + ">();");
+                WriteLine("public static IMatcher<" + cleanObjectFullName + "> Null()[[nl]]{");
+                WriteLine(Indent + "return AnInstance.Null<" + cleanObjectFullName + ">();");
                 WriteLine("}");
 
                 // NotNull() method
                 WriteLine();
-                WriteLine("public static IMatcher<" + cleanObjectFullName + "> NotNull(){");
-                WriteLine(CurrentIndent + "return AnInstance.NotNull<" + cleanObjectFullName + ">();");
+                WriteLine("public static IMatcher<" + cleanObjectFullName + "> NotNull()[[nl]]{");
+                WriteLine(Indent + "return AnInstance.NotNull<" + cleanObjectFullName + ">();");
                 WriteLine("}");
 
                 // Instance() method
                 WriteLine();
-                WriteLine("public static IMatcher<" + cleanObjectFullName + "> Instance(" + cleanObjectFullName  + " expect){");
-                WriteLine(CurrentIndent + "return AnInstance.SameAs(expect);");
+                WriteLine("public static IMatcher<" + cleanObjectFullName + "> Instance(" + cleanObjectFullName + " expect)[[nl]]{");
+                WriteLine(Indent + "return AnInstance.SameAs(expect);");
                 WriteLine("}");
 
                 GenerateMethods();
@@ -405,7 +405,7 @@ namespace TestFirst.Net.Template
                             var code = equalMatcherSnippet.Replace("$argType", pCleanTypeName).Replace("$argName", "expect").Replace("$propertyName", p.Name);
 
                             WriteLine();
-                            WriteLine("public " + m_matcherName + " " + p.Name + "(" + pCleanTypeName + " expect) {");
+                            WriteLine("public " + m_matcherName + " " + p.Name + "(" + pCleanTypeName + " expect)[[nl]]{");
                             IncrementIndent();
                             if (code.EndsWith(";"))
                             {
@@ -422,7 +422,7 @@ namespace TestFirst.Net.Template
                         else if (pType.IsEnum)
                         {
                             WriteLine();
-                            WriteLine("public " + m_matcherName + " " + p.Name + "(" + pCleanTypeName + "? expect) {");
+                            WriteLine("public " + m_matcherName + " " + p.Name + "(" + pCleanTypeName + "? expect)[[nl]]{");
                             IncrementIndent();
                             WriteLine(p.Name + "(AnInstance.EqualTo(expect));");
                             WriteLine("return this;");
@@ -435,7 +435,7 @@ namespace TestFirst.Net.Template
                         if (isNullable)
                         {
                             WriteLine();
-                            WriteLine("public " + m_matcherName + " " + p.Name + "Null() {");
+                            WriteLine("public " + m_matcherName + " " + p.Name + "Null()[[nl]]{");
                             IncrementIndent();
                             switch (pCleanTypeName)
                             {
@@ -475,8 +475,8 @@ namespace TestFirst.Net.Template
                             WriteLine("}");
                         }
                         
-                        WriteLine(); 
-                        WriteLine("public " + m_matcherName + " " + p.Name + "(IMatcher<" + pCleanTypeName + (addNullableMark ? "?" : string.Empty) + "> matcher) {");
+                        WriteLine();
+                        WriteLine("public " + m_matcherName + " " + p.Name + "(IMatcher<" + pCleanTypeName + (addNullableMark ? "?" : string.Empty) + "> matcher)[[nl]]{");
                         IncrementIndent();
                         WriteLine("WithProperty(() => PropertyNames." + p.Name + ", matcher);");
                         WriteLine("return this;");
@@ -656,10 +656,18 @@ namespace TestFirst.Net.Template
 
     public abstract class AbstractTemplate : ITemplate
     {
-        private const string Indent = "    ";
+        private static string _indent = "    ";
+        
         private StringWriter m_w;
         private int m_indentDepth;
-
+        
+        public static string Indent
+        {
+            get
+            {
+                return _indent;
+            }
+        }
         public string CurrentIndent { get; private set; }
 
         public string Render()
@@ -679,6 +687,7 @@ namespace TestFirst.Net.Template
 
         public void Write(string line, params object[] args)
         {
+            line = ReplaceTokens(line);
             if (args == null || args.Length == 0)
             {
                 m_w.Write(line);
@@ -691,6 +700,7 @@ namespace TestFirst.Net.Template
 
         public void WriteLine(string line, params object[] args)
         {
+            line = ReplaceTokens(line);
             m_w.Write(CurrentIndent);
             if (args == null || args.Length == 0)
             {
@@ -713,6 +723,11 @@ namespace TestFirst.Net.Template
         }
 
         protected abstract void Generate();
+
+        private string ReplaceTokens(string s)
+        {
+            return s.Replace("[[nl]]", Environment.NewLine + CurrentIndent).Replace("[[indent]]", CurrentIndent);
+        }
 
         private void SetIndent(int depth)
         {
