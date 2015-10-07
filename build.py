@@ -490,10 +490,12 @@ using System.Runtime.InteropServices;
 		
     text=template.strip().replace('$version',version)
     
-    f=open(file, 'w')
-    f.write(text)
-    f.flush()
-    f.close()
+    existing=open(file).read()
+    if existing != text:
+        f=open(file, 'w')
+        f.write(text)
+        f.flush()
+        f.close()
 
 def can_invoke(prog, args=None):
     if prog==None:
