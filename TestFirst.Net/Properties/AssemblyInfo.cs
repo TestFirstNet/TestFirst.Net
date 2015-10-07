@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-
 [assembly: AssemblyTitle("TestFirst.Net")]
 [assembly: AssemblyProduct("TestFirst.Net")]
 [assembly: AssemblyDescription("Another BDD testing library")]

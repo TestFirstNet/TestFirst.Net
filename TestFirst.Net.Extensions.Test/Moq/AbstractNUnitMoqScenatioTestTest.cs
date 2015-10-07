@@ -9,15 +9,20 @@ namespace TestFirst.Net.Extensions.Test.Moq
     [TestFixture]
     public class AbstractNUnitMoqScenatioTestTest : AbstractNUnitMoqScenarioTest
     {
+        public interface ISpeaker
+        {
+            string Says();
+        }
+        
         [Test]
         public void AMockPassesTest()
         {
             ISpeaker speaker;
-            String said;
+            string said;
 
             Scenario("AMockTest")
                 .Given(speaker = AMock<ISpeaker>()
-                    .WhereMethod(t=>t.Says())
+                    .WhereMethod(t => t.Says())
                     .Returns("DoDah")
                     .Instance)
                 .When(said = speaker.Says())
@@ -29,21 +34,20 @@ namespace TestFirst.Net.Extensions.Test.Moq
         {
             Scenario("AMockTest")                
                 .Given(AMock<ISpeaker>()
-                    .WhereMethod(t=>t.Says())
+                    .WhereMethod(t => t.Says())
                     .Returns("DoDah")
                     .Instance)
                 .WhenNothing()
-                .Then(()=>{ /*Scenario passes but verify should fail*/});
+                .Then(() => { /*Scenario passes but verify should fail*/ });
 
             MockException thrown = null;
             try
             {
-                //force scenario completion and assertions
+                // force scenario completion and assertions
                 AfterTest();
             }
             catch (Exception e)
             {
-
                 thrown = e.InnerException as MockException;
             }
 
@@ -51,11 +55,6 @@ namespace TestFirst.Net.Extensions.Test.Moq
                 .Type("Moq.MockVerificationException")
                 .Message(AString.Containing("ISpeaker t => t.Says()"))
                 .AssertMatch(thrown);
-        }
-
-        public interface ISpeaker
-        {
-            String Says();
         }
     }
 }

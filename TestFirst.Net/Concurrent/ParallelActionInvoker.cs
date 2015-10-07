@@ -8,17 +8,17 @@ namespace TestFirst.Net.Concurrent
 {
     /// <summary>
     /// A custom Async action invoker as the default Task.Factory and Parallel seem rather slow
-    //  to begin the actions. Not great for testing contention with many threads.
+    /// to begin the actions. Not great for testing contention with many threads.
     /// </summary>
     public static class ParallelActionInvoker
     {
-
         /// <summary>
-        /// See <see cref="InvokeAllWaitingForCompletion(System.Collections.Generic.IEnumerable{System.Action},TimeSpan,ThreadPriority)"/>
-        /// 
+        /// See <see cref="InvokeAllWaitingForCompletion(System.Collections.Generic.IEnumerable{System.Action}, TimeSpan, ThreadPriority)"/>
+        /// <para>
         /// Uses a timeout currently set to 2 minutes
+        /// </para>
         /// </summary>
-        /// <param name="parallelActions"></param>
+        /// <param name="parallelActions">actions to complete in parallel</param>
         public static void InvokeAllWaitingForCompletion(IEnumerable<Action> parallelActions)
         {
             InvokeAllWaitingForCompletion(parallelActions, TimeSpan.FromMinutes(2));
@@ -26,26 +26,28 @@ namespace TestFirst.Net.Concurrent
 
         /// <summary>
         /// Invoke all the given actions in parallel in their own thread. 
-        /// 
+        /// <para>
         /// A memory barrier is used to line up all actions in an attempt to ensure they are all invoked at the same time. The idea is 
         /// to cause maximum contention. However this is very much up to the OS, number or cores, whether true threading is used etc.
-        /// 
-        /// If your are performing multiple operations inside your action, it is suggested to to add a Thread.Yield() in suitable
+        /// </para>
+        /// <para>
+        /// If you are performing multiple operations inside your action, it is suggested to to add a Thread.Yield() in suitable
         /// places to increase the chance you will get out of order execution between threads (rather than one thread executing all the
         /// way through without being switched out partway through operation)
+        /// </para>
         /// </summary>
-        /// <param name="parallelActions"></param>ù
-        /// <param name="timeout"></param>
-        /// <param name="priority"></param>
+        /// <param name="parallelActions">actions to complete in parallel</param>
+        /// <param name="timeout">timeout period after which to abort</param>
+        /// <param name="priority">priority with which to run threads</param>
         public static void InvokeAllWaitingForCompletion(IEnumerable<Action> parallelActions, TimeSpan timeout, ThreadPriority priority = ThreadPriority.Normal)
         {
-            var actionList = new List<Action>(parallelActions);//allow multiple iteration      
+            var actionList = new List<Action>(parallelActions); // allow multiple iteration      
             var barrierToCauseContention = new Barrier(actionList.Count());
             var wrappedActions = new List<ActionWrapper>(actionList.Count());
             var threads = new List<Thread>(actionList.Count);
 
-            //wrap passed in actions so we can monitor the state of their execution and collect any exceptions thrown
-            //the wrapped actions will wait on the barrier
+            // wrap passed in actions so we can monitor the state of their execution and collect any exceptions thrown
+            // the wrapped actions will wait on the barrier
             foreach (var action in actionList)
             {
                 var wrapper = new ActionWrapper(barrierToCauseContention, action);
@@ -57,23 +59,24 @@ namespace TestFirst.Net.Concurrent
                 thread.Start();
             }
 
-            //wait till all actions complete
+            // wait till all actions complete
             var timeoutInMs = timeout.TotalMilliseconds;
             var stopWatch = Stopwatch.StartNew();
             var allComplete = false;
             while (!allComplete)
             {
-                //if we timed out
+                // if we timed out
                 if (stopWatch.ElapsedMilliseconds > timeoutInMs)
                 {
-                    //kill all the threads still running
+                    // kill all the threads still running
                     foreach (var t in threads)
                     {
                         TerminateThreadQuietly(t);
                     }
-                    TestFirstAssert.Fail(String.Format("Timed out waiting for all actions to complete. Waitied for {0} milliseonds (TimeSpan {1}). Aborted remaining threads", timeoutInMs, timeout));
+                    TestFirstAssert.Fail(string.Format("Timed out waiting for all actions to complete. Waitied for {0} milliseonds (TimeSpan {1}). Aborted remaining threads", timeoutInMs, timeout));
                 }
-                //determine if all actions complete
+
+                // determine if all actions complete
                 var complete = true;
                 foreach (var wrapper in wrappedActions)
                 {
@@ -86,10 +89,11 @@ namespace TestFirst.Net.Concurrent
                 allComplete = complete;
                 if (!allComplete)
                 {
-                    Thread.Sleep(100);//give actions a bit of time to complete
+                    Thread.Sleep(100); // give actions a bit of time to complete
                 }
             }
-            //fail if any of the actions threw an exception
+
+            // fail if any of the actions threw an exception
             var exceptions = new List<string>();
             foreach (var wrapper in wrappedActions)
             {
@@ -100,7 +104,7 @@ namespace TestFirst.Net.Concurrent
             }
             if (exceptions.Count > 0)
             {               
-                var msg = "===============Action Error===========\r\n" + String.Join("\r\n===============Action Error===========", exceptions);
+                var msg = "===============Action Error===========\r\n" + string.Join("\r\n===============Action Error===========", exceptions);
                 TestFirstAssert.Fail(msg);
             }
         }
@@ -115,7 +119,7 @@ namespace TestFirst.Net.Concurrent
                 }
                 catch
                 {
-                    //ignoring errors
+                    // ignoring errors
                 }
             }
         }
@@ -127,8 +131,8 @@ namespace TestFirst.Net.Concurrent
         private class ActionWrapper
         {
             private readonly Action m_action;
-            private volatile bool m_complete;
             private readonly Barrier m_barrier;
+            private volatile bool m_complete;
             private volatile Exception m_actionException;
             private volatile int m_threadId;
 
@@ -145,7 +149,7 @@ namespace TestFirst.Net.Concurrent
 
             public bool HasFailed
             {
-                get { return m_actionException != null;}
+                get { return m_actionException != null; }
             }
 
             public Exception Exception
@@ -157,9 +161,9 @@ namespace TestFirst.Net.Concurrent
             }
 
             /// <summary>
-            /// Return the thread id of the thread used to invoke the action. Useful in diagnostics
+            /// Gets the thread id of the thread used to invoke the action. Useful in diagnostics
             /// </summary>
-            public String ThreadId
+            public string ThreadId
             {
                 get
                 {
@@ -171,7 +175,8 @@ namespace TestFirst.Net.Concurrent
                 try
                 {
                     m_threadId = Thread.CurrentThread.ManagedThreadId;
-                    //try to cause max contention                    
+
+                    // try to cause max contention                    
                     if (!m_barrier.SignalAndWait(TimeSpan.FromSeconds(30)))
                     {
                         throw new TestFirstException("Timed out waiting for start action synchronization barrier (to cause max contention)");
@@ -181,7 +186,6 @@ namespace TestFirst.Net.Concurrent
                 catch (Exception e)
                 {
                     m_actionException = e;
-                    //m_barrier.RemoveParticipant();
                 }
                 finally
                 {
@@ -189,6 +193,5 @@ namespace TestFirst.Net.Concurrent
                 }
             }
         }
-
     }
 }

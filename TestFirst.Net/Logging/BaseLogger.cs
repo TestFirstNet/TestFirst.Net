@@ -7,11 +7,12 @@ namespace TestFirst.Net.Logging
     {
         private const string DateTimeFormat = "HHmm:ss.fff";
 
-        private readonly String m_logName;
+        private readonly string m_logName;
         private readonly LogLevel m_level;
 
         public BaseLogger(LogLevel level, Type type) : this(level, type.FullName)
-        {}
+        {
+        }
 
         public BaseLogger(LogLevel level, string logName)
         {
@@ -39,86 +40,98 @@ namespace TestFirst.Net.Logging
             return IsLevel(LogLevel.Warn);
         }
 
-        public void Trace(String msg)
+        public void Trace(string msg)
         {
             Log(LogLevel.Debug, msg);
         }
 
-        public void Trace(String msg, Exception e)
+        public void Trace(string msg, Exception e)
         {
             Log(LogLevel.Debug, msg, e);
         }
 
-        public void TraceFormat(String msg,params object[] args)
+        public void TraceFormat(string msg, params object[] args)
         {
             LogFormat(LogLevel.Trace, msg, args);
         }
 
-        public void Debug(String msg)
+        public void Debug(string msg)
         {
             Log(LogLevel.Debug, msg);
         }
 
-        public void Debug(String msg, Exception e)
+        public void Debug(string msg, Exception e)
         {
             Log(LogLevel.Debug, msg, e);
         }
 
-        public void DebugFormat(String msg,params object[] args)
+        public void DebugFormat(string msg, params object[] args)
         {
             LogFormat(LogLevel.Debug, msg, args);
         }
 
-        public void Info(String msg)
+        public void Info(string msg)
         {
             Log(LogLevel.Info, msg);
         }
 
-        public void Info(String msg, Exception e)
+        public void Info(string msg, Exception e)
         {           
             Log(LogLevel.Info, msg, e);
         }
 
-        public void InfoFormat(String msg,params object[] args)
+        public void InfoFormat(string msg, params object[] args)
         {
             LogFormat(LogLevel.Info, msg, args);
         }
 
-        public void Warn(String msg)
+        public void Warn(string msg)
         {
             Log(LogLevel.Warn, msg);
         }
 
-        public void Warn(String msg, Exception e)
+        public void Warn(string msg, Exception e)
         {
             Log(LogLevel.Warn, msg, e);
         }
 
-        public void WarnFormat(String msg,params object[] args)
+        public void WarnFormat(string msg, params object[] args)
         {
            LogFormat(LogLevel.Warn, msg, args);
         }
 
-        public void Error(String msg)
+        public void Error(string msg)
         {
             Log(LogLevel.Error, msg);
         }
 
-        public void Error(String msg, Exception e)
+        public void Error(string msg, Exception e)
         {
             Log(LogLevel.Error, msg, e);
         }
 
-        public void ErrorFormat(String msg,params object[] args)
+        public void ErrorFormat(string msg, params object[] args)
         {
             LogFormat(LogLevel.Error, msg, args);
+        }
+
+        protected abstract void LogLine(LogLevel level, string msg);
+
+        /// <summary>
+        /// Subclasses can override to provide custom enabling of logging. Log level is take into account first though
+        /// </summary>
+        /// <returns>true if logging is enabled</returns>
+        protected virtual bool IsLoggingEnabled()
+        {
+            return true;
         }
 
         private void Log(LogLevel level, string msg)
         {
             if (IsLevel(level) && IsLoggingEnabled())
             {
-                var line = String.Format("[{0}] [{1}] [{2}] [{3}] {4}", 
+                var line = string.Format(
+                    "[{0}] [{1}] [{2}] [{3}] {4}", 
                     level.Name,                    
                     DateTime.Now.ToString(DateTimeFormat),
                     Thread.CurrentThread.ManagedThreadId, 
@@ -132,7 +145,8 @@ namespace TestFirst.Net.Logging
         {
             if (IsLevel(level) && IsLoggingEnabled())
             {
-                var line = String.Format("[{0}] [{1}] [{2}] [{3}] {4}, cause: {5}", 
+                var line = string.Format(
+                    "[{0}] [{1}] [{2}] [{3}] {4}, cause: {5}", 
                     level.Name,                    
                     DateTime.Now.ToString(DateTimeFormat), 
                     Thread.CurrentThread.ManagedThreadId,
@@ -147,9 +161,10 @@ namespace TestFirst.Net.Logging
         {
             if (IsLevel(level) && IsLoggingEnabled())
             {
-                var formattedMsg = String.Format(msg, args);
+                var formattedMsg = string.Format(msg, args);
 
-                var line = String.Format("[{0}] [{1}] [{2}] [{3}] {4}", 
+                var line = string.Format(
+                    "[{0}] [{1}] [{2}] [{3}] {4}", 
                     level.Name,                    
                     DateTime.Now.ToString(DateTimeFormat), 
                     Thread.CurrentThread.ManagedThreadId,
@@ -161,18 +176,7 @@ namespace TestFirst.Net.Logging
 
         private bool IsLevel(LogLevel level)
         {
-            return m_level.CompareTo(level) <= 0 ;
-        }
-
-        protected abstract void LogLine(LogLevel level, String msg);
-
-        /// <summary>
-        /// Subclasses can override to provide custom enabling of logging. Log level is take into account first though
-        /// </summary>
-        /// <returns></returns>
-        protected virtual bool IsLoggingEnabled()
-        {
-            return true;
+            return m_level.CompareTo(level) <= 0;
         }
     }
 }

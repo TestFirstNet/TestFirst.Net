@@ -2,7 +2,7 @@
 using System.IO;
 using Newtonsoft.Json;
 
-namespace TestFirst.Net.Examples.Service.Http
+namespace TestFirst.Net.Examples.Net.Http.Serializer
 {
     public class JsonNetSerializer : ISerializer
     {

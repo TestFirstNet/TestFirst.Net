@@ -7,9 +7,9 @@ namespace TestFirst.Net.Inject
     /// </summary>
     public class SystemClock : IClock
     {
-        public DateTimeOffset Now(){
+        public DateTimeOffset Now()
+        {
             return DateTimeOffset.Now;
         }
     }
 }
-

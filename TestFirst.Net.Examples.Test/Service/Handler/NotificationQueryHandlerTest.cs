@@ -38,7 +38,7 @@ namespace TestFirst.Net.Examples.Service.Handler
 
         private TheNotificationHandler NewHandler()
         {
-            return  new TheNotificationHandler();
+            return new TheNotificationHandler();
         }
 
         private class TheNotificationHandler : NotificationQueryHandler

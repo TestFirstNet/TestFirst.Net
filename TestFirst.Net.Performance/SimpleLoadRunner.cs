@@ -19,7 +19,6 @@ namespace TestFirst.Net.Performance
         private readonly TimeSpan m_threadStartDelay;
         private readonly double m_threadStartDelayVariance;
         
-
         private DateTime m_endAt;
         private List<ActionCompleteThread> m_threads = new List<ActionCompleteThread>();
 
@@ -43,12 +42,12 @@ namespace TestFirst.Net.Performance
 
         public void BeforeInvoke()
         {
-            //throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
         public void AfterInvoke()
         {
-            //throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
         public void Start(PerformanceSuite.PerfTestContext ctxt, IPerformanceTestRunnerListener runListener)
@@ -60,12 +59,13 @@ namespace TestFirst.Net.Performance
             {
                 var threadListener = new TestListenerAdapter(runListener, ctxt);
                 var threadAction = NewInvokeTestAction(threadListener);
-                m_threads.Add(new ActionCompleteThread(threadAction.Invoke).Where(t=>t.Priority = m_threadPriority));
+                m_threads.Add(new ActionCompleteThread(threadAction.Invoke).Where(t => t.Priority = m_threadPriority));
             }
 
             m_threads.ForEach(t => t.Start());
-            //wait for runners to complete
-            while (DateTime.Now < m_endAt && m_threads.Any(t=>!t.Completed))
+
+            // wait for runners to complete
+            while (DateTime.Now < m_endAt && m_threads.Any(t => !t.Completed))
             {
                 Thread.Sleep(1000);
             }
@@ -84,15 +84,16 @@ namespace TestFirst.Net.Performance
                 if (m_threadStartDelay.TotalMilliseconds > 0 && m_threadStartDelayVariance > 0)
                 {
                     var r = new System.Random();
-                    //ensure some random variance in the start time of each thread
+
+                    // ensure some random variance in the start time of each thread
                     var delayStart = r.NextDouble() * (m_threadStartDelayVariance * m_threadStartDelay.TotalMilliseconds);
                     if (delayStart > 0)
                     {
-                        Thread.Sleep((int) delayStart);
+                        Thread.Sleep((int)delayStart);
                     }
                 }
                 
-                while(DateTime.Now < m_endAt)
+                while (DateTime.Now < m_endAt)
                 {
                     try
                     {
@@ -102,7 +103,7 @@ namespace TestFirst.Net.Performance
                     catch (Exception e)
                     {
                         listener.OnError(e);
-                        if(m_failOnError)
+                        if (m_failOnError)
                         {
                             throw;
                         }                       
@@ -112,7 +113,8 @@ namespace TestFirst.Net.Performance
                         if (m_testDelayVariance > 0)
                         {
                             var r = new System.Random();
-                            //ensure some random variance in the delay between tests to smooth the load
+
+                            // ensure some random variance in the delay between tests to smooth the load
                             var delay = r.NextDouble() * (m_testDelayVariance * m_delayBetweenTests.TotalMilliseconds);
                             if (delay > 0)
                             {
@@ -149,14 +151,14 @@ namespace TestFirst.Net.Performance
                 PreConditions.AssertTrue(m_testDelayVariance >= 0 && m_testDelayVariance <= 1, "expect test delay variance to be between 0 and 1");
 
                 return new SimpleLoadRunner(
-                    numThreads:m_numThreads,
-                    delayBetweenTests:m_delayBetweenThreads, 
-                    testDelayVariance:m_testDelayVariance,
-                    runFor:m_runFor.GetValueOrDefault(), 
-                    threadPriority:m_threadPriority, 
-                    threadStartDelay:m_startDelay,
-                    threadStartDelayVariance:m_startDelayVariance,
-                    failOnError:m_failOnError,
+                    numThreads: m_numThreads,
+                    delayBetweenTests: m_delayBetweenThreads, 
+                    testDelayVariance: m_testDelayVariance,
+                    runFor: m_runFor.GetValueOrDefault(), 
+                    threadPriority: m_threadPriority, 
+                    threadStartDelay: m_startDelay,
+                    threadStartDelayVariance: m_startDelayVariance,
+                    failOnError: m_failOnError,
                     testProvider: m_testProvider);
             }
 
@@ -241,8 +243,6 @@ namespace TestFirst.Net.Performance
             {
                 return new TimeSpanBuilder<Builder>(time, RunFor);
             }
-
-            
         }
     }
 }

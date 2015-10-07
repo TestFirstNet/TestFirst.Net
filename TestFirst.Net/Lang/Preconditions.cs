@@ -19,7 +19,7 @@ namespace TestFirst.Net.Lang
             {
                 throw new ArgumentException("Expected non null value for argument:" + name);
             }
-            if (String.IsNullOrWhiteSpace(val))
+            if (string.IsNullOrWhiteSpace(val))
             {
                 throw new ArgumentException("Expected non empty or blank value for argument:" + name);
             }
@@ -30,7 +30,7 @@ namespace TestFirst.Net.Lang
         {
             if (!val)
             {
-                throw new ArgumentException(String.Format("Expected {0} for argument {1}", desc, name));
+                throw new ArgumentException(string.Format("Expected {0} for argument {1}", desc, name));
             }
         }
 
@@ -38,7 +38,7 @@ namespace TestFirst.Net.Lang
         {
             if (!val)
             {
-                throw new ArgumentException(String.Format("Expected {0}", desc));
+                throw new ArgumentException(string.Format("Expected {0}", desc));
             }
         }
 
@@ -50,6 +50,5 @@ namespace TestFirst.Net.Lang
             }
             return false;
         }
-
     }
 }

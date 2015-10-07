@@ -22,7 +22,7 @@ can be written in TestFirst.Net as:
         .Given(user = UserInTheDb().WithDefaults())
         .Given(account = AccountInTheDb().For(user).Balance(10).Dollars())
         
-        .When(()=>account.debit(6))
+        .When(() => account.debit(6))
 
         .Then(
             ExpectThat(TheAccountInTheDb.For(account)),
@@ -151,11 +151,11 @@ Examples:
                 .Is(AList.InAnyOrder().WithOnly("a").And("b")); <--'Matcher' we are using to perform the 
 
             Expect
-                .That(()=>foo.DoIt())
+                .That(() => foo.DoIt())
                 .Throws(AnException.Of().Type<MyException>().Message(AString.ContainingIgnorePunctuationAndCase("Some bad thing")));
             
             Expect
-                .That(()=>foo.map())
+                .That(() => foo.map())
                 .Is(ADictionary
                     .KeyMatching("a","value_a")
                     .KeyMatching("foo",AFoo.With().FloppyEars().SunHat()));
@@ -288,11 +288,11 @@ To fill poco's with random data.
 Example:
 
     var filler = new RandomFiller.With()
-        .GeneratorForType(typeof(Fibble), () => Fibble.CreateRandom()) //customise random value generators
+        .GeneratorForType(typeof(Fibble), () => Fibble.CreateRandom()) // customise random value generators
         .EnableLogging(true)
         .Build();
 
-    var poco = filler.FillWithRandom(new MyPoco());//do the actual filling
+    var poco = filler.FillWithRandom(new MyPoco()); // do the actual filling
 
 Moq Scenario
 ============
@@ -317,10 +317,10 @@ If using MatcherMoqExtensions, a fullish example would be:
         public void myTest(){
          
             MyClass foo;
-            String response;
+            string response;
 
-            Scenario() //this will set the scenario name to the name of your test method, in this case 'myTest'
-                 .Given(foo=AMock<MyClass>() //setup the mock
+            Scenario() // this will set the scenario name to the name of your test method, in this case 'myTest'
+                 .Given(foo=AMock<MyClass>() // setup the mock
                          .WhereMethod(f=>f.DoIt(
                              ArgIs(AString.EndingWith("It")),
                              ArgIs(AnInt.GreaterThan(0))
@@ -329,14 +329,14 @@ If using MatcherMoqExtensions, a fullish example would be:
                          .WhereMethod(f=>f.DoneIt(
                              ArgIs(AString.EqualTo("done!"))
                          )
-                         .Instance //returns the mock object and assigns to foo
+                         .Instance // returns the mock object and assigns to foo
                  )
-             .When(response=foo.DoIt("WorkIt",2)) //invoke the 1st method
-             .Then(ExpectThat(response),Is(AString.EqualTo("done!"))
-             .When(foo.DoneIt(response)) //invoke the 2nd method
+             .When(response=foo.DoIt("WorkIt",2)) // invoke the 1st method
+             .Then(ExpectThat(response), Is(AString.EqualTo("done!"))
+             .When(foo.DoneIt(response)) // invoke the 2nd method
              .Then(Nothing())//you shoud assert something here
 
-            //Moq's Mock.VerifyAll will be automatically called at the end of the scenario
+            // Moq's Mock.VerifyAll will be automatically called at the end of the scenario
         }
     }
 
@@ -370,7 +370,7 @@ Example:
                     .NumRuns(2)
                     .PerRunTimeout(20).Seconds()
                     .LoadRunner(ContentionLoadRunner.With()
-                        .Tests(new MyPerfTest()) //the test to run
+                        .Tests(new MyPerfTest()) // the test to run
                         .RunTimeout(15).Seconds())
                     .Listener(metricsWriter)
                     .Build())//runs the test (returns an IInvokable)
@@ -431,14 +431,14 @@ In a T4 template, use the following:
 
     var template = new MatchersTemplate();
 
-    //customise generation
-    template.ForPropertyType<String>()
-        .AddMatchMethodTaking<int>("$argName.ToString()");<--for any String property, add a match method taking an int
+    // customise generation
+    template.ForPropertyType<string>()
+        .AddMatchMethodTaking<int>("$argName.ToString()");<--for any string property, add a match method taking an int
     
-    //genrate matchers for the following
+    // genrate matchers for the following
     template.GenerateFor<MyPoco>();
-    template.GenerateFor<MyPoco2>().MatcherName("MyFibble");//customise matcher name
-    template.GenerateFor<MyPoco3>().MatcherName("MyFrubble").ExcludeProperties("MyExcludedProp");//further customisation
+    template.GenerateFor<MyPoco2>().MatcherName("MyFibble"); // customise matcher name
+    template.GenerateFor<MyPoco3>().MatcherName("MyFrubble").ExcludeProperties("MyExcludedProp"); // further customisation
     
     template.RenderToFile("MyMatchers.cs");<--will write all the generated matchers to the given file
     

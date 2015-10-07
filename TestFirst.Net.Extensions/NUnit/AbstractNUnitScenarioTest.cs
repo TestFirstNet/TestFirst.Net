@@ -10,9 +10,27 @@ namespace TestFirst.Net.Extensions.NUnit
     public abstract class AbstractNUnitScenarioTest : AbstractScenarioTest
     {
         /// <summary>
+        /// Annotated method to cause NUnit to call the 'base.BeforeTest'. If you overwrite this be sure to call this on completion
+        /// </summary>
+        [SetUp]
+        public override void BeforeTest()
+        {
+            base.BeforeTest();
+        }
+
+        /// <summary>
+        /// Annotated method to cause NUnit to call the base.AfterTest. If you overwrite this be sure to call this on completion
+        /// </summary>
+        [TearDown]
+        public override void AfterTest()
+        {
+            base.AfterTest();
+        }
+        
+        /// <summary>
         /// Return a scenario with the name of the current test method
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A test scenario with the name of the current test method</returns>
         protected Scenario Scenario()
         {
             try
@@ -29,24 +47,6 @@ namespace TestFirst.Net.Extensions.NUnit
             {
                 return Scenario("--unnamed--");
             }
-        }
-
-        /// <summary>
-        /// Annotated method to cause NUnit to call the 'base.BeforeTest'. If you overwrite this be sure to call this on completion
-        /// </summary>
-        [SetUp]
-        public override void BeforeTest()
-        {
-            base.BeforeTest();
-        }
-
-        /// <summary>
-        /// Annotated method to cause NUnit to call the base.AfterTest. If you overwrite this be sure to call this on completion
-        /// </summary>
-        [TearDown]
-        public override void AfterTest()
-        {
-            base.AfterTest();
         }
     }
 }

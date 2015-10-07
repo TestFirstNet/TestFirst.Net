@@ -16,37 +16,20 @@ namespace TestFirst.Net
         private static readonly IAppendListener NullListener = new NullAppendListener();
 
         private readonly IAppendListener m_listener;
-        
-        private String m_currentIndent;
         private readonly Stack<string> m_indents = new Stack<string>();
-
-        //don' call append directly unless you also set the m_currentlyOnNewLine flag
+        
+        // don't call append directly unless you also set the m_currentlyOnNewLine flag
         private readonly StringBuilder m_sb = new StringBuilder();
-        //since we can't peek at the string builder, maintain a flag to determine if the last character was a newline
-        //this is to prevent too many newlines from being added
+
+        private string m_currentIndent;
+
+        // since we can't peek at the string builder, maintain a flag to determine if the last character was a newline
+        // this is to prevent too many newlines from being added
         private bool m_currentlyOnNewLine = true;
 
-        public interface IAppendListener
+        public Description() : this(NullListener)
         {
-            void Append(string text);
-            void AppendFormat(string text,params object[] args);
-            void AppendLine();
         }
-
-        private class NullAppendListener : IAppendListener 
-        {
-            public void Append(string text)
-            {}
-
-            public void AppendFormat(string text, params object[] args)
-            {}
-
-            public void AppendLine()
-            {}
-        }
-
-        public Description():this(NullListener)
-        {}
 
         public Description(IAppendListener listener)
         {
@@ -55,13 +38,21 @@ namespace TestFirst.Net
             m_listener = listener;
         }
 
+        public interface IAppendListener
+        {
+            void Append(string text);
+            void AppendFormat(string text, params object[] args);
+            void AppendLine();
+        }
+
+        public bool IsNull
+        {
+            get { return false; }
+        }
+
         public static Description With()
         {
             return new Description();
-        }
-
-        public bool IsNull{
-            get {return false;}
         }
 
         public IDescription Text(string line, params object[] args)
@@ -71,26 +62,17 @@ namespace TestFirst.Net
             return this;
         }
 
-        public IDescription Child(string label, Object child)
+        public IDescription Child(string label, object child)
         {
             Text(label + ":");
             AppendChild(child);
             return this;
         }
 
-        public IDescription Child(Object child)
+        public IDescription Child(object child)
         {
             AppendChild(child);
             return this;
-        }
-
-        private void AppendChild(Object child)
-        {
-            IncreaseIndent();
-            var childString = ValueToString(child);
-            RequireIndent();
-            Append(childString);
-            DecreaseIndent();
         }
 
         public IDescription Children(string label, IEnumerable children)
@@ -104,42 +86,12 @@ namespace TestFirst.Net
             return AppendChildren(children);
         }
 
-        private IDescription AppendChildren(IEnumerable children)
-        {   
-            //inset the actual child values
-            IncreaseIndent();
-            var primitiveItems = ObjectExtensions.IsEnumerationTypeWithPrimitiveElements(children.GetType());
-            if (primitiveItems)
-            {
-                var first = true;
-                foreach (var child in children)
-                {
-                    if (!first)
-                    {
-                        Append(",");                        
-                    }
-                    first = false;
-                    AppendValue(child);
-                }
-            }
-            else
-            {
-                foreach (var child in children)
-                {
-                    RequireIndent();
-                    AppendValue(child);
-                }
-            }
-
-            DecreaseIndent();
-            return this;
-        }
-
-        public IDescription Value(String label, object value)
+        public IDescription Value(string label, object value)
         {
             Text(label + ":");
             var s = ValueToString(value);
-            //keep the child text aligned
+
+            // keep the child text aligned
             if (s.ContainsNewLines())
             {
                 RequireIndent();
@@ -160,18 +112,72 @@ namespace TestFirst.Net
             return this;
         }
 
+        public void DescribeTo(IDescription desc)
+        {
+            if (desc != this)
+            {
+                // prevent accidental self recursion
+                desc.Text(ToString());
+            }
+        }
+
+        public override string ToString()
+        {
+            return m_sb.ToString();
+        }
+
+        private void AppendChild(object child)
+        {
+            IncreaseIndent();
+            var childString = ValueToString(child);
+            RequireIndent();
+            Append(childString);
+            DecreaseIndent();
+        }
+
+        private IDescription AppendChildren(IEnumerable children)
+        {
+            // inset the actual child values
+            IncreaseIndent();
+            var primitiveItems = ObjectExtensions.IsEnumerationTypeWithPrimitiveElements(children.GetType());
+            if (primitiveItems)
+            {
+                var first = true;
+                foreach (var child in children)
+                {
+                    if (!first)
+                    {
+                        Append(",");
+                    }
+                    first = false;
+                    AppendValue(child);
+                }
+            }
+            else
+            {
+                foreach (var child in children)
+                {
+                    RequireIndent();
+                    AppendValue(child);
+                }
+            }
+
+            DecreaseIndent();
+            return this;
+        }
+
         private void AppendValue(object value)
         {
             Append(ValueToString(value));
         }
 
-        private String ValueToString(Object value)
+        private string ValueToString(object value)
         {
             if (value == null)
             {
                 return "null";
             }
-            String s;
+            string s;
             var selfDesc = value as ISelfDescribing;            
             if (selfDesc != null)
             {
@@ -183,9 +189,11 @@ namespace TestFirst.Net
             {
                 s = value.ToPrettyString();
             }
-            //remove any start/end cruft
-            var cleaned = ReTabReplace.Replace(s.Trim(),Indent);
-            //ensure properly indented
+
+            // remove any start/end cruft
+            var cleaned = ReTabReplace.Replace(s.Trim(), Indent);
+
+            // ensure properly indented
             var indented = ReNewlineReplace.Replace(cleaned, Environment.NewLine + m_currentIndent);
             return indented;
         }        
@@ -200,7 +208,7 @@ namespace TestFirst.Net
 
         private bool NewLineRequired()
         {
-            return (m_sb.Length > 0 && !m_currentlyOnNewLine);
+            return m_sb.Length > 0 && !m_currentlyOnNewLine;
         }
 
         private IDescription NewLine()
@@ -232,11 +240,11 @@ namespace TestFirst.Net
             }
             else
             {
-                //convert args 
+                // convert args 
                 try
                 {
                     m_sb.AppendFormat(text, args);
-                    m_listener.AppendFormat(text,args);
+                    m_listener.AppendFormat(text, args);
                 }
                 catch (FormatException e)
                 {
@@ -247,7 +255,7 @@ namespace TestFirst.Net
             return this;
         }
 
-        private void Append(String s)
+        private void Append(string s)
         {
             m_sb.Append(s);
             m_listener.Append(s);
@@ -265,23 +273,25 @@ namespace TestFirst.Net
             m_currentIndent = m_indents.Pop();
         }
 
-        public void DescribeTo(IDescription desc)
+        private class NullAppendListener : IAppendListener
         {
-            if (desc != this)//prevent accidental self recursion
+            public void Append(string text)
             {
-                desc.Text(ToString());
-            }            
-        }
-        
-        public override string ToString()
-        {
-            return m_sb.ToString();
+            }
+
+            public void AppendFormat(string text, params object[] args)
+            {
+            }
+
+            public void AppendLine()
+            {
+            }
         }
     }
 
     internal static class StringExtensions
     {
-        internal static bool ContainsNewLines(this String val)
+        internal static bool ContainsNewLines(this string val)
         {
             if (string.IsNullOrEmpty(val))
             {

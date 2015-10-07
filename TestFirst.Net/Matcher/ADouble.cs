@@ -59,7 +59,7 @@ namespace TestFirst.Net.Matcher
         }
     }
 
-    static class DoubleExtensions
+    internal static class DoubleExtensions
     {
         internal static bool IsValidDouble(this double? val)
         {
@@ -74,7 +74,7 @@ namespace TestFirst.Net.Matcher
         {
             if (other == null)
             {
-                return -1;//treat null as less
+                return -1; // treat null as less
             }
             int compare = val.CompareTo(other.Value);
             return compare;

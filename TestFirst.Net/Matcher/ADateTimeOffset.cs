@@ -7,9 +7,6 @@ namespace TestFirst.Net.Matcher
 {
     public static class ADateTimeOffset
     {
-        //private const string DateTimeFormat = "yyyy/MM/dd HH:mm:ss.fff";
-        //private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
         public static IMatcher<DateTimeOffset?> Any()
         {
             return AnInstance.Any<DateTimeOffset?>();
@@ -39,7 +36,7 @@ namespace TestFirst.Net.Matcher
         public static DateTimeOffsetIntervalMatcher After(DateTimeOffset? expect, int millisecondsBuffer)
         {
             if (millisecondsBuffer > 0)
-                millisecondsBuffer = -1*millisecondsBuffer;
+                millisecondsBuffer = -1 * millisecondsBuffer;
 
             if (expect != null)
                 expect = expect.Value.AddMilliseconds(millisecondsBuffer);
@@ -79,26 +76,21 @@ namespace TestFirst.Net.Matcher
             private bool m_inclusive = true;
 
             private IMatcher<DateTimeOffset> m_cachedMatcher;
-             
-            internal DateTimeOffsetEqualsMatcher()
-            {}
 
-            internal DateTimeOffsetEqualsMatcher EqualTo(DateTimeOffset? expect)
+            internal DateTimeOffsetEqualsMatcher()
             {
-                m_expect = expect;
-                return this;
             }
 
             public TimeSpanBuilder<DateTimeOffsetEqualsMatcher> Within(double val)
             {
-                return new TimeSpanBuilder<DateTimeOffsetEqualsMatcher>(val,span=>Within(span));
+                return new TimeSpanBuilder<DateTimeOffsetEqualsMatcher>(val, span => Within(span));
             }
 
             /// <summary>
             /// The error margin on the match. Same as calling PlusMax and MinusMax together with the same value
             /// </summary>
-            /// <param name="span"></param>
-            /// <returns></returns>
+            /// <param name="span">The error margin on the match</param>
+            /// <returns>A DateTimeOffset matcher with a margin of error</returns>
             public DateTimeOffsetEqualsMatcher Within(TimeSpan span)
             {
                 MinusMax(span);
@@ -110,11 +102,11 @@ namespace TestFirst.Net.Matcher
             /// Add an upper bound to the error margin. If the datetime is more than this from the required equals, then fail. Depends on the 
             /// Inclusive/Exclusive flag whether the actual bound is included
             /// </summary>
-            /// <param name="val"></param>
-            /// <returns></returns>
+            /// <param name="val">The upper bound on the error margin</param>
+            /// <returns>A timespan builder for creating a DateTimeOffset matcher</returns>
             public TimeSpanBuilder<DateTimeOffsetEqualsMatcher> PlusMax(double val)
             {
-                return new TimeSpanBuilder<DateTimeOffsetEqualsMatcher>(val,span=>PlusMax(span));
+                return new TimeSpanBuilder<DateTimeOffsetEqualsMatcher>(val, span => PlusMax(span));
             }
 
             public DateTimeOffsetEqualsMatcher PlusMax(TimeSpan span)
@@ -127,18 +119,18 @@ namespace TestFirst.Net.Matcher
             /// Add a lower bound to the error margin. If the datetime is more than this from the required equals, then fail. Depends on the 
             /// Inclusive/Exclusive flag whether the actual bound is included
             /// </summary>
-            /// <param name="val"></param>
-            /// <returns></returns>
+            /// <param name="val">The lower bound on the error margin</param>
+            /// <returns>A timespan builder for creating a DateTimeOffset matcher</returns>
             public TimeSpanBuilder<DateTimeOffsetEqualsMatcher> MinusMax(double val)
             {
-                return new TimeSpanBuilder<DateTimeOffsetEqualsMatcher>(val,span=>MinusMax(span));
+                return new TimeSpanBuilder<DateTimeOffsetEqualsMatcher>(val, span => MinusMax(span));
             }
 
             /// <summary>
             /// Add a lower bound to the error margin
             /// </summary>
-            /// <param name="span"></param>
-            /// <returns></returns>
+            /// <param name="span">The lower bound on the error margin</param>
+            /// <returns>A timespan builder for creating a DateTimeOffset matcher</returns>
             public DateTimeOffsetEqualsMatcher MinusMax(TimeSpan span)
             {
                 m_maxMinus = span;
@@ -148,7 +140,7 @@ namespace TestFirst.Net.Matcher
             /// <summary>
             /// Include the bounds
             /// </summary>
-            /// <returns></returns>
+            /// <returns>A DateTimeOffset matcher which includes the bounds</returns>
             public DateTimeOffsetEqualsMatcher Inclusive()
             {
                 m_inclusive = true;
@@ -159,7 +151,7 @@ namespace TestFirst.Net.Matcher
             /// <summary>
             /// Exclude the bounds
             /// </summary>
-            /// <returns></returns>
+            /// <returns>A DateTimeOffset matcher which excludes the bounds</returns>
             public DateTimeOffsetEqualsMatcher Exclusive()
             {
                 m_inclusive = false;
@@ -167,51 +159,24 @@ namespace TestFirst.Net.Matcher
                 return this;
             }
 
-            private void ResetCached()
-            {
-                m_cachedMatcher = null;
-            }
-
             public override bool Matches(DateTimeOffset? actual, IMatchDiagnostics diagnostics)
             {
-                if(actual == null && m_expect == null)
+                if (actual == null && m_expect == null)
                 {
                     diagnostics.Matched("Null");
                     return true;
                 }
-                if(actual == null)
+                if (actual == null)
                 {
                     diagnostics.MisMatched("Was null");
                     return false;
                 }
-                if(m_expect == null)
+                if (m_expect == null)
                 {
                     diagnostics.MisMatched("Expected null");
                     return false;
                 }
                 return diagnostics.TryMatch(actual, GetOrBuild());
-            }
-
-            private IMatcher<DateTimeOffset> GetOrBuild()
-            {
-                var cached = m_cachedMatcher;
-                if (cached == null)
-                {
-                    cached = Matchers.Function((DateTimeOffset actual, IMatchDiagnostics diagnostics) =>
-                        {
-                            var expectVal = m_expect.Value;
-                            var plus = m_inclusive ? 1 : 0;
-                            var maxMinus = Math.Truncate((m_maxMinus ?? TimeSpan.FromMilliseconds(0)).TotalMilliseconds + plus);
-                            var maxPlus = Math.Truncate((m_maxPlus ?? TimeSpan.FromMilliseconds(0)).TotalMilliseconds + plus);
-
-                            IMatcher<double?> diffMatcher = ADouble.BetweenIncluding(-maxMinus,maxPlus);
-                            double diff = Math.Truncate((actual - expectVal).TotalMilliseconds);
-                            return diffMatcher.Matches(diff, diagnostics);
-                        }, "");
-                    m_cachedMatcher = cached;
-                }
-                return cached;
-
             }
 
             public override void DescribeTo(IDescription desc)
@@ -246,6 +211,40 @@ namespace TestFirst.Net.Matcher
             {
                 return "ADateTimeOffset";
             }
+
+            internal DateTimeOffsetEqualsMatcher EqualTo(DateTimeOffset? expect)
+            {
+                m_expect = expect;
+                return this;
+            }
+
+            private void ResetCached()
+            {
+                m_cachedMatcher = null;
+            }
+
+            private IMatcher<DateTimeOffset> GetOrBuild()
+            {
+                var cached = m_cachedMatcher;
+                if (cached == null)
+                {
+                    cached = Matchers.Function((DateTimeOffset actual, IMatchDiagnostics diagnostics) => MatchFunction(actual, diagnostics), string.Empty);
+                    m_cachedMatcher = cached;
+                }
+                return cached;
+            }
+
+            private bool MatchFunction(DateTimeOffset actual, IMatchDiagnostics diagnostics)
+            {
+                var expectVal = m_expect.Value;
+                var plus = m_inclusive ? 1 : 0;
+                var maxMinus = Math.Truncate((m_maxMinus ?? TimeSpan.FromMilliseconds(0)).TotalMilliseconds + plus);
+                var maxPlus = Math.Truncate((m_maxPlus ?? TimeSpan.FromMilliseconds(0)).TotalMilliseconds + plus);
+
+                IMatcher<double?> diffMatcher = ADouble.BetweenIncluding(-maxMinus, maxPlus);
+                double diff = Math.Truncate((actual - expectVal).TotalMilliseconds);
+                return diffMatcher.Matches(diff, diagnostics);
+            }
         }
 
         public class DateTimeOffsetIntervalMatcher : AbstractMatcher<DateTimeOffset?>, IProvidePrettyTypeName
@@ -258,7 +257,8 @@ namespace TestFirst.Net.Matcher
             private bool m_inclusive;
 
             internal DateTimeOffsetIntervalMatcher()
-            {}
+            {
+            }
 
             public DateTimeOffsetIntervalMatcher AfterNow()
             {
@@ -286,7 +286,7 @@ namespace TestFirst.Net.Matcher
 
             public TimeSpanBuilder<DateTimeOffsetIntervalMatcher> Within(double val)
             {
-                return new TimeSpanBuilder<DateTimeOffsetIntervalMatcher>(val,span=>Within(span));
+                return new TimeSpanBuilder<DateTimeOffsetIntervalMatcher>(val, span => Within(span));
             }
 
             public DateTimeOffsetIntervalMatcher Within(TimeSpan span)
@@ -315,12 +315,12 @@ namespace TestFirst.Net.Matcher
 
             public override bool Matches(DateTimeOffset? actual, IMatchDiagnostics diagnostics)
             {
-                if(actual == null)
+                if (actual == null)
                 {
                     diagnostics.MisMatched("Null");
                     return false;
                 }
-                var within = m_expectWithin.TotalMilliseconds + (m_inclusive?1:0);//if not inclusive let's be just a little more
+                var within = m_expectWithin.TotalMilliseconds + (m_inclusive ? 1 : 0); // if not inclusive let's be just a little more
 
                 if (m_expectAfter.HasValue)
                 {
@@ -346,12 +346,12 @@ namespace TestFirst.Net.Matcher
                 var sb = new StringBuilder("A DateTimeOffset where ");
                 var sign = m_inclusive ? "= " : " ";
 
-                if(m_expectAfter.HasValue)
+                if (m_expectAfter.HasValue)
                 {
                     sb.Append(ApplyOffset(m_expectAfter).ToPrettyString()).Append(" <").Append(sign);
                 }
                 sb.Append("value");
-                if( m_expectBefore.HasValue)
+                if (m_expectBefore.HasValue)
                 {
                     sb.Append(" <").Append(sign).Append(ApplyOffset(m_expectBefore).ToPrettyString());
                 }
@@ -363,6 +363,11 @@ namespace TestFirst.Net.Matcher
                 desc.Text(sb.ToString());
             }
 
+            public string GetPrettyTypeName()
+            {
+                return "ADateTimeOffset";
+            }
+
             private DateTimeOffset ApplyOffset(DateTimeOffset? dt)
             {
                 if (m_offset == null)
@@ -370,11 +375,6 @@ namespace TestFirst.Net.Matcher
                     return dt.Value;
                 }
                 return dt.Value.Add(m_offset.Value);
-            }
-
-            public string GetPrettyTypeName()
-            {
-                return "ADateTimeOffset";
             }
         }
     }

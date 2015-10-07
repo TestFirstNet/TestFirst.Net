@@ -5,7 +5,7 @@ namespace TestFirst.Net.Examples.Api
 {
     public class ANotification : PropertyMatcher<Notification>
     {
-        //allow us to access refactor safe proeprty names without resorting to magic strings
+        // allow us to access refactor safe proeprty names without resorting to magic strings
         private static readonly Notification PropertyNames = null;
 
         public static ANotification With()
@@ -13,7 +13,7 @@ namespace TestFirst.Net.Examples.Api
             return new ANotification();
         }
 
-        public static  IMatcher<Notification> Instance(Notification val)
+        public static IMatcher<Notification> Instance(Notification val)
         {
             return AnInstance.SameAs(val);
         }

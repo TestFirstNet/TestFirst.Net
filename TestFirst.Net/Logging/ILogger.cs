@@ -12,24 +12,24 @@ namespace TestFirst.Net.Logging
         bool IsInfoEnabled();
         bool IsWarnEnabled();
 
-        void Trace(String msg);
-        void Trace(String msg, Exception e);
-        void TraceFormat(String msg, params object[] args);
+        void Trace(string msg);
+        void Trace(string msg, Exception e);
+        void TraceFormat(string msg, params object[] args);
                 
-        void Debug(String msg);
-        void Debug(String msg, Exception e);
-        void DebugFormat(String msg, params object[] args);
+        void Debug(string msg);
+        void Debug(string msg, Exception e);
+        void DebugFormat(string msg, params object[] args);
 
-        void Info(String msg);
-        void Info(String msg, Exception e);
-        void InfoFormat(String msg,params object[] args);
+        void Info(string msg);
+        void Info(string msg, Exception e);
+        void InfoFormat(string msg, params object[] args);
 
-        void Warn(String msg);
-        void Warn(String msg, Exception e);
-        void WarnFormat(String msg,params object[] args);
+        void Warn(string msg);
+        void Warn(string msg, Exception e);
+        void WarnFormat(string msg, params object[] args);
 
-        void Error(String msg);
-        void Error(String msg, Exception e);
-        void ErrorFormat(String msg,params object[] args);
+        void Error(string msg);
+        void Error(string msg, Exception e);
+        void ErrorFormat(string msg, params object[] args);
     }
 }

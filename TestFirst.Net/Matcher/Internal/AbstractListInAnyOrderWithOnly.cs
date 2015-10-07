@@ -7,27 +7,29 @@ namespace TestFirst.Net.Matcher.Internal
     /// Each matcher must match only once and must have a match. Depending on the config either all items must be matched or 
     /// additional unmatched items may exist. Order is not important
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Type contained within list</typeparam>
     internal abstract class AbstractListInAnyOrder<T> : AList.AbstractListMatcher<T>, AList.IAcceptMoreMatchers<T>, IProvidePrettyTypeName
     {
         private readonly List<IMatcher<T>> m_matchers;
         private readonly bool m_failOnAdditionalItems;
 
-        protected internal enum FailOnAdditionalItems
-        {
-            True,False
-        }
-
-        protected internal AbstractListInAnyOrder(FailOnAdditionalItems failOnAdditionalItems, string matcherName):base(matcherName)
+        protected internal AbstractListInAnyOrder(FailOnAdditionalItems failOnAdditionalItems, string matcherName)
+            : base(matcherName)
         {
             m_matchers = new List<IMatcher<T>>();
-            m_failOnAdditionalItems = failOnAdditionalItems==FailOnAdditionalItems.True;
+            m_failOnAdditionalItems = failOnAdditionalItems == FailOnAdditionalItems.True;
         }
-
-        protected internal AbstractListInAnyOrder(IEnumerable<IMatcher<T>> matchers, FailOnAdditionalItems failOnAdditionalItems, string matcherName):base(matcherName)
+        
+        protected internal AbstractListInAnyOrder(IEnumerable<IMatcher<T>> matchers, FailOnAdditionalItems failOnAdditionalItems, string matcherName)
+            : base(matcherName)
         {
             m_matchers = new List<IMatcher<T>>(matchers);
-            m_failOnAdditionalItems = failOnAdditionalItems==FailOnAdditionalItems.True;
+            m_failOnAdditionalItems = failOnAdditionalItems == FailOnAdditionalItems.True;
+        }
+
+        protected internal enum FailOnAdditionalItems
+        {
+            True, False
         }
 
         public AList.IAcceptMoreMatchers<T> And(IMatcher<T> matcher)
@@ -47,11 +49,11 @@ namespace TestFirst.Net.Matcher.Internal
             var passed = true;
             var ctxt = new MatchContext(m_matchers);
             int pos = 0;
-            for(; pos < list.Count; pos++)
+            for (; pos < list.Count; pos++)
             {
                 var item = list[pos];
                 var matchPassed = false;
-                if(ctxt.MatchersRemain())
+                if (ctxt.MatchersRemain())
                 {
                     if (m_failOnAdditionalItems)
                     {
@@ -59,8 +61,8 @@ namespace TestFirst.Net.Matcher.Internal
                     }
                     else
                     {
-                        //prevent useless diagnostics messages appearing in output as we call the matchers
-                        //repeatably as we try to find a match
+                        // prevent useless diagnostics messages appearing in output as we call the matchers
+                        // repeatably as we try to find a match
                         var childDiag = diagnostics.NewChild();
                         matchPassed = ctxt.Matches(item, pos, childDiag);
                         if (matchPassed)
@@ -70,14 +72,14 @@ namespace TestFirst.Net.Matcher.Internal
                     }                     
                 }
                  
-                if(!matchPassed)
+                if (!matchPassed)
                 {
                     if (m_failOnAdditionalItems)
                     {
                         passed = false;
                     }
                 }
-                if(!passed)
+                if (!passed)
                 {
                     var child = diagnostics.NewChild();
                     child.Value("position", pos);
@@ -105,16 +107,6 @@ namespace TestFirst.Net.Matcher.Internal
             return passed;
         }
 
-        private static IList SubSet(int startIndex, IList list)
-        {
-            var sub = new List<object>(list.Count - startIndex);
-            for (int i = startIndex; i < list.Count; i++)
-            {
-                sub.Add(list[i]);
-            }
-            return sub;
-        }
-
         public override string ToString()
         {
             var desc = new Description();
@@ -135,6 +127,16 @@ namespace TestFirst.Net.Matcher.Internal
             desc.Children(m_matchers);
         }
 
+        private static IList SubSet(int startIndex, IList list)
+        {
+            var sub = new List<object>(list.Count - startIndex);
+            for (int i = startIndex; i < list.Count; i++)
+            {
+                sub.Add(list[i]);
+            }
+            return sub;
+        }
+
         private class MatchContext
         {
             private readonly List<IMatcher<T>> m_remainingMatchers;
@@ -144,13 +146,13 @@ namespace TestFirst.Net.Matcher.Internal
                 m_remainingMatchers = new List<IMatcher<T>>(matchers);
             }
 
-            internal bool Matches(System.Object item, int itemPos, IMatchDiagnostics diagnostics)
+            internal bool Matches(object item, int itemPos, IMatchDiagnostics diagnostics)
             {
-                //collect all the mismatches for later
+                // collect all the mismatches for later
                 var children = new List<IMatchDiagnostics>(m_remainingMatchers.Count);
                 foreach (var matcher in m_remainingMatchers)
                 {
-                    //want to keep non matchign matchers clear
+                    // want to keep non matchign matchers clear
                     var childDiag = diagnostics.NewChild();
                     if (childDiag.TryMatch(item, matcher))
                     {
@@ -160,7 +162,8 @@ namespace TestFirst.Net.Matcher.Internal
                     }
                     children.Add(childDiag);
                 }
-                //lets print all the mis matches
+
+                // lets print all the mis matches
                 diagnostics.Children(children);
                 return false;
             }
@@ -172,7 +175,8 @@ namespace TestFirst.Net.Matcher.Internal
 
             internal void AddMisMatchMessage(IMatchDiagnostics diagnostics)
             {
-                if(MatchersRemain()){
+                if (MatchersRemain())
+                {
                     diagnostics.Child("didn't match", m_remainingMatchers);
                 }
             }

@@ -2,6 +2,8 @@
 using System.Net;
 using System.Threading;
 using NUnit.Framework;
+using TestFirst.Net.Examples.Net.Http;
+using TestFirst.Net.Examples.Net.Http.Serializer;
 using TestFirst.Net.Extensions.NUnit;
 
 namespace TestFirst.Net.Examples.Service.Http
@@ -24,7 +26,7 @@ namespace TestFirst.Net.Examples.Service.Http
             var host = listener.Host;
             var port = listener.Port;
             var url = "http://" + host + ":" + port;
-            //TODO:make request
+            //// TODO:make request
             
             Thread.Sleep(TimeSpan.FromSeconds(1));
 

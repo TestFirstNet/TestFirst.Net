@@ -12,11 +12,6 @@ namespace TestFirst.Net.Performance
         private readonly Thread m_thread;
         private volatile bool m_completed;
 
-        internal bool Completed
-        {
-            get { return m_completed; }
-        }
-
         internal ActionCompleteThread(Action action)
         {
             m_action = () => 
@@ -33,10 +28,9 @@ namespace TestFirst.Net.Performance
             m_thread = new Thread(m_action.Invoke);
         }
 
-        internal ActionCompleteThread Where(Action<Thread> threadMutator)
+        internal bool Completed
         {
-            threadMutator.Invoke(m_thread);
-            return this;
+            get { return m_completed; }
         }
 
         public void Start()
@@ -47,6 +41,12 @@ namespace TestFirst.Net.Performance
         public void Abort()
         {
             m_thread.Abort();
-        }   
+        }
+
+        internal ActionCompleteThread Where(Action<Thread> threadMutator)
+        {
+            threadMutator.Invoke(m_thread);
+            return this;
+        }
     }
 }

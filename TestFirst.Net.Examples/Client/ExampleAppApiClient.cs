@@ -1,28 +1,30 @@
 ﻿using System;
 using TestFirst.Net.Examples.Api;
 using TestFirst.Net.Examples.Api.Query;
+using TestFirst.Net.Examples.Net;
 
 namespace TestFirst.Net.Examples.Client
 {
-    public class ApiClient:IApiClient
+    public class ApiClient : IApiClient
     {
         public TResponse Invoke<TResponse>(IReturn<TResponse> query)
-        {
-            return (TResponse)Invoke(query,typeof(TResponse));
-        }
-
-        public TResponse Invoke<TQuery,TResponse>(TQuery query) where TResponse:class
         {
             return (TResponse)Invoke(query, typeof(TResponse));
         }
 
-        private Object Invoke(Object query, Type responseType)
+        public TResponse Invoke<TQuery, TResponse>(TQuery query) 
+            where TResponse : class
         {
-            //serialize request
+            return (TResponse)Invoke(query, typeof(TResponse));
+        }
 
-            //make call
+        private object Invoke(object query, Type responseType)
+        {
+            // serialize request
 
-            //deserialize response
+            // make call
+
+            // deserialize response
             return null;
         }
     }

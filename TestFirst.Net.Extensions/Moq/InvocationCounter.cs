@@ -15,11 +15,21 @@ namespace TestFirst.Net.Extensions.Moq
             m_methodExpression = expression;
         }
 
+        // ensue we handle case where method is not invoked often enough
+        public void VerifyMock()
+        {
+            if (m_invokeCount != m_expectCount)
+            {
+                throw new AssertionFailedException("Invocation " + m_methodExpression + " was unexpectedly performed " + Times(m_invokeCount) + ", but expected " + Times(m_expectCount));
+            }
+        }
+
         internal void Increment()
         {
             var count = Interlocked.Increment(ref m_invokeCount);
-            if (count > m_expectCount)//lets bail as soon as possible
+            if (count > m_expectCount)
             {
+                // Lets bail as soon as possible
                 throw new AssertionFailedException("Invocation " + m_methodExpression + " was unexpectedly performed " + Times(count) + ", but expected " + Times(m_expectCount));
             }
         }
@@ -28,15 +38,5 @@ namespace TestFirst.Net.Extensions.Moq
         {
             return i + " " + (i == 1 ? "time" : "times");
         }
-
-        //ensue we handle case where method is nt invoked often enough
-        public void VerifyMock()
-        {
-            if (m_invokeCount != m_expectCount)
-            {
-                throw new AssertionFailedException("Invocation " + m_methodExpression + " was unexpectedly performed " + Times(m_invokeCount) + ", but expected " + Times(m_expectCount));
-            }
-        }
     }
-
 }

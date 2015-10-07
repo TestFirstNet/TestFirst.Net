@@ -6,12 +6,13 @@ using TestFirst.Net.Util;
 
 namespace TestFirst.Net.Extensions.Moq
 {
+    /// <summary>Fluent builder for describing a property getter</summary>
     /// <typeparam name="T">the type of the class being mocked</typeparam>
     /// <typeparam name="TProperty">the type of the property</typeparam>
     public class FluentPropertyGet<T, TProperty> : IRunOnMockVerify
         where T : class
     {
-        private readonly FluentMock<T>  m_mock;
+        private readonly FluentMock<T> m_mock;
         private readonly ISetupGetter<T, TProperty> m_setup;
         private readonly Expression<Func<T, TProperty>> m_expression;
         private readonly List<IRunOnMockVerify> m_runOnVerify = new List<IRunOnMockVerify>(1);
@@ -41,7 +42,6 @@ namespace TestFirst.Net.Extensions.Moq
             return m_mock;
         }
 
-
         public FluentMock<T> Returns(Func<TProperty> valueFunction)
         {
             m_setup.Returns(valueFunction);
@@ -55,7 +55,7 @@ namespace TestFirst.Net.Extensions.Moq
         }
 
         public FluentMock<T> Throws<TException>()
-            where TException : Exception,new() 
+            where TException : Exception, new() 
         {
             m_setup.Throws<TException>();
             return m_mock;
@@ -67,7 +67,8 @@ namespace TestFirst.Net.Extensions.Moq
             return m_mock;
         }
 
-        public FluentMock<T> Throws<TException>(IBuilder<TException> builder) where TException:Exception
+        public FluentMock<T> Throws<TException>(IBuilder<TException> builder) 
+            where TException : Exception
         {
             m_setup.Throws(builder.Build());
             return m_mock;
@@ -75,18 +76,15 @@ namespace TestFirst.Net.Extensions.Moq
 
         public TimesBuilder<int, FluentPropertyGet<T, TProperty>> IsCalled(int num)
         {
-            return new TimesBuilder<int, FluentPropertyGet<T, TProperty>>(num, val =>
-            {
-                var counter = new InvocationCounter(val, m_expression);
-                m_setup.Callback(counter.Increment);
-                RunOnVerify(counter);
-                return this;//return the fluent method builder
-            });
-        }
-
-        internal void RunOnVerify(IRunOnMockVerify verifier)
-        {
-            m_runOnVerify.Add(verifier);
+            return new TimesBuilder<int, FluentPropertyGet<T, TProperty>>(
+                num, 
+                val =>
+                    {
+                        var counter = new InvocationCounter(val, m_expression);
+                        m_setup.Callback(counter.Increment);
+                        RunOnVerify(counter);
+                        return this; // return the fluent method builder
+                    });
         }
 
         public void VerifyMock()
@@ -95,6 +93,11 @@ namespace TestFirst.Net.Extensions.Moq
             {
                 verifier.VerifyMock();
             }
+        }
+
+        internal void RunOnVerify(IRunOnMockVerify verifier)
+        {
+            m_runOnVerify.Add(verifier);
         }
     }
 }

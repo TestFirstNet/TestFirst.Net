@@ -30,7 +30,7 @@ can be written in TestFirst.Net as:
         .Given(user = UserInTheDb().WithDefaults())
         .Given(account = AccountInTheDb().For(user).Balance(10).Dollars())
         
-        .When(()=>account.debit(6))
+        .When(() => account.debit(6))
 
         .Then(
             ExpectThat(TheAccountInTheDb.For(account)),

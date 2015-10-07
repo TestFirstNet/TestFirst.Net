@@ -2,7 +2,7 @@ using TestFirst.Net.Util;
 
 namespace TestFirst.Net.Matcher
 {
-    //needs work. Need to add in precision to comparisons!
+    // needs work. Need to add in precision to comparisons!
     public static class AFloat
     {
         public static IMatcher<float?> EqualTo(float? expect)
@@ -65,7 +65,7 @@ namespace TestFirst.Net.Matcher
         }
     }
 
-    static class FloatExtensions
+    internal static class FloatExtensions
     {
         internal static bool IsValidFloat(this float? val)
         {
@@ -80,7 +80,7 @@ namespace TestFirst.Net.Matcher
         {
             if (other == null)
             {
-                return -1;//treat null as less
+                return -1; // treat null as less
             }
             int compare = val.CompareTo(other.Value);
             return compare;

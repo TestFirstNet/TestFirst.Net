@@ -3,26 +3,31 @@
 namespace TestFirst.Net
 {
     /// <summary>
-    /// Add an <see cref="Description.IAppendListener"/> which logs everythign to the console as it goes. Useful when
-    /// integrating with third parties libraries and it is not possible to access the diagostics after the matching
+    /// Add an <see cref="Description.IAppendListener"/> which logs everything to the console as it goes. Useful when
+    /// integrating with third parties libraries and it is not possible to access the diagnostics after the matching
     /// </summary>
     public class ConsoleLoggingMatchDiagnostics : MatchDiagnostics
     {
-        public ConsoleLoggingMatchDiagnostics():base(new ConsoleAppendListener(null))
-        {}
+        public ConsoleLoggingMatchDiagnostics() 
+            : base(new ConsoleAppendListener(null))
+        {
+        }
 
-        public ConsoleLoggingMatchDiagnostics(String prefix):base(new ConsoleAppendListener(prefix))
-        {}
+        public ConsoleLoggingMatchDiagnostics(string prefix)
+            : base(new ConsoleAppendListener(prefix))
+        {
+        }
 
         private class ConsoleAppendListener : IAppendListener
         {
-            private readonly String m_prefix;
+            private readonly string m_prefix;
             private bool m_printPrefix = true;
 
-            internal ConsoleAppendListener(String prefix)
+            internal ConsoleAppendListener(string prefix)
             {
-                m_prefix = prefix??"";
+                m_prefix = prefix ?? string.Empty;
             }
+
             public void Append(string text)
             {
                 PrintPrefixIfRequired();
@@ -32,19 +37,22 @@ namespace TestFirst.Net
             public void AppendFormat(string text, params object[] args)
             {
                 PrintPrefixIfRequired();
-                Console.Write(text,args);
+                Console.Write(text, args);
             }
 
-            private void PrintPrefixIfRequired(){
-                if( m_printPrefix){
-                    Console.Write(m_prefix);
-                    m_printPrefix = false;
-                }
-            }
             public void AppendLine()
             {
                 Console.WriteLine();              
                 m_printPrefix = false;
+            }
+
+            private void PrintPrefixIfRequired()
+            {
+                if (m_printPrefix)
+                {
+                    Console.Write(m_prefix);
+                    m_printPrefix = false;
+                }
             }
         }
     }

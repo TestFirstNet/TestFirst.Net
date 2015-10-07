@@ -16,7 +16,7 @@ namespace TestFirst.Net.Logging
             return Logger.GetLogger(type.FullName);
         }
 
-        ILogger ILogFactory.GetLogger(String logName)
+        ILogger ILogFactory.GetLogger(string logName)
         {
             return new ConsoleLogAdapter(m_level, logName);
         }

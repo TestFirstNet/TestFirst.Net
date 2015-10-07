@@ -9,14 +9,14 @@ using TestFirst.Net.Util;
 namespace TestFirst.Net.Performance
 {
     /// <summary>
-    /// Runs a set of tests/actions in such a away to force maximuim thread contention
+    /// Runs a set of tests/actions in such a away to force maximum thread contention
     /// </summary>
     public class ContentionLoadRunner : PerformanceSuite.ILoadRunner
     {
+        private static readonly TimeSpan BarrierWaitTimeout = TimeSpan.FromSeconds(40);
         private readonly IList<IPerformanceTest> m_tests;
         private readonly TimeSpan m_runTimeout;
         private readonly ThreadPriority m_threadPriority;
-        private readonly static TimeSpan BarrierWaitTimeout = TimeSpan.FromSeconds(40);
 
         private ContentionLoadRunner(IEnumerable<IPerformanceTest> tests, TimeSpan runTimeout, ThreadPriority threadPriority)
         {
@@ -32,12 +32,12 @@ namespace TestFirst.Net.Performance
 
         public void BeforeInvoke()
         {
-            //throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
         public void AfterInvoke()
         {
-            //throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
         public void Start(PerformanceSuite.PerfTestContext ctxt, IPerformanceTestRunnerListener runListener)
@@ -50,14 +50,13 @@ namespace TestFirst.Net.Performance
         {
         }
 
-        private IEnumerable<Action> TestsToParallelActions(IList<IPerformanceTest> tests,IPerformanceTestRunnerListener listener)
+        private IEnumerable<Action> TestsToParallelActions(IList<IPerformanceTest> tests, IPerformanceTestRunnerListener listener)
         {
-            //barrier to synchronize Before/After operations
+            // barrier to synchronize Before/After operations
             var testSynchronizationBarrier = new Barrier(tests.Count);
             var actions = tests.Select(test => TestToAction(test, testSynchronizationBarrier, listener)).ToList();
             return actions;
         }
-
 
         private Action TestToAction(IPerformanceTest test, Barrier barrier, IPerformanceTestRunnerListener listener)
         {
@@ -67,7 +66,7 @@ namespace TestFirst.Net.Performance
                     {
                         throw new TestFirstException("Timed out waiting for 'Invoke' barrier");
                     }
-                    var testListener = new TestListenerAdapter(listener, new PerformanceSuite.PerfTestContext {AgentId = "0", MachineId = Environment.MachineName } );
+                    var testListener = new TestListenerAdapter(listener, new PerformanceSuite.PerfTestContext { AgentId = "0", MachineId = Environment.MachineName });
                     test.InvokeTest(testListener);
 
                     if (!barrier.SignalAndWait(BarrierWaitTimeout))
@@ -76,7 +75,6 @@ namespace TestFirst.Net.Performance
                     }                    
                 };
         }
-
 
         public class Builder : IBuilder<ContentionLoadRunner>
         {
@@ -90,7 +88,7 @@ namespace TestFirst.Net.Performance
                 PreConditions.AssertNotNull(m_tests, "Tests");
                 PreConditions.AssertNotNull(m_runTimeout, "expect run timeout");
 
-                return new ContentionLoadRunner(m_tests,m_runTimeout.GetValueOrDefault(), m_threadPriority);
+                return new ContentionLoadRunner(m_tests, m_runTimeout.GetValueOrDefault(), m_threadPriority);
             }
 
             public Builder Priority(ThreadPriority priority)
@@ -115,7 +113,7 @@ namespace TestFirst.Net.Performance
             {
                 var tests = new List<IPerformanceTest>();
                 IPerformanceTest test;
-                while( (test = testProvider.Next()) != null && tests.Count < m_maxNumTests)
+                while ((test = testProvider.Next()) != null && tests.Count < m_maxNumTests)
                 {
                     tests.Add(test);
                 }
@@ -126,8 +124,8 @@ namespace TestFirst.Net.Performance
             /// <summary>
             /// If using a <see cref="PerformanceSuite.ITestProvider"/> the max number of tests to grab
             /// </summary>
-            /// <param name="numTests"></param>
-            /// <returns></returns>
+            /// <param name="numTests">The maximum number of tests</param>
+            /// <returns>The builder</returns>
             public Builder MaxNumTests(int numTests)
             {
                 m_maxNumTests = numTests;

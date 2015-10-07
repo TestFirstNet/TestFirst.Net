@@ -1,4 +1,4 @@
-﻿namespace TestFirst.Net.Examples.Service.Http
+﻿namespace TestFirst.Net.Examples.Net.Http
 {
     internal interface IRequestProcessor
     {
