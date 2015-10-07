@@ -476,7 +476,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-//set by the build script
+// set by the build script
 [assembly: AssemblyVersion("$version")]
 [assembly: AssemblyFileVersion("$version")]
 [assembly: AssemblyInformationalVersion("$version")]
@@ -488,7 +488,7 @@ using System.Runtime.InteropServices;
         .replace('alpha','0') \
         .replace('snapshot','0')
 		
-    text=template.replace('$version',version)
+    text=template.strip().replace('$version',version)
     
     f=open(file, 'w')
     f.write(text)
