@@ -13,7 +13,7 @@ namespace TestFirst.Net.Examples
     public partial class ANotification : PropertyMatcher<TestFirst.Net.Examples.Api.Notification>
     {
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Examples.Api.Notification PropertyNames = null;
+        protected static readonly TestFirst.Net.Examples.Api.Notification PropertyNames = null;
 
         public static ANotification With()
         {
@@ -57,7 +57,7 @@ namespace TestFirst.Net.Examples
     public partial class ANotificationQuery : PropertyMatcher<TestFirst.Net.Examples.Api.Query.NotificationQuery>
     {
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Examples.Api.Query.NotificationQuery PropertyNames = null;
+        protected static readonly TestFirst.Net.Examples.Api.Query.NotificationQuery PropertyNames = null;
 
         public static ANotificationQuery With()
         {
@@ -125,7 +125,7 @@ namespace TestFirst.Net.Examples
     public partial class AResponse : PropertyMatcher<TestFirst.Net.Examples.Api.Query.NotificationQuery.Response>
     {
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Examples.Api.Query.NotificationQuery.Response PropertyNames = null;
+        protected static readonly TestFirst.Net.Examples.Api.Query.NotificationQuery.Response PropertyNames = null;
 
         public static AResponse With()
         {

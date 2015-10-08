@@ -68,6 +68,7 @@
     <Compile Include="Matcher\AnArrayTest.cs" />
     <Compile Include="Matcher\ADateTimeOffsetTest.cs" />
     <Compile Include="Template\MatchersTemplateTest.cs" />
+    <Compile Include="Template\MatchersTemplateTest.Expect.generated.cs" />
     <Compile Include="Template\TestDto.cs" />
     <Compile Include="Matcher\ABoolTest.cs" />
     <Compile Include="Matcher\ADateTimeTest.cs" />

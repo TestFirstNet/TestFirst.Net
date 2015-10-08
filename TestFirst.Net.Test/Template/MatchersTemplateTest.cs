@@ -26,10 +26,10 @@ namespace TestFirst.Net.Template
 
             var actualContent = template.Render();
             
-            var expectFile = new FileInfo(Path.Combine(GetProjectDir().Parent.FullName, "test/ExpectedOutput/MatchersTemplateTest.ExpectGenerated.cs"));
+            var expectFile = new FileInfo(Path.Combine(GetProjectDir().Parent.FullName, "TestFirst.Net.Test/Template/MatchersTemplateTest.Expect.generated.cs"));
             var expectContent = ReadFile(expectFile);
-
-            Assert.AreEqual(Clean(expectContent), Clean(actualContent), "Generated output does not match expected. Actual:\n {} \n Expected: \n{}", actualContent, expectContent);
+            
+            Assert.AreEqual(Clean(expectContent), Clean(actualContent), "Generated output does not match expected. Actual:\n {0} \n Expected: \n{1}", actualContent, expectContent);
         }
 
         private static string Clean(string s)

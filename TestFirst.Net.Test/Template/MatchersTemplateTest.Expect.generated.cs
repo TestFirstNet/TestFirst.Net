@@ -7,13 +7,13 @@ using TestFirst.Net.Matcher;
 
 namespace TestFirst.Net.Template
 {
-
+    /// <summary>
+    /// Matcher for a <see cref="TestFirst.Net.Template.TestDto"/>
+    /// </summary>
     public partial class ATestDto : PropertyMatcher<TestFirst.Net.Template.TestDto>
     {
-
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestDto PropertyNames = null;
-
+        protected static readonly TestFirst.Net.Template.TestDto PropertyNames = null;
 
         public static ATestDto With()
         {
@@ -573,13 +573,13 @@ namespace TestFirst.Net.Template
 
 namespace TestFirst.Net.Template
 {
-
+    /// <summary>
+    /// Matcher for a <see cref="TestFirst.Net.Template.TestDto2"/>
+    /// </summary>
     public partial class ATestDto2 : PropertyMatcher<TestFirst.Net.Template.TestDto2>
     {
-
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestDto2 PropertyNames = null;
-
+        protected static readonly TestFirst.Net.Template.TestDto2 PropertyNames = null;
 
         public static ATestDto2 With()
         {
@@ -629,13 +629,13 @@ namespace TestFirst.Net.Template
 
 namespace TestFirst.Net.Template
 {
-
+    /// <summary>
+    /// Matcher for a <see cref="TestFirst.Net.Template.TestDto3"/>
+    /// </summary>
     public partial class MyCustomName : PropertyMatcher<TestFirst.Net.Template.TestDto3>
     {
-
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestDto3 PropertyNames = null;
-
+        protected static readonly TestFirst.Net.Template.TestDto3 PropertyNames = null;
 
         public static MyCustomName With()
         {
@@ -685,13 +685,13 @@ namespace TestFirst.Net.Template
 
 namespace TestFirst.Net.Template
 {
-
+    /// <summary>
+    /// Matcher for a <see cref="TestFirst.Net.Template.TestDtoEnumerable"/>
+    /// </summary>
     public partial class ATestDtoEnumerable : PropertyMatcher<TestFirst.Net.Template.TestDtoEnumerable>
     {
-
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestDtoEnumerable PropertyNames = null;
-
+        protected static readonly TestFirst.Net.Template.TestDtoEnumerable PropertyNames = null;
 
         public static ATestDtoEnumerable With()
         {
@@ -765,13 +765,13 @@ namespace TestFirst.Net.Template
 
 namespace MyNamespace
 {
-
+    /// <summary>
+    /// Matcher for a <see cref="TestFirst.Net.Template.TestIndexedDto"/>
+    /// </summary>
     public partial class ATestIndexedDto : PropertyMatcher<TestFirst.Net.Template.TestIndexedDto>
     {
-
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestIndexedDto PropertyNames = null;
-
+        protected static readonly TestFirst.Net.Template.TestIndexedDto PropertyNames = null;
 
         public static ATestIndexedDto With()
         {
@@ -797,13 +797,13 @@ namespace MyNamespace
 
 namespace TestFirst.Net.Template
 {
-
+    /// <summary>
+    /// Matcher for a <see cref="TestFirst.Net.Template.TestDtoWithSubClass"/>
+    /// </summary>
     public partial class ATestDtoWithSubClass : PropertyMatcher<TestFirst.Net.Template.TestDtoWithSubClass>
     {
-
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestDtoWithSubClass PropertyNames = null;
-
+        protected static readonly TestFirst.Net.Template.TestDtoWithSubClass PropertyNames = null;
 
         public static ATestDtoWithSubClass With()
         {
@@ -841,13 +841,13 @@ namespace TestFirst.Net.Template
 
 namespace TestFirst.Net.Template
 {
-
+    /// <summary>
+    /// Matcher for a <see cref="TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto"/>
+    /// </summary>
     public partial class ASubTestDto : PropertyMatcher<TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto>
     {
-
         // provide IDE rename and find reference support
-        private static readonly TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto PropertyNames = null;
-
+        protected static readonly TestFirst.Net.Template.TestDtoWithSubClass.SubTestDto PropertyNames = null;
 
         public static ASubTestDto With()
         {
@@ -894,5 +894,3 @@ namespace TestFirst.Net.Template
         }
     }
 }
-
-

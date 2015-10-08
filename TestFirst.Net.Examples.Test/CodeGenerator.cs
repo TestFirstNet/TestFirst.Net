@@ -5,11 +5,11 @@ using TestFirst.Net.Examples.Api;
 namespace TestFirst.Net.Examples
 {
     [TestFixture]
-    public class CodeGenerator
+    public class MatcherCodeGenerator
     {
         public static void Main(string[] args)
         {
-            new CodeGenerator().GenerateCode();
+            new MatcherCodeGenerator().GenerateCode();
         }
         
         [Test]
@@ -40,7 +40,7 @@ namespace TestFirst.Net.Examples
             
             template.GenerateForAssembly(typeof(Notification).Assembly, "TestFirst.Net.Examples.Api.*");
 
-            template.RenderToFile("Generated.cs");
+            template.RenderToFile("Matchers.generated.cs");
         }
     }
 }

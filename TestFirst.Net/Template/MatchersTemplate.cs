@@ -331,7 +331,7 @@ namespace TestFirst.Net.Template
                 // static property access
                 IncrementIndent();
                 WriteLine("// provide IDE rename and find reference support");
-                WriteLine("private static readonly " + cleanObjectFullName + " PropertyNames = null;");
+                WriteLine("protected static readonly " + cleanObjectFullName + " PropertyNames = null;");
                 
                 // With() method
                 WriteLine();
