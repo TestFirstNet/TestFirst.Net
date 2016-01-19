@@ -33,7 +33,7 @@ def is_windows():
 SOLUTION_DIR=os.path.dirname(os.path.realpath(__file__))
 SOLUTION='TestFirst.Net.sln'
 PROJECTS=['TestFirst.Net','TestFirst.Net.Extensions','TestFirst.Net.Performance']
-TEST_PROJECTS=['TestFirst.Net.Tests','TestFirst.Net.Extensions.Test','TestFirst.Net.Performance.Test']
+TEST_PROJECTS=['TestFirst.Net.Test','TestFirst.Net.Extensions.Test','TestFirst.Net.Performance.Test']
 
 #optional, the project to clean/test etc
 PROJECT=None
@@ -233,8 +233,7 @@ def task_test():
         if include_proj(proj):
             log('executing tests in ' + proj)
             with cd(proj + '/bin/' + CONFIG):
-                # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
-                dll_name=proj if not proj.endswith('s') else proj[:-1]
+                dll_name=proj
                 if TESTS:
                     win_invoke(NUNIT_CONSOLE_EXE,['-nologo','-run:' + TESTS, dll_name + '.dll'])
                 else:
@@ -250,8 +249,7 @@ def task_test_coverage():
         if include_proj(proj):
             log('Executing tests in {} for coverage'.format(proj))
             with cd(proj + '/bin/' + CONFIG):
-                # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
-                test_dll_name=proj if not proj.endswith('s') else proj[:-1]
+                test_dll_name=proj
                 proj_dll_name=(test_dll_name if not test_dll_name.endswith('.Test') else test_dll_name[:-5])
                 
                 log('Generating code coverage for {}'.format(proj))
@@ -476,7 +474,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-//set by the build script
+// set by the build script
 [assembly: AssemblyVersion("$version")]
 [assembly: AssemblyFileVersion("$version")]
 [assembly: AssemblyInformationalVersion("$version")]
@@ -488,12 +486,14 @@ using System.Runtime.InteropServices;
         .replace('alpha','0') \
         .replace('snapshot','0')
 		
-    text=template.replace('$version',version)
+    text=template.strip().replace('$version',version)
     
-    f=open(file, 'w')
-    f.write(text)
-    f.flush()
-    f.close()
+    existing=open(file).read()
+    if existing != text:
+        f=open(file, 'w')
+        f.write(text)
+        f.flush()
+        f.close()
 
 def can_invoke(prog, args=None):
     if prog==None:

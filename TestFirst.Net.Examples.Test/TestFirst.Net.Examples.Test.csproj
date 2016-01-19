@@ -41,7 +41,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>TestFirst.Net.Examples.CodeGenerator</StartupObject>
+    <StartupObject>TestFirst.Net.Examples.MatcherCodeGenerator</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net">
@@ -70,7 +70,7 @@
   <ItemGroup>
     <Compile Include="Api\ANotification.cs" />
     <Compile Include="CodeGenerator.cs" />
-    <Compile Include="Generated.cs" />
+    <Compile Include="Matchers.generated.cs" />
     <Compile Include="Service\ExampleAppTest.cs" />
     <Compile Include="Service\Handler\NotificationQueryHandlerTest.cs" />
     <Compile Include="Api\Query\ANotificationQueryResponse.cs" />
