@@ -57,6 +57,11 @@ namespace TestFirst.Net.Matcher
         {
             return Matchers.Function((double? actual) => actual != null, "a non null double");
         }
+
+        public static IMatcher<double?> NaN()
+        {
+            return Matchers.Function((double? actual) => actual.HasValue && double.IsNaN(actual.Value), "a NaN double");
+        }
     }
 
     internal static class DoubleExtensions

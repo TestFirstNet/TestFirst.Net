@@ -108,5 +108,13 @@ namespace TestFirst.Net.Test.Matcher
             AssertPasses(10D, ADouble.NotNull());
             AssertFails(null, ADouble.NotNull());
         }
+
+        [Test]
+        public void NaNTest()
+        {
+            AssertPasses(double.NaN, ADouble.NaN());
+            AssertFails(10D, ADouble.NaN());
+            AssertFails(null, ADouble.NaN());
+        }
     }
 }
