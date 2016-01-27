@@ -8,14 +8,15 @@ namespace TestFirst.Net.Matcher.Internal
     /// There can be more items than matchers, matchers must apply in order, and each matcher must match. This means there may 
     /// be additional items which don't match
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Type contained within list</typeparam>
     internal class AListInOrderAtLeast<T> : AList.AbstractListMatcher<T>, AList.IAcceptMoreMatchers<T>, IProvidePrettyTypeName
     {
         private readonly List<IMatcher<T>> m_matchers;
  
-        internal AListInOrderAtLeast(IEnumerable<IMatcher<T>> matchers):base("InOrderWithAtLeast")
+        internal AListInOrderAtLeast(IEnumerable<IMatcher<T>> matchers)
+            : base("InOrderWithAtLeast")
         {
-            //check each matcher is not null? or throw error when it happens
+            // check each matcher is not null? or throw error when it happens
             m_matchers = new List<IMatcher<T>>(matchers);
         }
         
@@ -36,11 +37,11 @@ namespace TestFirst.Net.Matcher.Internal
             var matcher = new MatchContext(m_matchers);
             if (!matcher.CanStillMatch())
             {
-                //no matchers so all ok
+                // no matchers so all ok
                 return true;
             }
             matcher.NextMatcher();
-            Object lastMatchedItem = default(T); 
+            object lastMatchedItem = default(T); 
             int lastMatchedItemIdx = -1;
             for (int i = 0; i < items.Count && matcher.CanStillMatch(); i++)
             {
@@ -52,7 +53,8 @@ namespace TestFirst.Net.Matcher.Internal
                     matcher.NextMatcher();
                 }
             }
-            //check all matchers matched
+
+            // check all matchers matched
             if (matcher.CanStillMatch())
             {
                 matcher.AddMisMatchMessage(diagnostics, lastMatchedItem, lastMatchedItemIdx, items);
@@ -61,11 +63,24 @@ namespace TestFirst.Net.Matcher.Internal
             return true;
         }
 
+        public override string ToString()
+        {
+            var desc = new Description();
+            DescribeTo(desc);
+            return desc.ToString();
+        }
+
+        public override void DescribeTo(IDescription desc)
+        {
+            desc.Text("A list in order containing at least:");
+            desc.Children(m_matchers);
+        }
+
         private class MatchContext
         {
+            private readonly List<IMatcher<T>> m_matchers;
             private int m_currentMatcherIdx;
             private bool m_canStillMatch;
-            private readonly List<IMatcher<T>> m_matchers;
                 
             internal MatchContext(List<IMatcher<T>> matchers)
             {
@@ -74,24 +89,10 @@ namespace TestFirst.Net.Matcher.Internal
                 m_matchers = matchers;
             }
 
-            internal bool Matches(Object item, int itemPos, IMatchDiagnostics diagnostics)
+            internal bool Matches(object item, int itemPos, IMatchDiagnostics diagnostics)
             {
                 var matcher = CurrentMatcher();
                 return diagnostics.TryMatch(item, itemPos, matcher);
-            }
-
-            private IMatcher<T> CurrentMatcher()
-            {
-                if (m_currentMatcherIdx < 0)
-                {
-                    throw new InvalidOperationException("no more matchers");
-                }
-                var matcher = m_matchers[m_currentMatcherIdx];
-                if (matcher == null)
-                {
-                    throw new ArgumentException("Child matcher is null, at position " + m_currentMatcherIdx);
-                }
-                return matcher;
             }
 
             internal void NextMatcher()
@@ -111,14 +112,10 @@ namespace TestFirst.Net.Matcher.Internal
                 return m_canStillMatch;
             }
 
-            private bool HasNextMatcher()
+            internal void AddMisMatchMessage(IMatchDiagnostics diagnostics, object lastMatchedItem, int itemPosition, IEnumerable items)
             {
-                return m_currentMatcherIdx < m_matchers.Count - 1;
-            }
-
-            internal void AddMisMatchMessage(IMatchDiagnostics diagnostics, Object lastMatchedItem, int itemPosition, IEnumerable items)
-            {
-                if( HasNextMatcher()){
+                if (HasNextMatcher())
+                {
                     diagnostics.Text("not all matchers matched, matchers which didn't match were");
                     diagnostics.Child("matchedUpToItemAtPosition", itemPosition);
                     diagnostics.Child("matchedUpToItem", lastMatchedItem);
@@ -128,19 +125,25 @@ namespace TestFirst.Net.Matcher.Internal
                     diagnostics.Children("items", items);
                 }
             }
-        }
 
-        public override string ToString()
-        {
-            var desc = new Description();
-            DescribeTo(desc);
-            return desc.ToString();
-        }
+            private IMatcher<T> CurrentMatcher()
+            {
+                if (m_currentMatcherIdx < 0)
+                {
+                    throw new InvalidOperationException("no more matchers");
+                }
+                var matcher = m_matchers[m_currentMatcherIdx];
+                if (matcher == null)
+                {
+                    throw new ArgumentException("Child matcher is null, at position " + m_currentMatcherIdx);
+                }
+                return matcher;
+            }
 
-        public override void DescribeTo(IDescription desc)
-        {
-            desc.Text("A list in order containing at least:");
-            desc.Children(m_matchers);
+            private bool HasNextMatcher()
+            {
+                return m_currentMatcherIdx < m_matchers.Count - 1;
+            }
         }
     }
 }

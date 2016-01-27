@@ -12,10 +12,9 @@ namespace TestFirst.Net.Util
         public static string ReflectionToString<T>(T instance)
         {
             var sb = new StringBuilder();
-            ReflectionToString(sb, "", instance);
+            ReflectionToString(sb, string.Empty, instance);
             return sb.ToString();
         }
-
 
         private static void ReflectionToString<T>(StringBuilder sb, string offset, T instance)
         {
@@ -27,7 +26,7 @@ namespace TestFirst.Net.Util
             sb.Append(instance.GetType().Name);
 
             var props = instance.GetType().GetProperties(ReflectionFlags);
-            foreach(var prop in props)
+            foreach (var prop in props)
             {
                 if (prop.CanRead)
                 {
@@ -43,20 +42,19 @@ namespace TestFirst.Net.Util
                 }
             }
             var fields = instance.GetType().GetFields(ReflectionFlags);
-            foreach(var field in fields)
+            foreach (var field in fields)
             {
                 var val = field.GetValue(instance);
                 Append(sb, offset, field.Name, val);
             }
         }
-
         
-        private static void Append(StringBuilder sb, String offset, String propOrFieldName,Object val )
+        private static void Append(StringBuilder sb, string offset, string propOrFieldName, object val)
         {
             sb.Append(offset).Append("\n\t").Append(propOrFieldName).Append(" : ");
             if (val is IList)
             {
-                PrintList(sb, offset + "\t", (IList) val);
+                PrintList(sb, offset + "\t", (IList)val);
             }
             else
             {

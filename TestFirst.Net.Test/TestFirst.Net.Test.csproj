@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TestFirst.Net.Test</RootNamespace>
+    <AssemblyName>TestFirst.Net.Test</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>42744463</NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="NSubstitute, Version=1.8.2.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+      <HintPath>..\packages\NSubstitute.1.8.2.0\lib\net40\NSubstitute.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Shouldly, Version=2.6.0.0, Culture=neutral, PublicKeyToken=6042cbcb05cbc941, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shouldly.2.6.0\lib\net40\Shouldly.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AbstractScenarioTest.cs" />
+    <Compile Include="AbstractScenarioTestTest.cs" />
+    <Compile Include="DisposingStepArgsInjectorTest.cs" />
+    <Compile Include="Matcher\AbstractMatcherTest.cs" />
+    <Compile Include="Matcher\AnArrayTest.cs" />
+    <Compile Include="Matcher\ADateTimeOffsetTest.cs" />
+    <Compile Include="Template\MatchersTemplateTest.cs" />
+    <Compile Include="Template\MatchersTemplateTest.Expect.generated.cs" />
+    <Compile Include="Template\TestDto.cs" />
+    <Compile Include="Matcher\ABoolTest.cs" />
+    <Compile Include="Matcher\ADateTimeTest.cs" />
+    <Compile Include="Matcher\ADecimalTest.cs" />
+    <Compile Include="Matcher\ADoubleTest.cs" />
+    <Compile Include="Matcher\AFloatTest.cs" />
+    <Compile Include="Matcher\ALongTest.cs" />
+    <Compile Include="Matcher\AnExceptionTest.cs" />
+    <Compile Include="Matcher\AShortTest.cs" />
+    <Compile Include="Matcher\AnInstanceTest.cs" />
+    <Compile Include="Matcher\ATimeSpanTest.cs" />
+    <Compile Include="Matcher\AListInAnyOrderTest.cs" />
+    <Compile Include="Rand\RandomFillerTest.cs" />
+    <Compile Include="ScenarioBuilderTest.cs" />
+    <Compile Include="ScenarioInserterTest.cs" />
+    <Compile Include="ScenarioThenMatcherTest.cs" />
+    <Compile Include="DescriptionTest.cs" />
+    <Compile Include="Matcher\AGuidTest.cs" />
+    <Compile Include="Matcher\AStringTest.cs" />
+    <Compile Include="ScenarioFetcherTest.cs" />
+    <Compile Include="ScenarioTest.cs" />
+    <Compile Include="MatchDiagnosticsTest.cs" />
+    <Compile Include="Matcher\AnIntTest.cs" />
+    <Compile Include="Matcher\BaseMatcherTest.cs" />
+    <Compile Include="Matcher\AListInOrderTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Matcher\PropertyMatcherTest.cs" />
+    <Compile Include="TypeExtensionsTest.cs" />
+    <Compile Include="Matcher\AKeyValuePairTest.cs" />
+    <Compile Include="Matcher\ACharTest.cs" />
+    <Compile Include="ExpectTest.cs" />
+    <Compile Include="Matcher\AByteArray.cs" />
+    <Compile Include="Util\TimesBuilderTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Lang\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TestFirst.Net\TestFirst.Net.csproj">
+      <Project>{EF8C3967-0099-41CF-AAE7-02555869C67A}</Project>
+      <Name>TestFirst.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="..\packages\StyleCop.MSBuild.4.7.49.1\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.1\build\StyleCop.MSBuild.Targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\StyleCop.MSBuild.4.7.49.1\build\StyleCop.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StyleCop.MSBuild.4.7.49.1\build\StyleCop.MSBuild.Targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -5,9 +5,9 @@ namespace TestFirst.Net.Matcher
 {
     /// <summary>
     /// Usage:
-    /// 
+    /// <para>
     /// ATimeSpan.GreaterOrEqualTo(3).Minutes();
-    /// 
+    /// </para>
     /// </summary>
     public static class ATimeSpan
     {
@@ -141,7 +141,25 @@ namespace TestFirst.Net.Matcher
         protected abstract IMatcher<TimeSpan?> Matcher(Func<int, TimeSpan> func);
     }
 
-    class SingleArg : FluentMatcherFactory
+    internal static class TimeSpanExtensions
+    {
+        internal static bool IsValidTimeSpan(this TimeSpan? val)
+        {
+            return val != null;
+        }
+
+        internal static int SafeCompareTo(this TimeSpan val, TimeSpan? other)
+        {
+            if (other == null)
+            {
+                return -1; // treat null as less
+            }
+            int compare = val.CompareTo(other.Value);
+            return compare;
+        }
+    }
+
+    internal class SingleArg : FluentMatcherFactory
     {
         private readonly int m_time;
 
@@ -159,41 +177,23 @@ namespace TestFirst.Net.Matcher
         }
     }
 
-    class DualArg:FluentMatcherFactory
+    internal class DualArg : FluentMatcherFactory
     {
         private readonly int m_time1;
         private readonly int m_time2;
 
-        private readonly Func<TimeSpan,TimeSpan, IMatcher<TimeSpan?>> m_matcherCreateFunc;
+        private readonly Func<TimeSpan, TimeSpan, IMatcher<TimeSpan?>> m_matcherCreateFunc;
 
-        internal DualArg(int time1,int time2, Func<TimeSpan,TimeSpan, IMatcher<TimeSpan?>> matcherCreateFunc)
+        internal DualArg(int time1, int time2, Func<TimeSpan, TimeSpan, IMatcher<TimeSpan?>> matcherCreateFunc)
         {
             m_time1 = time1;
             m_time2 = time2;
             m_matcherCreateFunc = matcherCreateFunc;
         }
 
-        protected override IMatcher<TimeSpan?> Matcher(Func<int,TimeSpan> func)
+        protected override IMatcher<TimeSpan?> Matcher(Func<int, TimeSpan> func)
         {
-            return m_matcherCreateFunc.Invoke(func.Invoke(m_time1),func.Invoke(m_time2));
-        }
-    }
-
-    internal static class TimeSpanExtensions
-    {
-        internal static bool IsValidTimeSpan(this TimeSpan? val)
-        {
-            return val!= null;
-        }
-
-        internal static int SafeCompareTo(this TimeSpan val, TimeSpan? other)
-        {
-            if (other == null)
-            {
-                return -1; //treat null as less
-            }
-            int compare = val.CompareTo(other.Value);
-            return compare;
+            return m_matcherCreateFunc.Invoke(func.Invoke(m_time1), func.Invoke(m_time2));
         }
     }
 }

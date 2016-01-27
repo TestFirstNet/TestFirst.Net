@@ -11,9 +11,10 @@ namespace TestFirst.Net.Extensions.Matcher
         private static bool _verifyLogToConsole;
 
         /// <summary>
-        /// Ensure <see cref="Is{T}(IMatcher{T})"/> Moq verification also logs the matchign to the console. Useful during debugging
+        /// Ensure <see cref="Is{T}(IMatcher{T})"/> Moq verification also logs the matching to the console. Useful during debugging
         /// of tests
         /// </summary>
+        /// <param name="b">Whether to verify to console</param>
         public static void UseVerifyToConsole(bool b)
         {
             _verifyLogToConsole = b;
@@ -30,13 +31,19 @@ namespace TestFirst.Net.Extensions.Matcher
 
         /// <summary>
         /// For Moq matcher verify. Instead of 
-        /// 
+        /// <para>
         ///     MyMatcher.With()...Verify() 
-        /// 
+        /// </para>
+        /// <para>
         /// do 
-        /// 
+        /// </para>
+        /// <para>
         ///     Arg.Is(MyMatcher.With()...)
+        /// </para>
         /// </summary>
+        /// <param name="matcher">The matcher</param>
+        /// <returns>The instance</returns>
+        /// <typeparam name="T">The type of object to match against</typeparam>
         public static T Is<T>(IMatcher<T> matcher)
         {
             if (_verifyLogToConsole)
@@ -46,7 +53,7 @@ namespace TestFirst.Net.Extensions.Matcher
             return matcher.Verify();
         }
 
-        public static T Is<T>(IMatcher<T?> matcher) where T:struct
+        public static T Is<T>(IMatcher<T?> matcher) where T : struct
         {
             if (_verifyLogToConsole)
             {
@@ -58,9 +65,9 @@ namespace TestFirst.Net.Extensions.Matcher
         /// <summary>
         /// Use an instance matcher to allow passing in of an enum where a nullable enum is require
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="val"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type of instance to check</typeparam>
+        /// <param name="val">The value to assert is not null</param>
+        /// <returns>The value</returns>
         public static T? IsNotNull<T>(T val) where T : struct
         {
             if (_verifyLogToConsole)

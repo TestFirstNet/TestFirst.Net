@@ -4,14 +4,15 @@ namespace TestFirst.Net.Logging
 {
     public class SystemDiagnosticsLogAdapter : BaseLogger
     {
-        private readonly String m_logName;
+        private readonly string m_logName;
 
-        private SystemDiagnosticsLogAdapter(LogLevel level, String name) : base(level, name)
+        private SystemDiagnosticsLogAdapter(LogLevel level, string name) 
+            : base(level, name)
         {
             m_logName = name;
         }
 
-        protected override void LogLine(LogLevel level, String line)
+        protected override void LogLine(LogLevel level, string line)
         {
             if (level.Equals(LogLevel.Trace))
             {

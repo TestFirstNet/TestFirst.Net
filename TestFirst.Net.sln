@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-VisualStudioVersion = 12.0.30110.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFirst.Net", "TestFirst.Net\TestFirst.Net.csproj", "{EF8C3967-0099-41CF-AAE7-02555869C67A}"
 EndProject
@@ -19,17 +19,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFirst.Net.Examples.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFirst.Net.Performance.Test", "TestFirst.Net.Performance.Test\TestFirst.Net.Performance.Test.csproj", "{D45897FA-344E-4833-8B22-44608265A829}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFirst.Net.Test", "TestFirst.Net.Tests\TestFirst.Net.Test.csproj", "{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFirst.Net.Test", "TestFirst.Net.Test\TestFirst.Net.Test.csproj", "{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8F6D2D73-39B5-4720-8C63-AE00F5BBA54E}"
 	ProjectSection(SolutionItems) = preProject
+		build.py = build.py
+		CommonAssemblyInfo.cs = CommonAssemblyInfo.cs
 		icon.png = icon.png
 		icon_30x35.png = icon_30x35.png
 		icon_60x71.png = icon_60x71.png
 		LICENSE.txt = LICENSE.txt
-		build = build
-		RELEASENOTES.md = RELEASENOTES.md
 		README.md = README.md
+		RELEASENOTES.md = RELEASENOTES.md
+		Settings.StyleCop = Settings.StyleCop
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F4BAE0B6-2EF4-4C93-BB36-80784F995BCB}"
@@ -45,6 +47,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EF8C3967-0099-41CF-AAE7-02555869C67A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF8C3967-0099-41CF-AAE7-02555869C67A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF8C3967-0099-41CF-AAE7-02555869C67A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF8C3967-0099-41CF-AAE7-02555869C67A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{074926A9-0CF4-422F-886E-8CFBF4839284}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{074926A9-0CF4-422F-886E-8CFBF4839284}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{074926A9-0CF4-422F-886E-8CFBF4839284}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -65,18 +71,17 @@ Global
 		{B75670B3-D47C-4B70-8F04-9267523833B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B75670B3-D47C-4B70-8F04-9267523833B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B75670B3-D47C-4B70-8F04-9267523833B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D45897FA-344E-4833-8B22-44608265A829}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D45897FA-344E-4833-8B22-44608265A829}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D45897FA-344E-4833-8B22-44608265A829}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D45897FA-344E-4833-8B22-44608265A829}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EF8C3967-0099-41CF-AAE7-02555869C67A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EF8C3967-0099-41CF-AAE7-02555869C67A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EF8C3967-0099-41CF-AAE7-02555869C67A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EF8C3967-0099-41CF-AAE7-02555869C67A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C37C7EC4-AD1D-42A4-99C6-79FB5E8C9D3C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B45A483E-F928-43BB-A862-6FDBDB3F255D} = {8CB35AE6-ED66-47F0-B4A8-E43ED1A4B431}
@@ -91,8 +96,5 @@ Global
 		$1.inheritsSet = VisualStudio
 		$1.inheritsScope = text/plain
 		$1.scope = text/plain
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

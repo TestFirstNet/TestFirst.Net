@@ -14,7 +14,7 @@ namespace TestFirst.Net.Rand
             var genericArguments = type.GetGenericArguments();
             var typeDefeninition = type.Name;
             var unmangledName = typeDefeninition.Substring(0, typeDefeninition.IndexOf("`"));
-            return unmangledName + "<" + String.Join(",", genericArguments.Select(PrettyName)) + ">";
+            return unmangledName + "<" + string.Join(",", genericArguments.Select(PrettyName)) + ">";
         }
     }
 }

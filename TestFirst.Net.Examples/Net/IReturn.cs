@@ -1,4 +1,4 @@
-﻿namespace TestFirst.Net.Examples.Api.Query
+﻿namespace TestFirst.Net.Examples.Net
 {
     public interface IReturn<T>
     {

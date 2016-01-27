@@ -2,6 +2,6 @@
 {
     public interface IRequireClock
     {
-        IClock Clock{ set; }
+        IClock Clock { set; }
     }
 }

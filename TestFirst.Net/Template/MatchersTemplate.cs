@@ -10,46 +10,67 @@ using Microsoft.CSharp;
 
 namespace TestFirst.Net.Template 
 {
+    public interface ITemplate
+    {
+        /// <summary>
+        /// Invoke the template and render all the content. The methods below can only be called in the context of this call
+        /// </summary>
+        /// <returns>The rendered template</returns>
+        string Render();
+
+        void WriteLine();
+        void Write(string line, params object[] args);
+        void WriteLine(string line, params object[] args);
+        void IncrementIndent();
+        void DecrementIndent();
+    }
+
     /// <summary>
     /// I generate matcher classes
-    /// 
+    /// <para>
     /// Usage:
-    /// 
+    /// </para>
+    /// <para>
     /// var t = new TestFirst.Net.Template.MatchersTemplate();
-    ///
-    /// t.Defaults().Namespace("MyNamespace");
-    ///
-    /// t.ForPropertyType<MyPropertyType1>
-    ///    .AddMatchMethodTaking<String>("MyPropertyType1.Parse($argName)")  ==> will generate  public MyMatcher MyPropertyName(String expect){ MyPropertyName(MyPropertyType1.Parse(expect)); return this;}
-    ///    .AddMatchMethodTaking<MyPropertyType1>("AnInstance.Equal($argName)");
-    ///
-    /// t.ForPropertyType<MyPropertyType3>
-    ///    .AddMatchMethodTaking<String>("new Foo($argName)")
-    ///    .AddMatchMethodTaking<Object>("AnInstance.Equals($argName)");
-    ///
-    /// 
-    /// t.GenerateFor<MyPoco1>(); ==> will geenrate a matcher for this class
-    /// t.GenerateFor<MyPoco2>(); ==> ditto
-    /// 
+    /// </para>
+    /// <para>
+    /// t.Defaults().WithNamespace("MyNamespace");
+    /// </para>
+    /// <para>
+    /// t.ForPropertyType&lt;MyPropertyType1&gt;
+    ///    .AddMatchMethodTaking&lt;String&gt;("MyPropertyType1.Parse($argName)")  ==> will generate  public MyMatcher MyPropertyName(string expect){ MyPropertyName(MyPropertyType1.Parse(expect)); return this;}
+    ///    .AddMatchMethodTaking&lt;MyPropertyType1&gt;("AnInstance.Equal($argName)");
+    /// </para>
+    /// <para>
+    /// t.ForPropertyType&lt;MyPropertyType3&gt;
+    ///    .AddMatchMethodTaking&lt;string&gt;("new Foo($argName)")
+    ///    .AddMatchMethodTaking&lt;object&gt;("AnInstance.Equals($argName)");
+    /// </para>
+    /// <para>
+    /// t.GenerateFor&lt;MyPoco1&gt;(); ==> will generate a matcher for this class
+    /// t.GenerateFor&lt;MyPoco2&gt;(); ==> ditto
+    /// </para>
+    /// <para>
     /// t.Render() => performs the generation, outputs a string
+    /// </para>
     /// </summary>
-    public class MatchersTemplate : AbstractTemplate {
-
-        private readonly IDictionary<String, String> m_equalMatchersByTypeName = new Dictionary<String, String>();
+    public class MatchersTemplate : AbstractTemplate 
+    {
+        private readonly IDictionary<string, string> m_equalMatchersByTypeName = new Dictionary<string, string>();
 
         private readonly List<TemplateOptions> m_toGenerate = new List<TemplateOptions>();
 
-        private readonly TemplateOptions BuiltinDefaults = new TemplateOptions()
-                .IncludeParentProps(true)
-                .ExcludeProperties(typeof(IEnumerable<>), "Item")
-                .ExcludeProperties(typeof(IList<>), "Item")
-                .ExcludeProperties(typeof(IDictionary<,>), "Item");
+        private readonly TemplateOptions m_builtinDefaults = new TemplateOptions()
+                .WithIncludeParentProps(true)
+                .WithExcludeProperties(typeof(IEnumerable<>), "Item")
+                .WithExcludeProperties(typeof(IList<>), "Item")
+                .WithExcludeProperties(typeof(IDictionary<,>), "Item");
 
-        private TemplateOptions m_defaultOptions = new TemplateOptions();
+        private readonly TemplateOptions m_defaultOptions = new TemplateOptions();
 
         public MatchersTemplate()
         {
-            m_defaultOptions = BuiltinDefaults; 
+            m_defaultOptions = m_builtinDefaults; 
             
             EqualMatcherFor<string>("AString.EqualTo($argName)");
             EqualMatcherFor<bool>("ABool.EqualTo($argName)");
@@ -84,12 +105,12 @@ namespace TestFirst.Net.Template
             return m_defaultOptions;
         }
 
-        public void EqualMatcherFor<T>(String equalSnippet)
+        public void EqualMatcherFor<T>(string equalSnippet)
         {
             EqualMatcherFor(typeof(T).FullName, equalSnippet);
         }
 
-        public void EqualMatcherFor(String fullType, String equalSnippet)
+        public void EqualMatcherFor(string fullType, string equalSnippet)
         {
             m_equalMatchersByTypeName[fullType] = equalSnippet;
         }
@@ -101,17 +122,10 @@ namespace TestFirst.Net.Template
             GenerateFor(types);
         }
 
-        private IEnumerable<Type> FindTypesWithAttributeIn<TAttribute>(Assembly assembly)
-            where TAttribute : Attribute
-        {
-            return from type in assembly.GetTypes()
-                   where type.IsDefined(typeof(TAttribute), false)
-                   select type;
-        }
-
         public void GenerateFor(IEnumerable<Type> types)
         {
-            foreach (var t in types){
+            foreach (var t in types)
+            {
                 GenerateFor(t);
             }   
         }
@@ -120,14 +134,13 @@ namespace TestFirst.Net.Template
         {
             var types = assembly.GetTypes();
             var matched = new HashSet<Type>();
-            foreach(var glob in globPaths){
+            foreach (var glob in globPaths)
+            {
                 var re = FromAntToRegex(glob);
                 foreach (var type in types)
                 {
-                    //Console.WriteLine(type.FullName);
                     if (!type.IsAbstract && re.IsMatch(type.FullName))
                     {
-                        //Console.WriteLine("MATCHED:" + type.FullName);
                         matched.Add(type);
                     }
                 }
@@ -137,7 +150,68 @@ namespace TestFirst.Net.Template
             {
                 GenerateFor(type);
             }
+        }
 
+        public TemplateOptions GenerateFor<T>()
+        {
+            return GenerateFor(typeof(T));
+        }
+
+        public TemplateOptions GenerateFor(Type objectType)
+        {
+            var opts = new TemplateOptions();
+            opts.MatcherForType = objectType;
+            m_toGenerate.Add(opts);
+            return opts;
+        }
+        
+        /// <summary>
+        /// Render to the given file path, returning true if the generation caused a change to the file. If the file path is relative, then
+        /// a search is performed from the current directory up for a *.csproj and this is used as the root directory to calculate the relative path from
+        /// </summary>
+        /// <param name="path">The path to render the matcher to</param>
+        /// <returns>true if the file contents have changed</returns>
+        public bool RenderToFile(string path)
+        {
+            FileInfo file;
+            if (Path.IsPathRooted(path))
+            {
+                file = new FileInfo(path);
+            }
+            else
+            {
+                file = new FileInfo(Path.Combine(FindProjectRootDir().FullName, path));
+            }
+            return RenderToFile(file);
+        }
+
+        /// <summary>
+        /// Render generated code to the given file, returning true if the file was modified. If the generation causes no change to the file, returns false
+        /// </summary>
+        /// <param name="file">The file to render to</param>
+        /// <returns>true if the file was modified</returns>
+        public bool RenderToFile(FileInfo file)
+        {
+            return WriteToFileIfChanged(Render(), file);
+        }
+
+        protected override void Generate()
+        {
+            WriteLine("using System;");
+            WriteLine("using System.Collections.Generic;");
+            WriteLine("using System.Linq;");
+            WriteLine("using System.Text;");
+            WriteLine("using TestFirst.Net;");
+            WriteLine("using TestFirst.Net.Matcher;");
+
+            var defaults = m_builtinDefaults.Merge(m_defaultOptions);
+
+            foreach (var opt in m_toGenerate)
+            {
+                var merged = defaults.Merge(opt);
+                var t = new SingleMatcherTemplate(merged, m_equalMatchersByTypeName);
+                Write(t.Render());
+            }
         }
 
         private static Regex FromAntToRegex(string antExpression)
@@ -164,39 +238,9 @@ namespace TestFirst.Net.Template
             }
             return new Regex(sb.ToString(), RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
         }
-        public TemplateOptions GenerateFor<T>()
-        {
-            return GenerateFor(typeof(T));
-        }
 
-        public TemplateOptions GenerateFor(Type objectType)
+        private static DirectoryInfo FindProjectRootDir()
         {
-            var opts = new TemplateOptions();
-            opts._MatcherForType = objectType;
-            m_toGenerate.Add(opts);
-            return opts;
-        }
-        
-        /// <summary>
-        /// Render to the given file path, returning true if the generation caused a change to the file. If the file path is relative, then
-        /// a search is performed from the current directory up for a *.csproj and this is used as the root directory to calculate the relative path from
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public bool RenderToFile(string path){
-            FileInfo file;
-            if (Path.IsPathRooted(path))
-            {
-                file = new FileInfo(path);
-            }
-            else
-            {
-                file = new FileInfo(Path.Combine(FindProjectRootDir().FullName, path));
-            }
-            return RenderToFile(file);
-        }
-
-        private static DirectoryInfo FindProjectRootDir(){
             var current = new DirectoryInfo(Directory.GetCurrentDirectory());
             while (current != null)
             {
@@ -210,33 +254,12 @@ namespace TestFirst.Net.Template
             throw new FileNotFoundException("Could not find project root directory (walking up looking for a *.csproj file). You may need to specify an absolute file path");
         }
 
-        /// <summary>
-        /// Render generated code to the given file, returning true if the file was modified. If the generation causes no change t the file, returns false
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        public bool RenderToFile(FileInfo file)
+        private IEnumerable<Type> FindTypesWithAttributeIn<TAttribute>(Assembly assembly)
+            where TAttribute : Attribute
         {
-            return WriteToFileIfChanged(Render(), file);
-        }
-
-        protected override void Generate()
-        {
-            WriteLine("using System;");
-            WriteLine("using System.Collections.Generic;");
-            WriteLine("using System.Linq;");
-            WriteLine("using System.Text;");
-            WriteLine("using TestFirst.Net;");
-            WriteLine("using TestFirst.Net.Matcher;");
-
-            var defaults = BuiltinDefaults.Merge(m_defaultOptions);
-
-            foreach (var opt in m_toGenerate)
-            {
-                var merged = defaults.Merge(opt);
-                var t = new SingleMatcherTemplate(merged,m_equalMatchersByTypeName);
-                Write(t.Render());
-            }
+            return from type in assembly.GetTypes()
+                   where type.IsDefined(typeof(TAttribute), false)
+                   select type;
         }
 
         private bool WriteToFileIfChanged(string content, FileInfo file)
@@ -256,119 +279,106 @@ namespace TestFirst.Net.Template
             WriteToFile(content, file);
             return true;
         }
-        private void WriteToFile(String content, FileInfo file) {
+
+        private void WriteToFile(string content, FileInfo file)
+        {
             file.Directory.Create();
 
             Console.WriteLine("Writing generated file to:" + file.FullName);
 
-            using (var stream = file.Open(FileMode.Create, FileAccess.Write)) {
+            using (var stream = file.Open(FileMode.Create, FileAccess.Write)) 
+            {
                 var bytes = Encoding.UTF8.GetBytes(content);
                 stream.Write(bytes, 0, bytes.Length);
             }
         }
-        
-        internal class SingleMatcherTemplate : AbstractTemplate
+
+        private class SingleMatcherTemplate : AbstractTemplate
         {
-            
-            internal IDictionary<String, String> EqualMatcherSnippetsByTypeName;
-            internal IList<PropertyMatchers> AdditionalPropertyMatchers { get; set; }
+            private readonly IDictionary<string, string> m_equalMatcherSnippetsByTypeName;
+            private readonly IList<PropertyMatchers> m_additionalPropertyMatchers;
+            private readonly IDictionary<Type, IList<string>> m_excludeProperties;
+            private readonly Type m_objectType;
+            private readonly string m_matcherName;
+            private readonly string m_namespace;
+            private readonly bool m_includeParentProps;
 
-            internal IDictionary<Type, IList<String>> ExcludeProperties { get;set;}
-
-            internal Type ObjectType { get; set; }
-            internal String MatcherName { get; set; }
-            internal string Namespace { get; set; }
-            internal bool IncludeParentProps { get; set; }
-            internal IList<String> CustomMethodsSourceCode { get; set; }
-
-            internal SingleMatcherTemplate(TemplateOptions options, IDictionary<String, String> equalMatcherSnippetsByTypeName)
+            internal SingleMatcherTemplate(TemplateOptions options, IDictionary<string, string> equalMatcherSnippetsByTypeName)
             {
-                ObjectType = options._MatcherForType;
-                MatcherName = options._MatcherName ?? "A" + options._MatcherForType.Name;
-                Namespace = options._Namespace ?? options._MatcherForType.Namespace;
-                IncludeParentProps = options._IncludeParentProps ?? true;
-                ExcludeProperties = options._ExcludeProperties;
-                EqualMatcherSnippetsByTypeName = equalMatcherSnippetsByTypeName;
-                AdditionalPropertyMatchers = options._PropertyMatchers;
+                m_objectType = options.MatcherForType;
+                m_matcherName = options.MatcherName ?? "A" + options.MatcherForType.Name;
+                m_namespace = options.Namespace ?? options.MatcherForType.Namespace;
+                m_includeParentProps = options.IncludeParentProps ?? true;
+                m_excludeProperties = options.ExcludeProperties;
+                m_equalMatcherSnippetsByTypeName = equalMatcherSnippetsByTypeName;
+                m_additionalPropertyMatchers = options.PropertyMatchers;
             }
 
             protected override void Generate() 
             {
-                //namespace
+                // namespace
                 WriteLine();
-                WriteLine("namespace " + Namespace + " {");
+                WriteLine("namespace " + m_namespace + "[[nl]]{");
 
-                var cleanObjectFullName = ObjectType.ToPrettyTypeName();
-                //class
-                WriteLine();
+                // class
+                var cleanObjectFullName = m_objectType.ToPrettyTypeName();
                 IncrementIndent();
-                WriteLine("public partial class " + MatcherName + " : PropertyMatcher<" + cleanObjectFullName  + ">{");
+                WriteLine("/// <summary>");
+                WriteLine("/// Matcher for a <see cref=\"" + cleanObjectFullName + "\"/>");
+                WriteLine("/// </summary>");
+                WriteLine("public partial class " + m_matcherName + " : PropertyMatcher<" + cleanObjectFullName + ">[[nl]]{");
 
+                // static property access
                 IncrementIndent();
-                //static property access
-                WriteLine();
                 WriteLine("// provide IDE rename and find reference support");
-                WriteLine("private static readonly " + cleanObjectFullName + " PropertyNames = null;");
-                WriteLine();
+                WriteLine("protected static readonly " + cleanObjectFullName + " PropertyNames = null;");
                 
-                //With() method
+                // With() method
                 WriteLine();
-                WriteLine("public static " + MatcherName + " With(){");
-                WriteLine(CurrentIndent + "return new " + MatcherName + "();");
+                WriteLine("public static " + m_matcherName + " With()[[nl]]{");
+                WriteLine(Indent + "return new " + m_matcherName + "();");
                 WriteLine("}");
 
-                //Null() method
+                // Null() method
                 WriteLine();
-                WriteLine("public static IMatcher<" + cleanObjectFullName + "> Null(){");
-                WriteLine(CurrentIndent + "return AnInstance.Null<" + cleanObjectFullName + ">();");
+                WriteLine("public static IMatcher<" + cleanObjectFullName + "> Null()[[nl]]{");
+                WriteLine(Indent + "return AnInstance.Null<" + cleanObjectFullName + ">();");
                 WriteLine("}");
 
-                //NotNull() method
+                // NotNull() method
                 WriteLine();
-                WriteLine("public static IMatcher<" + cleanObjectFullName + "> NotNull(){");
-                WriteLine(CurrentIndent + "return AnInstance.NotNull<" + cleanObjectFullName + ">();");
+                WriteLine("public static IMatcher<" + cleanObjectFullName + "> NotNull()[[nl]]{");
+                WriteLine(Indent + "return AnInstance.NotNull<" + cleanObjectFullName + ">();");
                 WriteLine("}");
 
-                //Instance() method
+                // Instance() method
                 WriteLine();
-                WriteLine("public static IMatcher<" + cleanObjectFullName + "> Instance(" + cleanObjectFullName  + " expect){");
-                WriteLine(CurrentIndent + "return AnInstance.SameAs(expect);");
+                WriteLine("public static IMatcher<" + cleanObjectFullName + "> Instance(" + cleanObjectFullName + " expect)[[nl]]{");
+                WriteLine(Indent + "return AnInstance.SameAs(expect);");
                 WriteLine("}");
 
-                if (CustomMethodsSourceCode != null)
-                {
-                    foreach (var methodSource in CustomMethodsSourceCode)
-                    {
-                        var code = methodSource
-                            .Replace("$namespace", Namespace)
-                            .Replace("$objectType", ObjectType.ToPrettyTypeName())
-                            .Replace("$matcherName", MatcherName);
-                        WriteLine();
-                        WriteLine(code);
-                    }
-                    WriteLine();
-                }
-                    
                 GenerateMethods();
 
                 DecrementIndent();
-                WriteLine("}");//class
+                WriteLine("}"); // class
                 DecrementIndent(); 
-                WriteLine("}");//namespace
+                WriteLine("}"); // namespace
             }
 
             private void GenerateMethods() 
             {
                 var bindings = BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.Instance;
-                if( !IncludeParentProps ){
+                if (!m_includeParentProps)
+                {
                     bindings = bindings | BindingFlags.DeclaredOnly;
                 }
-                var props = ObjectType.GetProperties(bindings).OrderBy(p => p.Name);
-                var excludes = ExcludeProperties ==null?null:ExcludeProperties
-                        .Where(kv=>kv.Key.IsSuperclassOrInterfaceOf(ObjectType))
+                var props = m_objectType.GetProperties(bindings).OrderBy(p => p.Name);
+                var excludes = m_excludeProperties == null ? null : m_excludeProperties
+                        .Where(kv => kv.Key.IsSuperclassOrInterfaceOf(m_objectType))
                         .ToList();
 
-                foreach (var p in props) {
+                foreach (var p in props)
+                {
                     var pType = p.PropertyType;
                     var pNameLower = p.Name.ToLowerInvariant();
                     var pIsIndexed = p.GetIndexParameters().Length > 0;
@@ -376,25 +386,26 @@ namespace TestFirst.Net.Template
                     if (!skip)
                     {
                         var pCleanTypeName = p.PropertyType.ToPrettyTypeName();
-                        //custom user converters. E.g String=>Foo, or Foo=>FooMatcher
-                        if (AdditionalPropertyMatchers != null)
+
+                        // custom user converters. E.g String => Foo, or Foo => FooMatcher
+                        if (m_additionalPropertyMatchers != null)
                         {
-                            foreach (var template in AdditionalPropertyMatchers)
+                            foreach (var template in m_additionalPropertyMatchers)
                             {
                                 if (template.Match(p))
                                 {
-                                    template.Generate(this, p, MatcherName);
+                                    template.Generate(this, p, m_matcherName);
                                 }
                             }
                         }
-                        var createEquals = EqualMatcherSnippetsByTypeName.ContainsKey(p.PropertyType.FullName);
+                        var createEquals = m_equalMatcherSnippetsByTypeName.ContainsKey(p.PropertyType.FullName);
                         if (createEquals)
                         {
-                            var equalMatcherSnippet = EqualMatcherSnippetsByTypeName[p.PropertyType.FullName];
+                            var equalMatcherSnippet = m_equalMatcherSnippetsByTypeName[p.PropertyType.FullName];
                             var code = equalMatcherSnippet.Replace("$argType", pCleanTypeName).Replace("$argName", "expect").Replace("$propertyName", p.Name);
 
                             WriteLine();
-                            WriteLine("public " + MatcherName + " " + p.Name + "(" + pCleanTypeName + " expect) {");
+                            WriteLine("public " + m_matcherName + " " + p.Name + "(" + pCleanTypeName + " expect)[[nl]]{");
                             IncrementIndent();
                             if (code.EndsWith(";"))
                             {
@@ -411,7 +422,7 @@ namespace TestFirst.Net.Template
                         else if (pType.IsEnum)
                         {
                             WriteLine();
-                            WriteLine("public " + MatcherName + " " + p.Name + "(" + pCleanTypeName + "? expect) {");
+                            WriteLine("public " + m_matcherName + " " + p.Name + "(" + pCleanTypeName + "? expect)[[nl]]{");
                             IncrementIndent();
                             WriteLine(p.Name + "(AnInstance.EqualTo(expect));");
                             WriteLine("return this;");
@@ -424,16 +435,13 @@ namespace TestFirst.Net.Template
                         if (isNullable)
                         {
                             WriteLine();
-                            WriteLine("public " + MatcherName + " " + p.Name + "Null() {");
+                            WriteLine("public " + m_matcherName + " " + p.Name + "Null()[[nl]]{");
                             IncrementIndent();
                             switch (pCleanTypeName)
                             {
                                 case "bool?":
                                     WriteLine(p.Name + "(ABool.Null());");
                                     break;
-                                //case "byte?":
-                                //    WriteLine(p.Name + "(AByte.Null());");
-                                //    break;
                                 case "decimal?":
                                     WriteLine(p.Name + "(ADecimal.Null());");
                                     break;
@@ -458,8 +466,8 @@ namespace TestFirst.Net.Template
                                 case "string":
                                     WriteLine(p.Name + "(AString.Null());");
                                     break;
-                                default :
-                                    WriteLine(p.Name + "(AnInstance.EqualTo<" + pCleanTypeName + (addNullableMark ? "?" : "") + ">(null));");
+                                default:
+                                    WriteLine(p.Name + "(AnInstance.EqualTo<" + pCleanTypeName + (addNullableMark ? "?" : string.Empty) + ">(null));");
                                     break;
                             }
                             WriteLine("return this;");
@@ -467,93 +475,76 @@ namespace TestFirst.Net.Template
                             WriteLine("}");
                         }
                         
-                        WriteLine(); 
-                        WriteLine("public " + MatcherName + " " + p.Name + "(IMatcher<" + pCleanTypeName + (addNullableMark ? "?" : "") + "> matcher) {");
+                        WriteLine();
+                        WriteLine("public " + m_matcherName + " " + p.Name + "(IMatcher<" + pCleanTypeName + (addNullableMark ? "?" : string.Empty) + "> matcher)[[nl]]{");
                         IncrementIndent();
-                        WriteLine("WithProperty(()=>PropertyNames." + p.Name + ",matcher);");
+                        WriteLine("WithProperty(() => PropertyNames." + p.Name + ", matcher);");
                         WriteLine("return this;");
                         DecrementIndent();
                         WriteLine("}");
-
                     }
                 }   
             }
         }
-
     }
 
     public class TemplateOptions
     {
         private static readonly TemplateOptions Empty = new TemplateOptions();
 
-        internal Type _MatcherForType;
-        internal String _MatcherName;
-        internal String _Namespace;
-        internal bool? _IncludeParentProps;
-        internal IDictionary<Type, IList<String>> _ExcludeProperties;
-        internal IList<PropertyMatchers> _PropertyMatchers;
-
         internal TemplateOptions()
         {
-            _MatcherForType = typeof(Object);
+            MatcherForType = typeof(object);
         }
 
-        internal TemplateOptions Merge(TemplateOptions overrides)
-        {
-            overrides = overrides ?? Empty;
+        internal Type MatcherForType { get; set; }
+        internal string MatcherName { get; private set; }
+        internal string Namespace { get; private set; }
+        internal bool? IncludeParentProps { get; private set; }
+        internal IDictionary<Type, IList<string>> ExcludeProperties { get; private set; }
+        internal IList<PropertyMatchers> PropertyMatchers { get; private set; }
 
-            var merged = new TemplateOptions
+        public TemplateOptions WithMatcherName(string val)
+        {
+            MatcherName = val;
+            return this;
+        }
+
+        public TemplateOptions WithNamespace(string val)
+        {
+            Namespace = val;
+            return this;
+        }
+
+        public TemplateOptions WithIncludeParentProps(bool val)
+        {
+            IncludeParentProps = val;
+            return this;
+        }
+
+        public TemplateOptions WithExcludeProperties(params string[] propertyNames)
+        {
+            WithExcludeProperties(MatcherForType, propertyNames);
+            return this;
+        }
+
+        public TemplateOptions WithExcludeProperties<T>(params string[] propertyNames)
+        {
+            WithExcludeProperties(typeof(T), propertyNames);
+            return this;
+        }
+
+        public TemplateOptions WithExcludeProperties(Type declaredOnType, params string[] propertyNames)
+        {
+            if (ExcludeProperties == null)
             {
-                _MatcherForType = overrides._MatcherForType?? _MatcherForType,
-                _MatcherName = overrides._MatcherName ?? _MatcherName,
-                _Namespace = overrides._Namespace ?? _Namespace,
-                _IncludeParentProps = overrides._IncludeParentProps ?? _IncludeParentProps,
-                _ExcludeProperties = Merge(_ExcludeProperties, overrides._ExcludeProperties),
-                _PropertyMatchers = SafeConcat(_PropertyMatchers, overrides._PropertyMatchers)
-            };
-            return merged;
-        }
-
-        public TemplateOptions MatcherName(String val)
-        {
-            _MatcherName = val;
-            return this;
-        }
-
-        public TemplateOptions Namespace(String val)
-        {
-            _Namespace = val;
-            return this;
-        }
-
-        public TemplateOptions IncludeParentProps(bool val)
-        {
-            _IncludeParentProps = val;
-            return this;
-        }
-
-        public TemplateOptions ExcludeProperties(params string[] propertyNames)
-        {
-            ExcludeProperties(_MatcherForType, propertyNames);
-            return this;
-        }
-
-        public TemplateOptions ExcludeProperties<T>(params string[] propertyNames)
-        {
-            ExcludeProperties(typeof(T), propertyNames);
-            return this;
-        }
-        public TemplateOptions ExcludeProperties(Type declaredOnType, params string[] propertyNames)
-        {
-            if (_ExcludeProperties == null)
-            {
-                _ExcludeProperties = new Dictionary<Type, IList<String>>();
+                ExcludeProperties = new Dictionary<Type, IList<string>>();
             }
             IList<string> excludeNames;
-            if (!_ExcludeProperties.TryGetValue(declaredOnType, out excludeNames))
+            if (!ExcludeProperties.TryGetValue(declaredOnType, out excludeNames))
             {
-                excludeNames = new List<String>();
-                _ExcludeProperties[declaredOnType] = excludeNames;
+                excludeNames = new List<string>();
+                ExcludeProperties[declaredOnType] = excludeNames;
             }
             foreach (var name in propertyNames)
             {
@@ -569,26 +560,42 @@ namespace TestFirst.Net.Template
         public PropertyMatchers ForPropertyType<TFrom>()
         {
             var c = new PropertyMatchers().ForPropertyType<TFrom>();
-            if (_PropertyMatchers == null)
+            if (PropertyMatchers == null)
             {
-                _PropertyMatchers = new List<PropertyMatchers>();
+                PropertyMatchers = new List<PropertyMatchers>();
             }
-            _PropertyMatchers.Add(c);
+            PropertyMatchers.Add(c);
             return c;
         }
 
-        private static IDictionary<Type, IList<String>> Merge(IDictionary<Type, IList<String>> left, IDictionary<Type, IList<String>> right)
+        internal TemplateOptions Merge(TemplateOptions overrides)
+        {
+            overrides = overrides ?? Empty;
+
+            var merged = new TemplateOptions
+            {
+                MatcherForType = overrides.MatcherForType ?? MatcherForType,
+                MatcherName = overrides.MatcherName ?? MatcherName,
+                Namespace = overrides.Namespace ?? Namespace,
+                IncludeParentProps = overrides.IncludeParentProps ?? IncludeParentProps,
+                ExcludeProperties = Merge(ExcludeProperties, overrides.ExcludeProperties),
+                PropertyMatchers = SafeConcat(PropertyMatchers, overrides.PropertyMatchers)
+            };
+            return merged;
+        }
+
+        private static IDictionary<Type, IList<string>> Merge(IDictionary<Type, IList<string>> left, IDictionary<Type, IList<string>> right)
         {
             if (left != null && right != null)
             {
-                //merge!
-                var merged = new Dictionary<Type, IList<String>>();
+                // merge!
+                var merged = new Dictionary<Type, IList<string>>();
 
                 var allTypes = left.Keys.Concat(right.Keys).Distinct();
                 foreach (var type in allTypes)
                 {
-                    IList<String> leftNames;
-                    IList<String> rightNames;
+                    IList<string> leftNames;
+                    IList<string> rightNames;
                     left.TryGetValue(type, out leftNames);
                     right.TryGetValue(type, out rightNames);
 
@@ -608,11 +615,11 @@ namespace TestFirst.Net.Template
             return null;
         }
 
-        private static IList<String> Merge(IList<String> left, IList<String> right)
+        private static IList<string> Merge(IList<string> left, IList<string> right)
         {
             if (left != null && right != null)
             {
-                //merge!
+                // merge!
                 return left.Concat(right).Distinct().ToList();
             }
 
@@ -631,7 +638,7 @@ namespace TestFirst.Net.Template
         {
             if (left != null && right != null)
             {
-                //merge!
+                // merge!
                 return left.Concat(right).Distinct().ToList();
             }
 
@@ -647,13 +654,105 @@ namespace TestFirst.Net.Template
         }
     }
 
+    public abstract class AbstractTemplate : ITemplate
+    {
+        private static string _indent = "    ";
+        
+        private StringWriter m_w;
+        private int m_indentDepth;
+        
+        public static string Indent
+        {
+            get
+            {
+                return _indent;
+            }
+        }
+        public string CurrentIndent { get; private set; }
+
+        public string Render()
+        {
+            CurrentIndent = string.Empty;
+            m_w = new StringWriter();
+            Generate();
+            var s = m_w.ToString();
+            m_w = null;
+            return s;
+        }
+
+        public void WriteLine()
+        {
+            m_w.WriteLine();
+        }
+
+        public void Write(string line, params object[] args)
+        {
+            line = ReplaceTokens(line);
+            if (args == null || args.Length == 0)
+            {
+                m_w.Write(line);
+            }
+            else
+            {
+                m_w.Write(line, args);
+            }
+        }
+
+        public void WriteLine(string line, params object[] args)
+        {
+            line = ReplaceTokens(line);
+            m_w.Write(CurrentIndent);
+            if (args == null || args.Length == 0)
+            {
+                m_w.WriteLine(line);
+            }
+            else
+            {
+                m_w.WriteLine(line, args);
+            }
+        }
+
+        public void IncrementIndent()
+        {
+            SetIndent(++m_indentDepth);
+        }
+
+        public void DecrementIndent()
+        {
+            SetIndent(--m_indentDepth);
+        }
+
+        protected abstract void Generate();
+
+        private string ReplaceTokens(string s)
+        {
+            return s.Replace("[[nl]]", Environment.NewLine + CurrentIndent).Replace("[[indent]]", CurrentIndent);
+        }
+
+        private void SetIndent(int depth)
+        {
+            CurrentIndent = string.Empty;
+            for (var i = 0; i < depth; i++)
+            {
+                CurrentIndent += Indent;
+            }
+        }
+    }
+
     public class PropertyMatchers
     {
+        private readonly List<CustomMatchMethodTemplate> m_methods = new List<CustomMatchMethodTemplate>();
         private Type m_propertyType;
-        private List<CustomMatchMethodTemplate> m_methods = new List<CustomMatchMethodTemplate>();
 
         internal PropertyMatchers()
-        { }
+        {
+        }
+
+        public PropertyMatchers AddMatchMethodTaking<TMethodArgType>(string code)
+        {
+            m_methods.Add(new CustomMatchMethodTemplate { ArgType = typeof(TMethodArgType), Code = code });
+            return this;
+        }
 
         internal PropertyMatchers ForPropertyType<TPropertyType>()
         {
@@ -666,13 +765,7 @@ namespace TestFirst.Net.Template
             return m_propertyType.IsSuperclassOrInterfaceOf(p.PropertyType);
         }
 
-        public PropertyMatchers AddMatchMethodTaking<TMethodArgType>(String code)
-        {
-            m_methods.Add(new CustomMatchMethodTemplate { ArgType = typeof(TMethodArgType), Code = code });
-            return this;
-        }
-
-        internal void Generate(ITemplate t, PropertyInfo p, String matcherName)
+        internal void Generate(ITemplate t, PropertyInfo p, string matcherName)
         {
             foreach (var m in m_methods)
             {
@@ -683,9 +776,9 @@ namespace TestFirst.Net.Template
         private class CustomMatchMethodTemplate
         {
             internal Type ArgType { get; set; }
-            internal String Code { get; set; }
+            internal string Code { get; set; }
 
-            internal void Generate(ITemplate t, PropertyInfo p, String matcherName)
+            internal void Generate(ITemplate t, PropertyInfo p, string matcherName)
             {
                 var argCleanTypeName = ArgType.ToPrettyTypeName(); 
                 t.WriteLine();
@@ -708,102 +801,18 @@ namespace TestFirst.Net.Template
         }
     }
 
-
-    public interface ITemplate
-    {
-        /// <summary>
-        /// Invoke the template and render all the content. The methods below can only be called in the context of this call
-        /// </summary>
-        /// <returns></returns>
-        String Render();
-
-        void WriteLine();
-        void Write(String line, params Object[] args);
-        void WriteLine(String line, params Object[] args);
-        void IncrementIndent();
-        void DecrementIndent();
-    }
-
-    public abstract class AbstractTemplate : ITemplate
-    {
-        private StringWriter m_w;
-        private const String Indent = "    ";
-        public String CurrentIndent { get; private set; }
-        private int m_indentDepth;
-
-        public String Render()
-        {
-            CurrentIndent = "";
-            m_w = new StringWriter();
-            Generate();
-            var s = m_w.ToString();
-            m_w = null;
-            return s;
-        }
-
-        protected abstract void Generate();
-
-        public void WriteLine()
-        {
-            m_w.WriteLine();
-        }
-
-        public void Write(String line, params Object[] args)
-        {
-            if (args == null || args.Length == 0)
-            {
-                m_w.Write(line);
-            }
-            else
-            {
-                m_w.Write(line, args);
-            }
-        }
-
-        public void WriteLine(String line, params Object[] args)
-        {
-            m_w.Write(CurrentIndent);
-            if (args == null || args.Length == 0)
-            {
-                m_w.WriteLine(line);
-            }
-            else
-            {
-                m_w.WriteLine(line, args);
-            }
-        }
-
-        public void IncrementIndent()
-        {
-            SetIndent(++m_indentDepth);
-        }
-
-        public void DecrementIndent()
-        {
-            SetIndent(--m_indentDepth);
-        }
-
-        private void SetIndent(int depth)
-        {
-            CurrentIndent = "";
-            for (var i = 0; i < depth; i++)
-            {
-                CurrentIndent += Indent;
-            }
-        }
-
-    }
     internal static class TypeExtensions 
     {
         private static readonly CSharpCodeProvider Compiler = new CSharpCodeProvider();
 
-        public static String ToPrettyTypeName(this Type t)
+        public static string ToPrettyTypeName(this Type t)
         {
             var name = _ToPrettyTypeName(t);
 
             return name;
         }
-        public static String _ToPrettyTypeName(this Type t)
+
+        public static string _ToPrettyTypeName(this Type t)
         {
             var underlyingType = Nullable.GetUnderlyingType(t);
             if (underlyingType != null)
@@ -816,7 +825,7 @@ namespace TestFirst.Net.Template
                 {
                     return "System.Collections.Generic.IEnumerable<" + ToPrettyTypeName(t.GetGenericArguments()[0]) + ">";
                 }
-                return GetRawTypeName(t) + "<" + String.Join(",", t.GetGenericArguments().Select(ToPrettyTypeName)) + ">";
+                return GetRawTypeName(t) + "<" + string.Join(",", t.GetGenericArguments().Select(ToPrettyTypeName)) + ">";
             }
             if (t.IsArray)
             {
@@ -826,14 +835,15 @@ namespace TestFirst.Net.Template
             return Compiler.GetTypeOutput(new CodeTypeReference(t));
         }
 
-        static bool IsEnumerableType(Type type)
+        internal static bool IsEnumerableType(Type type)
         {
             if (!type.IsGenericType)
             {
                 return false;
             }
-            if (typeof(string) == type)//implements IEnumerable<char>
+            if (typeof(string) == type)
             {
+                // implements IEnumerable<char>
                 return false;
             }
             foreach (Type intType in type.GetInterfaces())
@@ -846,7 +856,7 @@ namespace TestFirst.Net.Template
             return false;
         }
 
-        private static String GetRawTypeName(Type t)
+        private static string GetRawTypeName(Type t)
         {
             var name = t.FullName;
             var idx = name.IndexOf('`');

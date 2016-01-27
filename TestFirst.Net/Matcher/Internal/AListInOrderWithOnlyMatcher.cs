@@ -6,12 +6,13 @@ namespace TestFirst.Net.Matcher.Internal
     /// <summary>
     /// The number of items must equal the number of matchers, and each matcher must match in order
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Type of element contained within list</typeparam>
     internal class AListInOrderWithOnlyMatcher<T> : AList.AbstractListMatcher<T>, AList.IAcceptMoreMatchers<T>, IProvidePrettyTypeName
     {
         private readonly List<IMatcher<T>> m_matchers;
 
-        internal AListInOrderWithOnlyMatcher(IEnumerable<IMatcher<T>> matchers):base("InOrderWithOnly")
+        internal AListInOrderWithOnlyMatcher(IEnumerable<IMatcher<T>> matchers)
+            : base("InOrderWithOnly")
         {
             m_matchers = new List<IMatcher<T>>(matchers);
         }

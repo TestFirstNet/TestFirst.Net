@@ -10,13 +10,30 @@ import subprocess
 import shutil
 import inspect
 
+#---- some methods required at the very start ----
+
+def os_path(path):
+    if is_windows():     
+        return path.replace('/','\\')
+    else:
+        return path.replace('\\','/')
+
+
+def unix_path(path):
+    return path.replace('\\','/')
+
+
+def is_windows():
+    return os.name == 'nt'
+
+
 #---- build variables. User can override by passing in varname=varval on the commandline
 
 # reliably get the solution dir
 SOLUTION_DIR=os.path.dirname(os.path.realpath(__file__))
 SOLUTION='TestFirst.Net.sln'
 PROJECTS=['TestFirst.Net','TestFirst.Net.Extensions','TestFirst.Net.Performance']
-TEST_PROJECTS=['TestFirst.Net.Tests','TestFirst.Net.Extensions.Test','TestFirst.Net.Performance.Test']
+TEST_PROJECTS=['TestFirst.Net.Test','TestFirst.Net.Extensions.Test','TestFirst.Net.Performance.Test']
 
 #optional, the project to clean/test etc
 PROJECT=None
@@ -29,7 +46,7 @@ VERBOSITY='minimal'
 CONFIG='Release'
 #CONFIG=Debug
 
-VERSION='0.0.0'
+VERSION='0.0.0-beta'
 NUNIT_VERSION='2.6.4'
 OPENCOVER_VERSION='4.6.166'
 REPORTGEN_VERSION='2.3.1-beta2'
@@ -45,12 +62,12 @@ REPORTGEN_EXE=None
 NUNIT_CONSOLE_EXE=None
 
 NUGET_SRC='http://www.nuget.org/api/v2/'
-NUGET_PKG_DIR=SOLUTION_DIR + '/packages'
-NUGET_CONFIG=SOLUTION_DIR + '/.nuget/NuGet.Config'
+NUGET_PKG_DIR=os_path(SOLUTION_DIR + '/packages')
+NUGET_CONFIG=os_path(SOLUTION_DIR + '/.nuget/NuGet.Config')
 
 USER_HOME=os.path.expanduser("~")
-LOCAL_REPO=USER_HOME + '/workspace/local-nuget-repo'
-TMP_DIR='obj/tmp'
+LOCAL_REPO=os_path(USER_HOME + '/workspace/local-nuget-repo/')
+BUILD_ASSEMBLY=os_path(SOLUTION_DIR + '/BuildVersionAssemblyInfo.cs')
 
 def task_help():
     log('USAGE:')
@@ -92,10 +109,7 @@ def task_init():
     global OPENCOVER_EXE
     global XBUILD_EXE
     global NUNIT_CONSOLE_EXE
-    global LOCAL_REPO
-
-    LOCAL_REPO=os_path(LOCAL_REPO)
-
+    
     if can_invoke('MsBuild'):
         log('Using MSBuild on the path')
         MSBUILD_EXE="MsBuild"
@@ -196,9 +210,10 @@ def task_clean_packages():
 
 
 def task_build():
-    depends('init')
+    depends('init','version')
 
-    
+    write_assembly_version(BUILD_ASSEMBLY,VERSION)
+	
     if MSBUILD_EXE:
         log('building using msbuild : ' + MSBUILD_EXE)
         win_invoke(MSBUILD_EXE,[SOLUTION,'-t:Clean,Build','-p:Configuration=' + CONFIG, '/verbosity:' + VERBOSITY])
@@ -208,24 +223,21 @@ def task_build():
 
 
 def task_test():
+    if TEST_SKIP:
+       log('tests are set to skip')
+       return
     depends('init','build')
-
-    #e.g. ./TestFirst.Net.Performance.Test/obj/Release/TestFirst.Net.Performance.Test.dll
+    
+	#e.g. ./TestFirst.Net.Performance.Test/obj/Release/TestFirst.Net.Performance.Test.dll
     for proj in TEST_PROJECTS:
         if include_proj(proj):
-            if TEST_SKIP:
-                log('tests are set to skip')
-            else:
-                log('executing tests in ' + proj)
-                with cd(proj + '/bin/' + CONFIG):
-                    # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
-                    dll_name=proj if not proj.endswith('s') else proj[:-1]
-                    if TESTS:
-                        win_invoke(NUNIT_CONSOLE_EXE,['-nologo','-run:' + TESTS, dll_name + '.dll'])
-                    else:
-                        win_invoke(NUNIT_CONSOLE_EXE,['-nologo',dll_name + '.dll'])
-
-
+            log('executing tests in ' + proj)
+            with cd(proj + '/bin/' + CONFIG):
+                dll_name=proj
+                if TESTS:
+                    win_invoke(NUNIT_CONSOLE_EXE,['-nologo','-run:' + TESTS, dll_name + '.dll'])
+                else:
+                    win_invoke(NUNIT_CONSOLE_EXE,['-nologo',dll_name + '.dll'])
 
 def task_test_coverage():
     only_under_windows('opencover code coverage only runs under windows')
@@ -237,8 +249,7 @@ def task_test_coverage():
         if include_proj(proj):
             log('Executing tests in {} for coverage'.format(proj))
             with cd(proj + '/bin/' + CONFIG):
-                # to also handle the TestFirst.Net.Tests project (note the 's' after 'Test')
-                test_dll_name=proj if not proj.endswith('s') else proj[:-1]
+                test_dll_name=proj
                 proj_dll_name=(test_dll_name if not test_dll_name.endswith('.Test') else test_dll_name[:-5])
                 
                 log('Generating code coverage for {}'.format(proj))
@@ -404,13 +415,14 @@ def nuget_invoke(args=None,include_optons=True):
 
 
 def copy_pkgs_to_local_repo():
-    log('copying packages to local test repo ' + LOCAL_REPO)
+    log('copying nuget packages to local test repo ' + LOCAL_REPO)
     ensure_dir_exists(LOCAL_REPO)
 
     def onfile(path,name):
-        if name.endswith('.nupkg'):
-            shutil.copy(path,LOCAL_REPO)
-    find_files('.',onfile)
+        if name.endswith('.nupkg') and name.startswith('TestFirst.Net.'):
+            log("\tcopying : " + name)
+            shutil.copy(str(path),LOCAL_REPO)
+    find_files(SOLUTION_DIR,onfile)
 
     log('packages in local repo are:')
     def print_name(path,name):
@@ -422,20 +434,6 @@ def copy_pkgs_to_local_repo():
 def only_under_windows(msg):
     if not is_windows():
         raise BuildError(msg + ' only works correctly under windows')
-
-def os_path(path):
-    if is_windows():     
-        return path.replace('/','\\')
-    else:
-        return path.replace('\\','/')
-
-
-def unix_path(path):
-    return path.replace('\\','/')
-
-
-def is_windows():
-    return os.name == 'nt'
 
 
 def find_files(path,callback):
@@ -460,7 +458,7 @@ def filter_template(fromPath,toPath):
         .read() \
         .replace('[MAIN_DESCRIPTON]',readMeText) \
         .replace('[MAIN_RELEASENOTES]',releaseNotesText) \
-        .replace('[/]',os.sep);
+        .replace('[/]',os.sep)
 
     ensure_dir_exists(toPath)
 
@@ -469,6 +467,33 @@ def filter_template(fromPath,toPath):
     f.flush()
     f.close()
 
+def write_assembly_version(file,version):
+    log("setting build version in " + file)
+    template="""
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+// set by the build script
+[assembly: AssemblyVersion("$version")]
+[assembly: AssemblyFileVersion("$version")]
+[assembly: AssemblyInformationalVersion("$version")]
+"""
+    version=version \
+        .lower() \
+        .replace('-','.') \
+        .replace('beta','0') \
+        .replace('alpha','0') \
+        .replace('snapshot','0')
+		
+    text=template.strip().replace('$version',version)
+    
+    existing=open(file).read()
+    if existing != text:
+        f=open(file, 'w')
+        f.write(text)
+        f.flush()
+        f.close()
 
 def can_invoke(prog, args=None):
     if prog==None:
@@ -523,8 +548,11 @@ def error(msg):
 
 def ensure_dir_exists(path):
     try:
-        dir_path=os.path.dirname(os.path.abspath(path))
-        os.makedirs(dir_path)
+       if unix_path(path).endswith("/"):
+           os.makedirs(path)
+       else:
+          dir_path=os.path.dirname(os.path.abspath(path))
+          os.makedirs(dir_path)
     except OSError as exception:
         if exception.errno != errno.EEXIST:
             error("couldn't create dir '{}'".format(dirPath))
@@ -597,7 +625,7 @@ def run_task(taskName,once_only=True):
     task()
     log('-------- /task:' + taskName + ' ---------')
 
-def run_user_tasks():
+def run_cmdline_tasks():
     has_task=False
     #extract variable assignment. Expect VAR=VAL on command line
     for arg in sys.argv[1:]:  
@@ -609,7 +637,7 @@ def run_user_tasks():
                 val=True
             elif val.lower() == 'false':
                 val=False
-            log('set {} ==> {}'.format(name,val))
+            log('set {} ==> {}'.format(name, val))
             globals()[name]=val
 
     for arg in sys.argv[1:]:
@@ -633,6 +661,6 @@ log('-------- TestFirst.Net Build -----')
 #ensure we run from a known location
 with cd(SOLUTION_DIR):
     try:
-        run_user_tasks()
+        run_cmdline_tasks()
     except BuildError as e:
         error(e.msg)

@@ -5,7 +5,7 @@ namespace TestFirst.Net.Matcher
 {
     public class AnIdentity : PropertyMatcher<IIdentity>
     {
-        //for auto complete goodness
+        // for auto complete goodness
         private static readonly IIdentity PropertyNames = null;
 
         public static AnIdentity With()
@@ -13,13 +13,13 @@ namespace TestFirst.Net.Matcher
             return new AnIdentity();
         }
 
-        public AnIdentity Name(String val)
+        public AnIdentity Name(string val)
         {
             Name(AString.EqualTo(val));
             return this;
         }
 
-        public AnIdentity Name(IMatcher<String> matcher)
+        public AnIdentity Name(IMatcher<string> matcher)
         {
             WithProperty(() => PropertyNames.Name, matcher);
             return this;
@@ -31,7 +31,7 @@ namespace TestFirst.Net.Matcher
             return this;
         }
 
-        public AnIdentity AuthenticationType(String val)
+        public AnIdentity AuthenticationType(string val)
         {
             WithProperty(() => PropertyNames.AuthenticationType, AString.EqualTo(val));
             return this;

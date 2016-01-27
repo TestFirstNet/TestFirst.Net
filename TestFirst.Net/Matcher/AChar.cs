@@ -4,7 +4,8 @@
     {
         public static IMatcher<char?> EqualTo(char? expect)
         {
-            return Matchers.Function((char? actual) =>
+            return Matchers.Function(
+                (char? actual) =>
                 {
                     if (expect == null && actual == null)
                     {
@@ -16,13 +17,13 @@
                     }
                     return expect.Value.Equals(actual.Value);
                 },
-                expect ==null?"a null char":"a char == '" + expect + "'"
-             );
+                expect == null ? "a null char" : "a char == '" + expect + "'");
         }
 
         public static IMatcher<char?> NotEqualTo(char? expect)
         {
-            return Matchers.Function((char? actual) =>
+            return Matchers.Function(
+                (char? actual) =>
                 {
                     if (expect == null && actual == null)
                     {
@@ -34,8 +35,7 @@
                     }
                     return !expect.Value.Equals(actual.Value);
                 },
-                expect==null?"a non null char":"a char != '" + expect + "'"
-             );
+                expect == null ? "a non null char" : "a char != '" + expect + "'");
         }
 
         public static IMatcher<char?> NotNull()
@@ -45,7 +45,7 @@
 
         public static IMatcher<char?> Null()
         {
-            return Matchers.Function((char? actual) => actual == null, "a null char" );
+            return Matchers.Function((char? actual) => actual == null, "a null char");
         }
     }
 }

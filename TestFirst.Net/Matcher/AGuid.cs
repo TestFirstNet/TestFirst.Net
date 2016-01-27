@@ -6,7 +6,8 @@ namespace TestFirst.Net.Matcher
     {
         public static IMatcher<Guid?> EqualTo(Guid? expect)
         {
-            return Matchers.Function((Guid? actual) =>
+            return Matchers.Function(
+                (Guid? actual) =>
                 {
                     if (expect == null && actual == null)
                     {
@@ -18,13 +19,13 @@ namespace TestFirst.Net.Matcher
                     }
                     return expect.Value.Equals(actual.Value);
                 },
-                expect ==null?"a null Guid":"a Guid == '" + expect + "'"
-             );
+                expect == null ? "a null Guid" : "a Guid == '" + expect + "'");
         }
 
         public static IMatcher<Guid?> NotEqualTo(Guid? expect)
         {
-            return Matchers.Function((Guid? actual) =>
+            return Matchers.Function(
+                (Guid? actual) =>
                 {
                     if (expect == null && actual == null)
                     {
@@ -36,18 +37,17 @@ namespace TestFirst.Net.Matcher
                     }
                     return !expect.Value.Equals(actual.Value);
                 },
-                expect==null?"a non null Guid":"a Guid != '" + expect + "'"
-             );
+                expect == null ? "a non null Guid" : "a Guid != '" + expect + "'");
         }
 
         public static IMatcher<Guid?> NotEmpty()
         {
-            return Matchers.Function((Guid? actual) =>
+            return Matchers.Function(
+                (Guid? actual) =>
                 {
                     return actual != null && !Guid.Empty.Equals(actual);
                 },
-                "a non empty or null Guid"
-             );
+                "a non empty or null Guid");
         }
 
         public static IMatcher<Guid?> NotNull()
@@ -57,7 +57,7 @@ namespace TestFirst.Net.Matcher
 
         public static IMatcher<Guid?> Null()
         {
-            return Matchers.Function((Guid? actual) => actual == null, "a null Guid" );
+            return Matchers.Function((Guid? actual) => actual == null, "a null Guid");
         }
     }
 }

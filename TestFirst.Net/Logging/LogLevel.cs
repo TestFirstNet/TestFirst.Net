@@ -2,17 +2,16 @@
 
 namespace TestFirst.Net.Logging
 {
-    public class LogLevel:IComparable<LogLevel>
+    public class LogLevel : IComparable<LogLevel>
     {
-        public static readonly LogLevel Trace = new LogLevel(0,"TRACE");
-        public static readonly LogLevel Debug = new LogLevel(1,"DEBUG");
+        public static readonly LogLevel Trace = new LogLevel(0, "TRACE");
+        public static readonly LogLevel Debug = new LogLevel(1, "DEBUG");
         public static readonly LogLevel Info = new LogLevel(2, "INFO");
         public static readonly LogLevel Warn = new LogLevel(3, "WARN");
         public static readonly LogLevel Error = new LogLevel(4, "ERROR");
         public static readonly LogLevel Off = new LogLevel(5, "OFF");
 
         private readonly int m_level;
-        public String Name { get; private set; }
 
         private LogLevel(int level, string name)
         {
@@ -20,16 +19,14 @@ namespace TestFirst.Net.Logging
             Name = name;
         }
 
-        public int CompareTo(LogLevel level)
-        {
-            return m_level - level.m_level;
-        }
+        public string Name { get; private set; }
 
         /// <summary>
         /// Return the level given the string, never failing. 
         /// </summary>
+        /// <param name="logLevel">The log level to parse</param>
         /// <returns>On invalid level returns the DEBUG level</returns>
-        public static LogLevel SafeParse(String logLevel)
+        public static LogLevel SafeParse(string logLevel)
         {
             if (logLevel == null)
             {
@@ -46,6 +43,11 @@ namespace TestFirst.Net.Logging
                 case "OFF": return Off;
                 default: return Debug;
             }
+        }
+
+        public int CompareTo(LogLevel level)
+        {
+            return m_level - level.m_level;
         }
     }
 }

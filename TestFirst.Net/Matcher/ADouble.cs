@@ -57,9 +57,14 @@ namespace TestFirst.Net.Matcher
         {
             return Matchers.Function((double? actual) => actual != null, "a non null double");
         }
+
+        public static IMatcher<double?> NaN()
+        {
+            return Matchers.Function((double? actual) => actual.HasValue && double.IsNaN(actual.Value), "a NaN double");
+        }
     }
 
-    static class DoubleExtensions
+    internal static class DoubleExtensions
     {
         internal static bool IsValidDouble(this double? val)
         {
@@ -74,7 +79,7 @@ namespace TestFirst.Net.Matcher
         {
             if (other == null)
             {
-                return -1;//treat null as less
+                return -1; // treat null as less
             }
             int compare = val.CompareTo(other.Value);
             return compare;

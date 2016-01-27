@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TestFirst.Net.Examples.Api;
 using TestFirst.Net.Examples.Api.Query;
+using TestFirst.Net.Examples.Net;
 using TestFirst.Net.Examples.Service.Handler;
 using TestFirst.Net.Examples.Service.Inject;
 
@@ -9,25 +10,37 @@ namespace TestFirst.Net.Examples.Service
 {
     public class ExampleApp : IApiClient
     {
-        private readonly IDictionary<Type,HandlerHolder> m_holdersByRequestType = new Dictionary<Type, HandlerHolder>();
+        private readonly IDictionary<Type, HandlerHolder> m_holdersByRequestType = new Dictionary<Type, HandlerHolder>();
 
         private readonly DependencyInjector m_injector = new DependencyInjector();
 
         public TResponse Invoke<TResponse>(IReturn<TResponse> query)
         {
-            return (TResponse)Invoke(query,typeof(TResponse));
+            return (TResponse)Invoke(query, typeof(TResponse));
         }
 
-        public TResponse Invoke<TQuery,TResponse>(TQuery query) where TResponse:class
+        public TResponse Invoke<TQuery, TResponse>(TQuery query) 
+            where TResponse : class
         {
             return (TResponse)Invoke(query, typeof(TResponse));
         }
-                 
-        private Object Invoke(Object query,Type responseType) 
+
+        internal void RegisterHandler<TRequest, TResponse>(IHandler<TRequest, TResponse> handler)
+        {
+            // simply always return the same instance
+            RegisterHandler(() => handler);
+        }
+
+        internal void RegisterHandler<TRequest, TResponse>(Func<IHandler<TRequest, TResponse>> handlerFactory)
+        {
+            m_holdersByRequestType.Add(typeof(TRequest), HandlerHolder.Create(handlerFactory));
+        }
+
+        private object Invoke(object query, Type responseType) 
         {
             var key = query.GetType();
             HandlerHolder holder;
-            if( !m_holdersByRequestType.TryGetValue(key, out holder))
+            if (!m_holdersByRequestType.TryGetValue(key, out holder))
             {
                 throw new ArgumentException("No handlers registered for query type:" + key.FullName);
             }
@@ -42,17 +55,6 @@ namespace TestFirst.Net.Examples.Service
                 throw new InvalidOperationException("Expected response type " + responseType.FullName + " but got " + response.GetType().FullName);
             }
             return response;
-        }
-
-        internal void RegisterHandler<TRequest,TResponse>(IHandler<TRequest,TResponse> handler)
-        {
-            //simply always return the same instance
-            RegisterHandler(()=>handler);
-        }
-
-        internal void RegisterHandler<TRequest,TResponse>(Func<IHandler<TRequest,TResponse>> handlerFactory)
-        {
-            m_holdersByRequestType.Add(typeof(TRequest),HandlerHolder.Create(handlerFactory));
         }
 
         private class HandlerHolder

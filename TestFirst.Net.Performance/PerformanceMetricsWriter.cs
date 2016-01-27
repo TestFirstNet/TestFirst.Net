@@ -12,22 +12,20 @@ namespace TestFirst.Net.Performance
     /// Generates a report based from listening to the performance test
     /// </summary>
     [ThreadSafe]
-    public class PerformanceMetricsWriter:IPerformanceTestRunnerListener
+    public class PerformanceMetricsWriter : IPerformanceTestRunnerListener
     {
-        private readonly ILogger Log = Logger.GetLogger<PerformanceMetricsWriter>();
+        private static readonly ILogger Log = Logger.GetLogger<PerformanceMetricsWriter>();
 
-        //try to minimise any delays caused by the file system
-        readonly QueuedFileWriter m_writer = new QueuedFileWriter();
+        // try to minimise any delays caused by the file system
+        private readonly QueuedFileWriter m_writer = new QueuedFileWriter();
 
-        //ignore any incoming metrics after the test run
-        volatile bool m_collectingMetrics;
+        // ignore any incoming metrics after the test run
+        private volatile bool m_collectingMetrics;
 
         private string m_workingDir = "perf-metrics/";
         private string m_testName;
-
         private DateTime m_startTime;
-
-        String m_metricsFilePath;
+        private string m_metricsFilePath;
         
         public static PerformanceMetricsWriter With()
         {
@@ -37,19 +35,21 @@ namespace TestFirst.Net.Performance
         /// <summary>
         /// Override the default location to generate metrics and reports in
         /// </summary>
-        public PerformanceMetricsWriter WorkingDir(String dir)
+        /// <param name="dir">The working dir</param>
+        /// <returns>The PerformanceMetricsWriter</returns>
+        public PerformanceMetricsWriter WorkingDir(string dir)
         {
             m_workingDir = dir;
             return this;
         }
         
-        public PerformanceMetricsWriter TestName(Object test)
+        public PerformanceMetricsWriter TestName(object test)
         {
             TestName(test.GetType().Name);
             return this;
         }
 
-        public PerformanceMetricsWriter TestName(String name)
+        public PerformanceMetricsWriter TestName(string name)
         {
             m_testName = name;
             return this;
@@ -73,37 +73,11 @@ namespace TestFirst.Net.Performance
             m_startTime = DateTime.Now;
         }
 
-        private String CreateMetricsFile()
-        {
-            var path = String.Format("{0}metrics_{1}{2}.csv", 
-                m_workingDir, 
-                (m_testName==null?"":m_testName + "_"),
-                DateTime.Now.ToString("yyyyMMdd-HHmmss"));
-            path = Path.GetFullPath(path);
-
-            Directory.CreateDirectory(m_workingDir);
-
-            using (File.CreateText(path)) 
-            {
-                if (!File.Exists(path))
-                {
-                    throw new InvalidOperationException(String.Format("Couldn't create the metrics file path: {0}", path));
-                }
-            }
-
-            using (var writer = File.AppendText(path))
-            {
-                writer.WriteLine(MetricsFileUtil.Header());
-            }
-
-            return path;
-        }
-
         public void OnMetric(TestId testId, PerformanceMetric metric)
         {
             if (m_collectingMetrics)
             {
-                m_writer.WriteLine(MetricsFileUtil.ToLine(testId,m_startTime, metric));
+                m_writer.WriteLine(MetricsFileUtil.ToLine(testId, m_startTime, metric));
             }
         }
 
@@ -114,7 +88,7 @@ namespace TestFirst.Net.Performance
 
         public void OnEndTestRun()
         {
-            //do nothing
+            // do nothing
         }
 
         public void OnEndTestSession()
@@ -127,7 +101,8 @@ namespace TestFirst.Net.Performance
         {
             PreConditions.AssertNotNullOrWhitespace(m_testName, "TestName");
             Log.InfoFormat("Generating report, reading metrics from '{0}'", m_metricsFilePath);
-            //TODO:print a running report every X seconds
+
+            // TODO:print a running report every X seconds
             var report = new PerformanceReportBuilder
                 {
                     ReportTitle = m_testName,
@@ -141,6 +116,33 @@ namespace TestFirst.Net.Performance
             WriteReportToDisk(report);
 
             return report;
+        }
+
+        private string CreateMetricsFile()
+        {
+            var path = string.Format(
+                "{0}metrics_{1}{2}.csv",
+                m_workingDir,
+                m_testName == null ? string.Empty : m_testName + "_",
+                DateTime.Now.ToString("yyyyMMdd-HHmmss"));
+            path = Path.GetFullPath(path);
+
+            Directory.CreateDirectory(m_workingDir);
+
+            using (File.CreateText(path))
+            {
+                if (!File.Exists(path))
+                {
+                    throw new InvalidOperationException(string.Format("Couldn't create the metrics file path: {0}", path));
+                }
+            }
+
+            using (var writer = File.AppendText(path))
+            {
+                writer.WriteLine(MetricsFileUtil.Header());
+            }
+
+            return path;
         }
 
         private PerformanceMetric ReadLineToMetrics(string metricLineEntry)
@@ -169,6 +171,92 @@ namespace TestFirst.Net.Performance
             Log.InfoFormat("Printed report to '{0}'", reportFile);
         }
 
+        private static class MetricsFileUtil
+        {
+            private const string DateFormat = "yyyyMMdd-HHmm:ss.fff";
+
+            private static readonly char[] SplitChars = { ',' };
+
+            private enum Col
+            {
+                MachineId = 0,
+                AgentId = 1,
+                ThreadId = 2,
+                TimeFromStartMs = 3,
+                MetricCallId = 4,
+                MetricName = 5,
+                MetricTImeStamp = 6,
+                MetricValue = 7,
+                MetricIsError = 8,
+                MetricData = 9
+            }
+
+            internal static string Header()
+            {
+                return "# MachineId, AgentId, ThreadId, TimeFromStartMs, Metric.CallId, Metric.Name, Metric.Timestamp, Metric.Value, Metric.IsError, Metric.Data";
+            }
+
+            internal static string ToLine(TestId testId, DateTime testRunStartTime, PerformanceMetric metric)
+            {
+                return string.Format(
+                    "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
+                    testId.MachineId, 
+                    testId.AgentId, 
+                    testId.ThreadId,
+                    (metric.Timestamp - testRunStartTime).TotalMilliseconds,
+                    metric.CallId ?? string.Empty, 
+                    metric.Name,  
+                    metric.Timestamp.ToString(DateFormat),                                         
+                    metric.Value, 
+                    metric.IsError ? "t" : "f",
+                    metric.Data ?? string.Empty);
+            }
+
+            internal static bool TryRead(string line, out PerformanceMetric metric)
+            {
+                if (!line.StartsWith("#"))
+                {
+                    var parts = line.Split(SplitChars, (int)Col.MetricData + 1); // leave the Data bit as it is, including seperator chars
+                    if (parts.Length >= (int)Col.MetricData - 1)
+                    {
+                        // testId = new TestId(
+                        //    machineId:parts[0],
+                        //    agentId:parts[1],
+                        //    threadId:parts[2]
+                        // );
+                        metric = new PerformanceMetric
+                        {
+                            CallId = NullIfEmpty(parts[(int)Col.MetricCallId]),
+                            Name = parts[(int)Col.MetricName],
+                            Timestamp = DateTime.ParseExact(parts[(int)Col.MetricTImeStamp], DateFormat, null),
+                            Value = double.Parse(parts[(int)Col.MetricValue]),
+                            IsError = StringToBool(parts[(int)Col.MetricIsError]),
+                            Data = NullIfEmpty(parts[(int)Col.MetricData])
+                        };
+                        return true;
+                    }
+                }
+
+                // testId = default(TestId);
+                metric = default(PerformanceMetric);
+                return false;
+            }
+
+            private static string NullIfEmpty(string s)
+            {
+                return s.Length == 0 ? null : s;
+            }
+
+            private static bool StringToBool(string s)
+            {
+                if (string.IsNullOrEmpty(s))
+                {
+                    return false;
+                }
+                return s.Equals("t");
+            }
+        }
+
         /// <summary>
         /// Maintains a queues of strings to write to file. reads lines from many threads and writes in a single background thread
         /// </summary>
@@ -178,17 +266,17 @@ namespace TestFirst.Net.Performance
             private const int WritePollIntervalMs = 300;
 
             private readonly ConcurrentQueue<string> m_queue = new ConcurrentQueue<string>();
-                        
-            public string Given_filePath
-            {
-                get { return m_pathToFile; }
-                set { m_pathToFile = value; }
-            }
             private volatile string m_pathToFile;
 
             private bool m_running;
             private bool m_shouldRun;
             private Thread m_writerThread;
+
+            public string Given_filePath
+            {
+                get { return m_pathToFile; }
+                set { m_pathToFile = value; }
+            }
 
             public void Start()
             {
@@ -198,7 +286,7 @@ namespace TestFirst.Net.Performance
                 StartWriteTask();
             }
 
-            public void WriteLine(String line)
+            public void WriteLine(string line)
             {
                 m_queue.Enqueue(line);
             }
@@ -213,7 +301,7 @@ namespace TestFirst.Net.Performance
                 string item;
                 while (m_queue.TryDequeue(out item))
                 {
-                    //do nothing, queue is emptying
+                    // do nothing, queue is emptying
                 }
             }
 
@@ -244,12 +332,12 @@ namespace TestFirst.Net.Performance
             private void StopWriteTask()
             {
                 if (m_running)
-                {                    
-                    //kill the polling thread.
+                {
+                    // kill the polling thread.
                     m_shouldRun = false;
                     m_writerThread.Join(TimeSpan.FromSeconds(30));
-                 
-                    //complete the last poll to clear the queue
+
+                    // complete the last poll to clear the queue
                     using (var writer = File.AppendText(m_pathToFile))
                     {
                         WriteItemsTo(writer);
@@ -270,97 +358,12 @@ namespace TestFirst.Net.Performance
 
             private IEnumerable<string> TakeItemsFromQueue()
             {
-                String line;
+                string line;
                 while (m_queue.TryDequeue(out line))
                 {
                     yield return line;
                 }
             }
         }
-
-        private static class MetricsFileUtil
-        {
-            enum Col
-            {
-                MachineId = 0,
-                AgentId = 1,
-                ThreadId = 2,
-                TimeFromStartMs = 3,
-                MetricCallId = 4,
-                MetricName = 5,
-                MetricTImeStamp = 6,
-                MetricValue = 7,
-                MetricIsError = 8,
-                MetricData = 9
-
-            }
-            private const String DateFormat = "yyyyMMdd-HHmm:ss.fff";
-
-            private static readonly char[] SplitChars = {','};
-
-            internal static String Header()
-            {
-                return "# MachineId,AgentId,ThreadId,TimeFromStartMs,Metric.CallId,Metric.Name,Metric.Timestamp,Metric.Value,Metric.IsError,Metric.Data";
-            }
-
-            static internal String ToLine(TestId testId, DateTime testRunStartTime, PerformanceMetric metric)
-            {
-                return String.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
-                                        testId.MachineId, 
-                                        testId.AgentId, 
-                                        testId.ThreadId,
-                                        (metric.Timestamp - testRunStartTime).TotalMilliseconds,
-                                        metric.CallId??"", 
-                                        metric.Name,  
-                                        metric.Timestamp.ToString(DateFormat),                                         
-                                        metric.Value, 
-                                        metric.IsError?"t":"f",
-                                        metric.Data??""
-                                );
-            }
-
-            static internal bool TryRead(String line, out PerformanceMetric metric)
-            {
-                if (!line.StartsWith("#"))
-                {
-                    var parts = line.Split(SplitChars,(int)Col.MetricData + 1);//leave the Data bit as it is, including seperator chars
-                    if (parts.Length >= (int)Col.MetricData - 1)
-                    {
-                        //testId = new TestId(
-                        //    machineId:parts[0],
-                        //    agentId:parts[1],
-                        //    threadId:parts[2]
-                        //);
-                        metric = new PerformanceMetric
-                        {
-                            CallId = NullIfEmpty(parts[(int)Col.MetricCallId]),
-                            Name = parts[(int)Col.MetricName],
-                            Timestamp = DateTime.ParseExact(parts[(int)Col.MetricTImeStamp], DateFormat, null),
-                            Value = Double.Parse(parts[(int)Col.MetricValue]),
-                            IsError = StringToBool(parts[(int)Col.MetricIsError]),
-                            Data = NullIfEmpty(parts[(int)Col.MetricData])
-                        };
-                        return true;
-                    }
-                }
-                //testId = default(TestId);
-                metric = default(PerformanceMetric);
-                return false;
-            }
-
-            private static String NullIfEmpty(String s)
-            {
-                return s.Length == 0 ? null : s;
-            }
-
-            private static bool StringToBool(String s)
-            {
-                if (string.IsNullOrEmpty(s))
-                {
-                    return false;
-                }
-                return s.Equals("t");
-            }
-        }   
     }
 }

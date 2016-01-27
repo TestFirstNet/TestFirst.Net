@@ -5,7 +5,6 @@ namespace TestFirst.Net.Extensions.NUnit
 {
     /// <summary>
     /// Marks a test as under development and is not expected to pass yet. Useful when writing tests first before the implementation exists.
-    /// 
     /// If the test passes this will cause the test to fail
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]

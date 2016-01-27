@@ -5,8 +5,7 @@ namespace TestFirst.Net.Performance
         /// <summary>
         /// Perform the actual test using the provided lister to pass back metrics. 
         /// </summary>
-        /// <param name="testListener"></param>
+        /// <param name="testListener">The test listener</param>
         void InvokeTest(IPerformanceTestListener testListener);
-       
     }
 }

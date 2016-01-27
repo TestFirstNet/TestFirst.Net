@@ -30,7 +30,7 @@ can be written in TestFirst.Net as:
         .Given(user = UserInTheDb().WithDefaults())
         .Given(account = AccountInTheDb().For(user).Balance(10).Dollars())
         
-        .When(()=>account.debit(6))
+        .When(() => account.debit(6))
 
         .Then(
             ExpectThat(TheAccountInTheDb.For(account)),
@@ -50,12 +50,9 @@ for more info see project page
     <tags>testing tdd bdd fluent nunit moq</tags>
   </metadata>
   <files>
-    <file src="obj[/]Release[/]TestFirst.Net*.dll" target="/lib/net/40/"/>
-    <file src="obj[/]Release[/]TestFirst.Net*.pdb" target="/lib/net/40/"/>
-    <file src="obj[/]Release[/]TestFirst.Net*.dll" target="/lib/net/45/"/>
-    <file src="obj[/]Release[/]TestFirst.Net*.pdb" target="/lib/net/45/"/>
-    <file src="obj[/]Release[/]TestFirst.Net*.dll" target="/lib/net/dnx451/"/>
-    <file src="obj[/]Release[/]TestFirst.Net*.pdb" target="/lib/net/dnx451/"/>
-
+    <file src="obj[/]Release[/]TestFirst.Net*.dll" target="/lib/net40"/>
+    <file src="obj[/]Release[/]TestFirst.Net*.pdb" target="/lib/net40"/>
+    <file src="obj[/]Release[/]TestFirst.Net*.dll" target="/lib/net451/"/>
+    <file src="obj[/]Release[/]TestFirst.Net*.pdb" target="/lib/net451/"/>
   </files>
 </package>

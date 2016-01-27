@@ -7,21 +7,21 @@ namespace TestFirst.Net
     /// </summary>
     public class SimpleStepArgInjector : DisposingStepArgInjector
     {
-        public IClock Clock {get;set;}
-
-        public SimpleStepArgInjector(){
+        public SimpleStepArgInjector()
+        {
             Clock = new SystemClock();
         }
 
-        override public void InjectDependencies<T>(T instance)
+        public IClock Clock { get; set; }
+
+        public override void InjectDependencies<T>(T instance)
         {
             base.InjectDependencies(instance);
 
-            if (instance is IRequireClock) {
+            if (instance is IRequireClock) 
+            {
                 ((IRequireClock)instance).Clock = Clock;
             }
         }
-
-
     }
 }
